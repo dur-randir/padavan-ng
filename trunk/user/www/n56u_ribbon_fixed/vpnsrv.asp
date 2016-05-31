@@ -18,6 +18,7 @@
 <script type="text/javascript" src="/state.js"></script>
 <script type="text/javascript" src="/general.js"></script>
 <script type="text/javascript" src="/itoggle.js"></script>
+<script type="text/javascript" src="/help_wl.js"></script>
 <script type="text/javascript" src="/popup.js"></script>
 <script>
 var $j = jQuery.noConflict();
@@ -1129,7 +1130,7 @@ function getHash(){
                                     <th width="20%" style="border-top: 0 none;"><#VPNS_CName#>:</th>
                                     <th width="20%" style="border-top: 0 none;" id="col_pass"><#ISP_Authentication_pass#></th>
                                     <th width="20%" style="border-top: 0 none;"><#VPNS_FixIP#></th>
-                                    <th width="35%" style="border-top: 0 none;"><#VPNS_RNet#></th>
+                                    <th width="35%" style="border-top: 0 none;"><a class="help_tooltip" href="javascript: void(0)" onmouseover="openTooltip(this, 5, 1);"><#VPNS_RNet#></a></th>
                                     <th width="5%"  style="border-top: 0 none;">&nbsp;</th>
                                 </tr>
                                 <tr>

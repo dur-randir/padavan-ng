@@ -57,6 +57,8 @@ helpcontent[3] = new Array("",
 // MAC filter
 helpcontent[4] = new Array("",
 				"<#FirewallConfig_MFMethod_itemdesc#>");
+helpcontent[5] = new Array("",
+				"<#VPNS_RNet_itemdesc#>");
 
 function openTooltip(obj, hint_array_id, hint_show_id)
 {
