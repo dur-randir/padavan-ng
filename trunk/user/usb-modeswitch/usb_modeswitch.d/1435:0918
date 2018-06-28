@@ -1,0 +1,4 @@
+# WNC LTE D16Q1
+TargetVendor=0x1435
+TargetProduct=0x0918
+StandardEject=1

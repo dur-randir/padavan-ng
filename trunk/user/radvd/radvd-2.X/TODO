@@ -1,0 +1,77 @@
+
+                       NOTE WELL
+                       =========
+
+	*NONE* of the items are being actively worked on.
+        So, if you're interested in one of these features,
+        it means you'll have to submit a patch... :-)
+
+
+read list of interfaces with SIOCGIFCONF (AF_INET6 support in the kernel would
+be nice) or from /proc
+
+support for few protocol constants defined in RFC 4861 Sec 10 is missing.
+
+consider whether UnicastOnly flag should be detected by radvdump.
+
+The following parts of RFC4861 are not implemented:
+ - section 6.2.5: when AdvSendAdvertisements changes to FALSE, we don't send 
+   a final RA with zero Router Lifetime (we just send it when shutting down).
+   (SHOULD)
+ - section 6.2.8: if the link-local address of the router changes, it should
+   multicast a few RAs from the old address with zero router lifetime, and a
+   few from the new address. (SHOULD).
+
+Consider whether to support RFC 4286 (Multicast Router Discovery).
+
+Consider whether to support multiple IPv4 addresses with Base6to4Interface
+(currently the code just picks one).
+
+Consider whether to support multiple prefixes and routes with a single
+configuration line (instead of having to specify each prefix/route
+separately) somewhat similar to how RDNSS configuration already supports.
+
+Consider whether to support a generalization of Base6to4Interface for
+arbitrary IPv6 prefixes, to be used for automatic generation of downstream
+prefixes.  Also consider whether this would need to support multiple IPv6
+prefixes on the upstream interfaces.  See question 3 in README for more on
+this.
+
+Use getifaddrs() instead of ioctl SIOCGIFADDR and other friends.  The
+problem with this is that e.g. RHL73's glibc didn't support getifaddrs(),
+and before glibc 2.3.3 getifaddrs() didn't use netlink so it didn't work
+well with IPv6.  These old compat concerns are likely moot now..
+
+Implement Secure Neighbor Discovery (RFC 3971).
+
+Interface reconfiguration is only supported on Linux.  Consider whether to
+support that (and privilege separation as a result) on BSD as well.
+
+The restrictions of the (privilege separation) master process could
+be restricted as currently it basically only needs to write to /proc,
+do some logging and nothing else.
+
+Triggered by: https://bugzilla.redhat.com/show_bug.cgi?id=554125
+Known problems (probably can't do anything about these):
+ - If interface MAC address changes, radvd will keep sending the old MAC
+   in its LL option (until HUP signal).  The kernel will keep sending
+   Ethernet frames with the old MAC until interface is flapped.
+   More: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=508466
+
+AdvRASolicitedUnicast: Further improvement is possible.
+- If we get a RS and are about to send a multicast RA, then we can further save
+  battery on the client device by NOT sending a unicast response, and just
+  letting the client wait for the multicast response. This should be
+  implemented as a new time value, specifying the maximum amount of time
+  remaining to as a deciding factor between send-solicited-RA-now vs
+  wait-for-next-multicast.
+- The above can also form part of rate-limiting of unicast RA responses when
+  network topology has recently changed.
+
+The following parts of RFC7222 are not yet implemented:
+- Section 5.1.3: Networks that serve battery-powered devices SHOULD NOT send
+  multicast RAs too frequently (see Section 4) unless the information in the RA
+  packet has substantially changed.  If there is a desire to ensure that hosts
+  pick up configuration changes quickly, those networks MAY send frequent
+  Router Advertisements for a limited period of time (e.g., not more than one
+  minute) immediately after a configuration change.

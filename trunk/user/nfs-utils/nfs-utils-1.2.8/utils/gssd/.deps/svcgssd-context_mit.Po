@@ -1,0 +1,3 @@
+svcgssd-context_mit.o: context_mit.c ../../support/include/config.h
+
+../../support/include/config.h:

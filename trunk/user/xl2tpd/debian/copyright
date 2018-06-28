@@ -1,0 +1,18 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Source: http://www.xelerance.com/software/xl2tpd/ (repacked to remove non-free RFC text included in upstream distribution)
+
+Files: *
+Copyright: (c) 2006-2016 Xelerance Corporation
+License: GPL-2+
+
+Files: debian/*
+Copyright: (c) 2007-2013 Roberto C. Sanchez <roberto@connexer.com>
+                         Jean-Francois Dive
+License: GPL-2+
+
+License: GPL-2+
+ Please see the CREDITS file for a complete copyright history of all parts of
+ the project.
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License can be found in `/usr/share/common-licenses/GPL-2'.

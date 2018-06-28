@@ -1,0 +1,13 @@
+# RISC-V specific config options
+
+## no-package
+## depends on EXPERIMENTAL
+##
+## select ARCH_SUPPORTS_32
+## select ARCH_DEFAULT_32
+## select ARCH_SUPPORTS_WITH_ABI
+## select ARCH_SUPPORTS_WITH_ARCH
+## select GCC_REQUIRE_7_or_later
+
+## help The RISC-V architecture, as defined by:
+## help     http://www.riscv.org/

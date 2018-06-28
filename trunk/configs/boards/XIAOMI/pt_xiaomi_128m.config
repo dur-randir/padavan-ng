@@ -1,0 +1,46 @@
+{
+	name:	"Bootloader",
+	offset:	0x0,
+	size:	0x80000,
+}, {
+	name:	"BootEnv",
+	offset: 0x80000,
+	size:	0x80000,
+}, {
+	name:	"Factory",
+	offset:	0x100000,
+	size:	0x40000,
+}, {
+	name:	"crash",
+	offset:	0x140000,
+	size:	0x40000,
+}, {
+	name:	"crash_syslog",
+	offset:	0x180000,
+	size:	0x40000,
+}, {
+	name:	"reserved0",
+	offset:	0x1C0000,
+	size:	0x40000,
+}, {
+	name:	"kernel0",
+	offset:	0x200000,
+	size:	0x400000,
+	read_only: true,	/* read only mode! kernel0 is necessary for recovery */
+}, {
+	name:	"Firmware",
+	offset:	0x600000,
+	size:	0x1400000,
+}, {
+	name:	"Config",
+	offset:	0x1A00000,
+	size:	0x100000,
+}, {
+	name:	"Storage",
+	offset:	0x1B00000,
+	size:	0x400000,
+}, {
+	name:	"RWFS",
+	offset:	0x1F00000,
+	size:	0x6080000,
+}

@@ -1,0 +1,4 @@
+svcgssd-context_heimdal.o: context_heimdal.c \
+ ../../support/include/config.h
+
+../../support/include/config.h:

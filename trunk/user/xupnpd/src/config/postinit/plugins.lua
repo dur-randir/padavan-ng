@@ -1,0 +1,13 @@
+plugins["giantbomb"].disabled=true
+plugins["youtube"].disabled=true
+plugins["ivi"].disabled=true
+plugins["gametrailers"].disabled=true
+plugins["vimeo"].disabled=true
+plugins["vkontakte"].disabled=true
+plugins["generic"].disabled=false
+plugins["netstreamsat"].disabled=true
+plugins["arjlover"].disabled=true
+plugins["dreambox"].disabled=true
+plugins["hls"].disabled=false
+plugins["vsetv"].disabled=true
+plugins["ag"].disabled=true
