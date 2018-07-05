@@ -235,11 +235,6 @@ if [ "$CONFIG_RALINK_MT7621" = "y" ] ; then
 	if [ "$CONFIG_FIRMWARE_CPU_900MHZ" = "y" ] ; then
 		func_enable_kernel_param "CONFIG_RALINK_MT7621_PLL900"
 	fi
-	if [ "$CONFIG_FIRMWARE_RAM_MOD_256" = "y" ] ; then
-		func_disable_kernel_param "CONFIG_RT2880_DRAM_64M"
-		func_disable_kernel_param "CONFIG_RT2880_DRAM_128M"
-		func_enable_kernel_param "CONFIG_RT2880_DRAM_256M"
-	fi
 fi
 ############################# SMP #####################################
 if [ -n "$CONFIG_SMP" ] ; then
