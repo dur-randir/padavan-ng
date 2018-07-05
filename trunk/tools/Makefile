@@ -16,27 +16,16 @@ LDFLAGS   =
 
 -include $(LINUX_CONFIG)
 
-all : install
-
-install :
-	mkdir -p bin
+all:
 	make -C mkimage
 	make -C mktplinkfw
 	make -C sstrip
-	make -C mksquash_lzma-3.2 install
-	make -C mksquash_xz-4.0 install
+	make -C lzma
+	make -C mksquashfs_xz
 
 clean:
-	rm -rf ./bin
-	rm -rf ./headers
 	make -C sstrip clean
 	make -C mkimage clean
 	make -C mktplinkfw clean
-	make -C mksquash_lzma-3.2 clean
-	make -C mksquash_xz-4.0 clean
-	if [ -f xz/Makefile ] ; then \
-		make -C xz distclean ; \
-	fi ;
-
-mrproper:
-	echo "OK"
+	make -C lzma clean
+	make -C mksquashfs_xz clean

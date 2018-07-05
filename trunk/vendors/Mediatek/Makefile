@@ -132,13 +132,13 @@ romfs.post::
 	sudo /sbin/ldconfig -r $(ROMFSDIR) -C /etc_ro/ld.so.cache
 	rm -f $(RAMDISK)
 	rm -f $(KERNELZ).lzma
-	$(ROOTDIR)/tools/bin/mksquashfs_xz-4.0 $(ROMFSDIR) $(RAMDISK) -all-root -no-exports -noappend -nopad -noI -no-xattrs
+	$(TOOLS_DIR)/mksquashfs_xz/mksquashfs $(ROMFSDIR) $(RAMDISK) -all-root -no-exports -noappend -nopad -noI -no-xattrs
 
 image:
 	##############CREATE IMAGE#################
 	$(CROSS_COMPILE)objcopy -O binary -R .note -R .comment -S $(ROOTDIR)/$(LINUXDIR)/vmlinux $(KERNELZ)
 	cd $(IMAGEDIR) ; rm -f $(KERNELZ).*; \
-	$(ROOTDIR)/tools/bin/lzma_alone e -a1 -d25 $(KERNELZ) $(KERNELZ).$(COMP)
+	$(TOOLS_DIR)/lzma/lzma e -a1 -d25 $(KERNELZ) $(KERNELZ).$(COMP)
 ifeq ($(CONFIG_BLK_DEV_INITRD),)
 	@SIZE=`wc -c $(KERNELZ).$(COMP) | awk '{ print $$1 }'` ; \
 	SIZE=`expr $$SIZE + 64` ; \
