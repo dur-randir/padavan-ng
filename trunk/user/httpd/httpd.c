@@ -873,7 +873,7 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 		if ( strcmp( cur, "\n" ) == 0 || strcmp( cur, "\r\n" ) == 0 ) {
 			break;
 		}
-		
+
 		if (strncasecmp(cur, "Accept-Language:", 16) == 0) {
 			if (!http_has_lang)
 				http_has_lang = set_preferred_lang(cur + 16);
@@ -900,6 +900,11 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 			*cp = '\0';
 			cur = ++cp;
 		}
+	}
+
+	if (clen < 0 || clen > 50000000) {
+		send_error( 400, "Bad Request", NULL, "Content length invalid.", conn_fp);
+		return;
 	}
 
 	if (strcasecmp(method, "get") == 0)
@@ -982,7 +987,7 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 			send_authenticate(conn_fp);
 			return;
 		}
-		
+
 		if (login_state == 2)
 			http_login(&conn_ip);
 	}
