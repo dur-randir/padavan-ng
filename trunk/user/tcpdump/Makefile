@@ -16,6 +16,7 @@ config_test:
 configure:
 	( cd $(SRC_NAME) ; \
 	ac_cv_linux_vers=3 \
+	ac_cv_header_rpc_rpcent_h=no \
 	ac_cv_lib_rpc_main=no \
 	ac_cv_path_PCAP_CONFIG="$(STAGEDIR)/bin/pcap-config" \
 	td_cv_buggygetaddrinfo=no \
