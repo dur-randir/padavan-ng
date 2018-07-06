@@ -93,6 +93,18 @@ ifdef CONFIG_RT3352_INIC_MII
 endif
 endif
 ###############################################################
+ifeq ($(CONFIG_RALINK_RT3050_1T1R),y)
+	$(ROMFSINST) /etc_ro/Wireless/RT3050_AP_1T1R_V1_0.bin
+endif
+ifeq ($(CONFIG_RALINK_RT3051_1T2R),y)
+	$(ROMFSINST) /etc_ro/Wireless/RT3051_AP_1T2R_V1_0.bin
+endif
+ifeq ($(CONFIG_RALINK_RT3052_2T2R),y)
+	$(ROMFSINST) /etc_ro/Wireless/RT3052_AP_2T2R_V1_1.bin
+endif
+ifeq ($(CONFIG_RALINK_RT5350_1T1R),y)
+	$(ROMFSINST) /etc_ro/Wireless/RT5350_AP_1T1R_V1_0.bin
+endif
 ifdef CONFIG_RT5592_AP
 ifeq ($(CONFIG_RT5592_AP_EP_SUPPORT),y)
 	$(ROMFSINST) /etc_ro/Wireless/RT5592EP_PCIe_2T2R_5G_V1_4.bin
