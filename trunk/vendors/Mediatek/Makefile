@@ -2,13 +2,9 @@ include $(ROOTDIR)/user/shared/board.mk
 
 KERNELZ		= $(IMAGEDIR)/zImage
 RAMDISK		= $(IMAGEDIR)/ramdisk
-ifeq ($(TPLINK_HWID),)
-FW_EXTENSION=trx
-else
-FW_EXTENSION=bin
-endif
-IMAGE		= $(IMAGEDIR)/$(CONFIG_FIRMWARE_PRODUCT_ID)_$(FIRMWARE_KERNEL_VER).$(FIRMWARE_ROOTFS_VER)-$(FIRMWARE_BUILDS_VER).$(FW_EXTENSION)
+IMAGE_BASE	= $(IMAGEDIR)/$(CONFIG_FIRMWARE_PRODUCT_ID)_$(FIRMWARE_KERNEL_VER).$(FIRMWARE_ROOTFS_VER)-$(FIRMWARE_BUILDS_VER)
 BOARD_DIR	= $(ROOTDIR)/configs/boards/$(CONFIG_VENDOR)/$(CONFIG_FIRMWARE_PRODUCT_ID)
+FW_MAXSIZE	= $(shell awk '/"Firmware"/{ getline; getline; gsub(/,$$/,""); print strtonum($$2); }' $(BOARD_DIR)/partitions.config)
 ROMFS_DIR	= $(ROOTDIR)/romfs
 TOOLS_DIR	:= $(ROOTDIR)/tools
 CUR_DIR		= $(shell pwd)
@@ -153,7 +149,6 @@ ifeq ($(CONFIG_BLK_DEV_INITRD),)
 	@du -sb $(ROMFSDIR)
 	# Compressed RootFs Size
 	@wc -c $(RAMDISK)
-	# no union for tplink firmware
 ifeq ($(TPLINK_HWID),)
 	# Padded Kernel Image + Compressed Rootfs Size
 	@cat $(RAMDISK) >> $(KERNELZ).$(COMP)
@@ -169,14 +164,17 @@ ifeq ($(TPLINK_HWID),)
 	RSIZE=`wc -c $(RAMDISK) | awk '{print $$1}'` ; \
 	KRN_SIZE=`expr $$ISIZE - $$RSIZE + 64` ; \
 	$(TOOLS_DIR)/mkimage/mkimage -A mips -O linux -T kernel -C $(COMP) -a $(ENTRYPOINT) -e $$ENTRY -k $$KRN_SIZE \
-	-n $(CONFIG_FIRMWARE_PRODUCT_ID) -V $(FIRMWARE_KERNEL_VER) $(FIRMWARE_ROOTFS_VER) -d $(KERNELZ).$(COMP) $(IMAGE)
+	-n $(CONFIG_FIRMWARE_PRODUCT_ID) -V $(FIRMWARE_KERNEL_VER) $(FIRMWARE_ROOTFS_VER) -d $(KERNELZ).$(COMP) $(IMAGE_BASE).trx ; \
+	echo "#===========================================\nFirmware size: $$(stat -c %s $(IMAGE_BASE).trx)"
 else
 	@cd $(IMAGEDIR) ; \
 	ENTRY=`LANG=C LC_ALL=C readelf -h $(ROOTDIR)/$(LINUXDIR)/vmlinux | grep "Entry" | awk '{print $$4}'` ; \
 	$(TOOLS_DIR)/mktplinkfw/mktplinkfw2 -L $(ENTRYPOINT) -E $$ENTRY -H $(TPLINK_HWID) -W $(TPLINK_HWREV) \
 	-w $(TPLINK_HWREVADD) -F "$(TPLINK_FLASHLAYOUT)" -T $(TPLINK_HVERSION) -V "ver. 2.0" -a 0x4 -j \
-	-k $(KERNELZ).$(COMP) -r $(RAMDISK) -o $(IMAGE) -s -e
+	-k $(KERNELZ).$(COMP) -r $(RAMDISK) -o $(IMAGE_BASE).bin -s -e ; \
+	echo "#===========================================\nFirmware size: $$(stat -c %s $(IMAGE_BASE).bin)"
 endif
+	@echo "Firmware max allowed size: $(FW_MAXSIZE)\n"
 
 clean:
 	rm -f $(RAMDISK)
