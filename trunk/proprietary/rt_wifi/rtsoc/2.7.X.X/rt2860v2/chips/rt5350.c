@@ -190,7 +190,7 @@ REG_PAIR   RT5350_BBPRegTable[] = {
 	{BBP_R103,		0xC0},
 	{BBP_R104,		0x92},
 	{BBP_R105,		0x3C},
-	{BBP_R106,		0x03},
+	{BBP_R106,		0x1b},
 	{BBP_R128,		0x12},
 	{BBP_R120,		0x50},	// for long range -2db, Gary 2010-01-22
 	{BBP_R137,		0x0F},  // julian suggest make the RF output more stable
@@ -587,15 +587,15 @@ VOID RT5350SetRxAnt(
 	RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R150, BBPValue);
 	BBPValue = 0x30;
 	RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R151, BBPValue);
-	BBPValue = 0x00;
-	RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R154, BBPValue);
 
 	if (Ant == 0)
 	{
 		/* fix to main antenna */
 		/* do not care BBP R153, R155, R253 */
-		BBPValue = 0x23;
+		BBPValue = 0xa3; /* see 1st comment above */
 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R152, BBPValue);
+		pAd->RxAnt.Pair1PrimaryRxAnt = 0;
+		pAd->RxAnt.Pair1SecondaryRxAnt = 1;
 
 		DBGPRINT(RT_DEBUG_TRACE, ("%s: switch to main antenna\n", __FUNCTION__));
 	}
@@ -603,11 +603,17 @@ VOID RT5350SetRxAnt(
 	{
 		/* fix to aux antenna */
 		/* do not care BBP R153, R155, R253 */
-		BBPValue = 0xa3;
+		BBPValue = 0x23; /* see 1st comment above */
 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R152, BBPValue);
+		pAd->RxAnt.Pair1PrimaryRxAnt = 1;
+		pAd->RxAnt.Pair1SecondaryRxAnt = 0;
 
 		DBGPRINT(RT_DEBUG_TRACE, ("%s: switch to aux antenna\n", __FUNCTION__));
 	}
+
+	/* Clear previously selected ant and force to use new */
+	BBPValue = 0x00;
+	RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R154, BBPValue);
 }
 
 

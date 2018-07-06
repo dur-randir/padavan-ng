@@ -515,7 +515,13 @@ static void ChgMacLedCfg(
 	else
 	{
 		{
+#ifdef RT5350
+			LedCfgBuf.word = 0;
+			LedCfgBuf.field.LED_POL = 1;
+			RTMP_IO_WRITE32(pAd, MAC_LED_CFG, LedCfgBuf.word);
+#else
 			RTMP_IO_WRITE32(pAd, MAC_LED_CFG, 0);
+#endif
 		}		
 	}
 

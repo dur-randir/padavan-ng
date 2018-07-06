@@ -1789,7 +1789,7 @@ VOID RTMPWriteTxWI(
 	/* John tune the performace with Intel Client in 20 MHz performance*/
 #ifdef DOT11_N_SUPPORT
 	BASize = pAd->CommonCfg.TxBASize;
-	if (pAd->MACVersion == 0x28720200)
+	if ((pAd->MACVersion == 0x28720200) || (pAd->infType == RTMP_DEV_INF_RBUS))
 	{
 		if( BASize >13 )
 			BASize =13;

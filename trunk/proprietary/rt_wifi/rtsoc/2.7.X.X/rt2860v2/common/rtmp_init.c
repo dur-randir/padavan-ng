@@ -1958,6 +1958,17 @@ NDIS_STATUS	NICInitializeAsic(
 			DBGPRINT(RT_DEBUG_TRACE, ("NICInitializeAsic::act as PCI driver \n"));
 		}
 	}
+	if(pAd->infType == RTMP_DEV_INF_RBUS) {
+			US_CYC_CNT_STRUC	USCycCnt;
+			UINT32 				Value;
+
+			RTMP_IO_READ32(pAd, US_CYC_CNT, &Value);
+			USCycCnt.word = Value;
+			Value = get_surfboard_sysclk() / 1000 / 1000;
+			USCycCnt.field.UsCycCnt = Value & 0xFF;
+			RTMP_IO_WRITE32(pAd, US_CYC_CNT, USCycCnt.word);
+			DBGPRINT(RT_DEBUG_TRACE, ("NICInitializeAsic::act as RBus driver \n"));
+	}
 	DBGPRINT(RT_DEBUG_TRACE, ("%s: pAd->CommonCfg.bPCIeBus = %d\n", 
 		__FUNCTION__, pAd->CommonCfg.bPCIeBus));
 #endif /* RTMP_PCI_SUPPORT */
@@ -2019,7 +2030,7 @@ NDIS_STATUS	NICInitializeAsic(
 	
 #ifdef RTMP_MAC_PCI
 	/* TODO: check MACVersion, currently, rbus-based chip use this.*/
-	if (pAd->MACVersion == 0x28720200)
+	if ( (pAd->MACVersion == 0x28720200) || (pAd->infType == RTMP_DEV_INF_RBUS) )
 	{
 		/*UCHAR value;*/
 		UINT32 value2;
@@ -3378,7 +3389,7 @@ VOID	UserCfgInit(
 	pAd->CommonCfg.bBADecline = FALSE;
 	pAd->CommonCfg.bDisableReordering = FALSE;
 
-	if (pAd->MACVersion == 0x28720200)
+	if ((pAd->MACVersion == 0x28720200) || (pAd->infType == RTMP_DEV_INF_RBUS))
 	{
 		pAd->CommonCfg.TxBASize = 13; /*by Jerry recommend*/
 	}else{
@@ -4948,6 +4959,10 @@ IN  PRTMP_ADAPTER   pAd)
 			pAd->RxAnt.Pair1SecondaryRxAnt = 1;
 		}
 	}
+
+#ifdef RT5350
+	AsicSetRxAnt(pAd, pAd->RxAnt.Pair1PrimaryRxAnt);
+#endif
 
 	DBGPRINT(RT_DEBUG_OFF, ("\x1b[m%s: primary/secondary ant %d/%d\n\x1b[m", 
 					__FUNCTION__,
