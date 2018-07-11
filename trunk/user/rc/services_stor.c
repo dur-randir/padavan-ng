@@ -231,7 +231,7 @@ write_smb_conf(void)
 	if (i_smb_mode == 1 || i_smb_mode == 3) {
 		char *rootnm = nvram_safe_get("http_username");
 		if (!(*rootnm)) rootnm = "admin";
-		
+
 		fprintf(fp, "security = %s\n", "SHARE");
 		fprintf(fp, "guest ok = %s\n", "yes");
 		fprintf(fp, "guest only = yes\n");
@@ -245,6 +245,7 @@ write_smb_conf(void)
 		goto confpage;
 	}
 
+	fprintf(fp, "max protocol = SMB2\n");
 	fprintf(fp, "writeable = yes\n");
 	fprintf(fp, "directory mode = 0777\n");
 	fprintf(fp, "create mask = 0777\n");
@@ -275,12 +276,12 @@ write_smb_conf(void)
 		for (follow_disk = disks_info; follow_disk != NULL; follow_disk = follow_disk->next) {
 			for (follow_partition = follow_disk->partitions; follow_partition != NULL; follow_partition = follow_partition->next) {
 				char *mount_folder;
-				
+
 				if (follow_partition->mount_point == NULL)
 					continue;
-				
+
 				mount_folder = strrchr(follow_partition->mount_point, '/')+1;
-				
+
 				fprintf(fp, "[%s]\n", mount_folder);
 				fprintf(fp, "comment = %s's %s\n", follow_disk->tag, mount_folder);
 				fprintf(fp, "path = %s\n", follow_partition->mount_point);
@@ -311,36 +312,36 @@ write_smb_conf(void)
 	} else {
 		int n, acc_num = 0, sh_num=0;
 		char **account_list;
-		
+
 		// get the account list
 		if (get_account_list(&acc_num, &account_list) < 0) {
 			free_2_dimension_list(&acc_num, &account_list);
 			goto confpage;
 		}
-		
+
 		for (follow_disk = disks_info; follow_disk != NULL; follow_disk = follow_disk->next) {
 			for (follow_partition = follow_disk->partitions; follow_partition != NULL; follow_partition = follow_partition->next) {
 				if (follow_partition->mount_point == NULL)
 					continue;
-				
+
 				char **folder_list;
-				
+
 				// 1. get the folder list
 				if (get_folder_list_in_mount_path(follow_partition->mount_point, &sh_num, &folder_list) < 0) {
 					free_2_dimension_list(&sh_num, &folder_list);
 					continue;
 				}
-				
+
 				// 2. start to get every share
 				for (n = 0; n < sh_num; ++n) {
 					int i, right, first;
 					char share[256];
-					
+
 					memset(share, 0, 256);
 					strcpy(share, folder_list[n]);
-					
+
 					fclose(fp);
-					
+
 					if(check_existed_share(share)){
 						i = 1;
 						memset(share, 0, 256);
@@ -351,14 +352,14 @@ write_smb_conf(void)
 							sprintf(share, "%s(%d)", folder_list[n], i);
 						}
 					}
-					
+
 					if((fp = fopen(SAMBA_CONF, "a")) == NULL)
 						goto confpage;
 					fprintf(fp, "[%s]\n", share);
 					fprintf(fp, "comment = %s\n", folder_list[n]);
 					fprintf(fp, "path = %s/%s\n", follow_partition->mount_point, folder_list[n]);
 					fprintf(fp, "writeable = no\n");
-					
+
 					fprintf(fp, "valid users = ");
 					first = 1;
 					for (i = 0; i < acc_num; ++i) {
@@ -367,64 +368,64 @@ write_smb_conf(void)
 							first = 0;
 						else
 							fprintf(fp, ", ");
-						
+
 						fprintf(fp, "%s", account_list[i]);
 					}
 					fprintf(fp, "\n");
-					
+
 					fprintf(fp, "invalid users = ");
 					first = 1;
 					for (i = 0; i < acc_num; ++i) {
 						right = get_permission(account_list[i], follow_partition->mount_point, folder_list[n], "cifs");
 						if (right >= 1)
 							continue;
-						
+
 						if (first == 1)
 							first = 0;
 						else
 							fprintf(fp, ", ");
-						
+
 						fprintf(fp, "%s", account_list[i]);
 					}
 					fprintf(fp, "\n");
-					
+
 					fprintf(fp, "read list = ");
 					first = 1;
 					for (i = 0; i < acc_num; ++i) {
 						right = get_permission(account_list[i], follow_partition->mount_point, folder_list[n], "cifs");
 						if (right < 1)
 							continue;
-						
+
 						if (first == 1)
 							first = 0;
 						else
 							fprintf(fp, ", ");
-						
+
 						fprintf(fp, "%s", account_list[i]);
 					}
 					fprintf(fp, "\n");
-					
+
 					fprintf(fp, "write list = ");
 					first = 1;
 					for (i = 0; i < acc_num; ++i) {
 						right = get_permission(account_list[i], follow_partition->mount_point, folder_list[n], "cifs");
 						if (right < 2)
 							continue;
-						
+
 						if (first == 1)
 							first = 0;
 						else
 							fprintf(fp, ", ");
-						
+
 						fprintf(fp, "%s", account_list[i]);
 					}
 					fprintf(fp, "\n");
 				}
-				
+
 				free_2_dimension_list(&sh_num, &folder_list);
 			}
 		}
-		
+
 		free_2_dimension_list(&acc_num, &account_list);
 	}
 

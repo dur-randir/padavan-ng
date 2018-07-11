@@ -64,7 +64,7 @@ endif
 ifeq ($(CONFIG_FIRMWARE_INCLUDE_NTFS_3G),y)
 FS_NTFS_ENABLED=y
 endif
-ifeq ($(CONFIG_FIRMWARE_INCLUDE_SMBD),y)
+ifneq (,$(filter y,$(CONFIG_FIRMWARE_INCLUDE_SMBD) $(CONFIG_FIRMWARE_INCLUDE_SMBD36)))
 SAMBA_ENABLED=y
 endif
 endif
@@ -109,7 +109,15 @@ dir_$(DROPBEAR_ENABLED)				+= dropbear
 dir_$(CONFIG_FIRMWARE_INCLUDE_OPENVPN)		+= openvpn
 dir_$(CONFIG_FIRMWARE_INCLUDE_SSWAN)		+= strongswan
 dir_$(CONFIG_FIRMWARE_INCLUDE_TCPDUMP)		+= tcpdump
-dir_$(SAMBA_ENABLED)				+= samba3
+
+ifeq ($(SAMBA_ENABLED),y)
+ifeq ($(CONFIG_FIRMWARE_INCLUDE_SMBD36),y)
+dir_y						+= samba36
+else
+dir_y						+= samba3
+endif
+endif
+
 dir_$(CONFIG_FIRMWARE_INCLUDE_TOR)		+= tor
 dir_$(CONFIG_FIRMWARE_INCLUDE_PRIVOXY)		+= privoxy
 dir_$(CONFIG_FIRMWARE_INCLUDE_DNSCRYPT)	+= dnscrypt-proxy

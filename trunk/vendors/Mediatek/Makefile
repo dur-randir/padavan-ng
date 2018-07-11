@@ -3,8 +3,6 @@ include $(ROOTDIR)/user/shared/board.mk
 KERNELZ		= $(IMAGEDIR)/zImage
 RAMDISK		= $(IMAGEDIR)/ramdisk
 IMAGE_BASE	= $(IMAGEDIR)/$(CONFIG_FIRMWARE_PRODUCT_ID)_$(FIRMWARE_KERNEL_VER).$(FIRMWARE_ROOTFS_VER)-$(FIRMWARE_BUILDS_VER)
-BOARD_DIR	= $(ROOTDIR)/configs/boards/$(CONFIG_VENDOR)/$(CONFIG_FIRMWARE_PRODUCT_ID)
-FW_MAXSIZE	= $(shell awk '/"Firmware"/{ getline; getline; gsub(/,$$/,""); print strtonum($$2); }' $(BOARD_DIR)/partitions.config)
 ROMFS_DIR	= $(ROOTDIR)/romfs
 TOOLS_DIR	:= $(ROOTDIR)/tools
 CUR_DIR		= $(shell pwd)
@@ -52,7 +50,7 @@ romfs:
 	for i in $(ROMFS_DIRS); do \
 		[ -d $(ROMFSDIR)/$$i ] || mkdir -p $(ROMFSDIR)/$$i; \
 	done
-	for i in `ls $(BOARD_DIR)/SingleSKU*.dat` ; do \
+	for i in `ls $(BOARDDIR)/SingleSKU*.dat` ; do \
 		[ -f $$i ] && cp -f $$i $(ROMFSDIR)/etc_ro/Wireless; \
 	done
 ########### INSTALL LIBGCC_S.SO NEEDED FOR UCLIBC-NG ########
@@ -186,7 +184,7 @@ else
 	-k $(KERNELZ).$(COMP) -r $(RAMDISK) -o $(IMAGE_BASE).bin -s -e ; \
 	echo "#===========================================\nFirmware size: $$(stat -c %s $(IMAGE_BASE).bin)"
 endif
-	@echo "Firmware max allowed size: $(FW_MAXSIZE)\n"
+	@echo "Firmware max allowed size: $(FIRMWARE_MAXSIZE)\n"
 
 clean:
 	rm -f $(RAMDISK)
