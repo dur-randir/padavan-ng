@@ -824,8 +824,12 @@ static void timestamp_and_log(int pri, char *msg, int len)
 		time(&now);
 		timestamp = ctime(&now) + 4; /* skip day of week */
 	} else {
-		now = 0;
-		timestamp = msg;
+		// patch - use local time anyway
+//		now = 0;
+//		timestamp = msg;
+		time(&now);
+		timestamp = ctime(&now) + 4;
+		
 		msg += 16;
 	}
 	timestamp[15] = '\0';

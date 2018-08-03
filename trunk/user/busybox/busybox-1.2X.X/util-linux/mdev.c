@@ -553,6 +553,11 @@ static void make_device(char *device_name, char *path, int operation)
 	int major, minor, type, len;
 	char *path_end = path + strlen(path);
 
+	/* fix create char device /dev/mtdX as block device (child for /dev/mtdblockX) */
+	if (strcmp((char*) bb_basename(path), "device") == 0) {
+		return;
+	}
+
 	/* Try to read major/minor string.  Note that the kernel puts \n after
 	 * the data, so we don't need to worry about null terminating the string
 	 * because sscanf() will stop at the first nondigit, which \n is.
