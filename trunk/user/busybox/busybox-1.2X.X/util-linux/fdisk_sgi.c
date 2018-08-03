@@ -425,7 +425,7 @@ create_sgiinfo(void)
 	/* I keep SGI's habit to write the sgilabel to the second block */
 	sgilabel->directory[0].vol_file_start = SGI_SSWAP32(2);
 	sgilabel->directory[0].vol_file_size = SGI_SSWAP32(sizeof(sgiinfo));
-	strncpy((char*)sgilabel->directory[0].vol_file_name, "sgilabel", 8);
+	memcpy((char*)sgilabel->directory[0].vol_file_name, "sgilabel", 8);
 }
 
 static sgiinfo *fill_sgiinfo(void);
@@ -623,7 +623,7 @@ sgi_change_sysid(int i, int sys)
 			"retrieve from its directory standalone tools like sash and fx.\n"
 			"Only the \"SGI volume\" entire disk section may violate this.\n"
 			"Type YES if you are sure about tagging this partition differently.\n");
-		if (strcmp(line_ptr, "YES\n") != 0)
+		if (strcmp(line_ptr, "YES") != 0)
 			return;
 	}
 	sgilabel->partitions[i].id = SGI_SSWAP32(sys);

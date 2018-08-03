@@ -102,14 +102,21 @@ static const char *unpack_usage_messages(void)
 	char *outbuf = NULL;
 	bunzip_data *bd;
 	int i;
+	jmp_buf jmpbuf;
 
-	i = start_bunzip(&bd,
+	/* Setup for I/O error handling via longjmp */
+	i = setjmp(jmpbuf);
+	if (i == 0) {
+		i = start_bunzip(&jmpbuf,
+			&bd,
 			/* src_fd: */ -1,
 			/* inbuf:  */ packed_usage,
-			/* len:    */ sizeof(packed_usage));
-	/* read_bunzip can longjmp to start_bunzip, and ultimately
-	 * end up here with i != 0 on read data errors! Not trivial */
-	if (!i) {
+			/* len:    */ sizeof(packed_usage)
+		);
+	}
+	/* read_bunzip can longjmp and end up here with i != 0
+	 * on read data errors! Not trivial */
+	if (i == 0) {
 		/* Cannot use xmalloc: will leak bd in NOFORK case! */
 		outbuf = malloc_or_warn(sizeof(UNPACKED_USAGE));
 		if (outbuf)
@@ -750,6 +757,12 @@ static void install_links(const char *busybox, int use_symbolic_links,
 			continue;
 	}
 }
+# elif ENABLE_BUSYBOX
+static void install_links(const char *busybox UNUSED_PARAM,
+		int use_symbolic_links UNUSED_PARAM,
+		char *custom_install_dir UNUSED_PARAM)
+{
+}
 # endif
 
 static void run_applet_and_exit(const char *name, char **argv) NORETURN;
@@ -854,8 +867,7 @@ int busybox_main(int argc UNUSED_PARAM, char **argv)
 		return 0;
 	}
 
-# if ENABLE_FEATURE_INSTALLER
-	if (strcmp(argv[1], "--install") == 0) {
+	if (ENABLE_FEATURE_INSTALLER && strcmp(argv[1], "--install") == 0) {
 		int use_symbolic_links;
 		const char *busybox;
 
@@ -878,7 +890,6 @@ int busybox_main(int argc UNUSED_PARAM, char **argv)
 		install_links(busybox, use_symbolic_links, argv[2]);
 		return 0;
 	}
-# endif
 
 	if (strcmp(argv[1], "--help") == 0) {
 		/* "busybox --help [<applet>]" */

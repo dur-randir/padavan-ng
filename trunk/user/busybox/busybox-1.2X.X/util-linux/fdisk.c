@@ -169,9 +169,9 @@ typedef unsigned long long ullong;
  * do not support more than 2^32 sectors
  */
 typedef uint32_t sector_t;
-#if UINT_MAX == 4294967295
+#if UINT_MAX == 0xffffffff
 # define SECT_FMT ""
-#elif ULONG_MAX == 4294967295
+#elif ULONG_MAX == 0xffffffff
 # define SECT_FMT "l"
 #else
 # error Cant detect sizeof(uint32_t)
@@ -426,7 +426,7 @@ struct globals {
 	unsigned sector_offset; // = 1;
 	unsigned g_heads, g_sectors, g_cylinders;
 	smallint /* enum label_type */ current_label_type;
-	smallint display_in_cyl_units; // = 1;
+	smallint display_in_cyl_units;
 #if ENABLE_FEATURE_OSF_LABEL
 	smallint possibly_osf_label;
 #endif
@@ -486,11 +486,10 @@ struct globals {
 #define INIT_G() do { \
 	SET_PTR_TO_GLOBALS(xzalloc(sizeof(G))); \
 	sector_size = DEFAULT_SECTOR_SIZE; \
-	sector_offset = 2048; \
+	sector_offset = 1; \
 	g_partitions = 4; \
-	display_in_cyl_units = 1; \
 	units_per_sector = 1; \
-	dos_compatible_flag = 0; \
+	dos_compatible_flag = 1; \
 } while (0)
 
 
@@ -504,8 +503,8 @@ static sector_t bb_BLKGETSIZE_sectors(int fd)
 	unsigned long longsectors;
 
 	if (ioctl(fd, BLKGETSIZE64, &v64) == 0) {
-		/* Got bytes, convert to sectors */
-		v64 /= sector_size;
+		/* Got bytes, convert to 512 byte sectors */
+		v64 >>= 9;
 		if (v64 != (sector_t)v64) {
  ret_trunc:
 			/* Not only DOS, but all other partition tables
@@ -639,25 +638,6 @@ seek_sector(sector_t secno)
 }
 
 #if ENABLE_FEATURE_FDISK_WRITABLE
-/* Read line; return 0 or first printable char */
-static int
-read_line(const char *prompt)
-{
-	int sz;
-
-	sz = read_line_input(NULL, prompt, line_buffer, sizeof(line_buffer));
-	if (sz <= 0)
-		exit(EXIT_SUCCESS); /* Ctrl-D or Ctrl-C */
-
-	if (line_buffer[sz-1] == '\n')
-		line_buffer[--sz] = '\0';
-
-	line_ptr = line_buffer;
-	while (*line_ptr != '\0' && (unsigned char)*line_ptr <= ' ')
-		line_ptr++;
-	return *line_ptr;
-}
-
 static void
 set_all_unchanged(void)
 {
@@ -678,6 +658,25 @@ write_part_table_flag(char *b)
 {
 	b[510] = 0x55;
 	b[511] = 0xaa;
+}
+
+/* Read line; return 0 or first printable non-space char */
+static int
+read_line(const char *prompt)
+{
+	int sz;
+
+	sz = read_line_input(NULL, prompt, line_buffer, sizeof(line_buffer));
+	if (sz <= 0)
+		exit(EXIT_SUCCESS); /* Ctrl-D or Ctrl-C */
+
+	if (line_buffer[sz-1] == '\n')
+		line_buffer[--sz] = '\0';
+
+	line_ptr = line_buffer;
+	while (*line_ptr != '\0' && (unsigned char)*line_ptr <= ' ')
+		line_ptr++;
+	return *line_ptr;
 }
 
 static char
@@ -1389,7 +1388,10 @@ get_partition_table_geometry(void)
 static void
 get_geometry(void)
 {
+	int sec_fac;
+
 	get_sectorsize();
+	sec_fac = sector_size / 512;
 #if ENABLE_FEATURE_SUN_LABEL
 	guess_device_type();
 #endif
@@ -1408,11 +1410,11 @@ get_geometry(void)
 		kern_sectors ? kern_sectors : 63;
 	total_number_of_sectors = bb_BLKGETSIZE_sectors(dev_fd);
 
-	sector_offset = 2048;
+	sector_offset = 1;
 	if (dos_compatible_flag)
 		sector_offset = g_sectors;
 
-	g_cylinders = total_number_of_sectors / g_heads / g_sectors;
+	g_cylinders = total_number_of_sectors / (g_heads * g_sectors * sec_fac);
 	if (!g_cylinders)
 		g_cylinders = user_cylinders;
 }
@@ -1611,53 +1613,54 @@ read_int(sector_t low, sector_t dflt, sector_t high, sector_t base, const char *
 
 		if (*line_ptr == '+' || *line_ptr == '-') {
 			int minus = (*line_ptr == '-');
-			int absolute = 0;
+			unsigned scale_shift;
 
-			value = atoi(line_ptr + 1);
+			if (sizeof(value) <= sizeof(long))
+				value = strtoul(line_ptr + 1, NULL, 10);
+			else
+				value = strtoull(line_ptr + 1, NULL, 10);
 
 			/* (1) if 2nd char is digit, use_default = 0.
-			 * (2) move line_ptr to first non-digit. */
+			 * (2) move line_ptr to first non-digit.
+			 */
 			while (isdigit(*++line_ptr))
 				use_default = 0;
 
-			switch (*line_ptr) {
-			case 'c':
-			case 'C':
-				if (!display_in_cyl_units)
-					value *= g_heads * g_sectors;
-				break;
-			case 'K':
-				absolute = 1024;
-				break;
+			scale_shift = 0;
+			switch (*line_ptr | 0x20) {
 			case 'k':
-				absolute = 1000;
+				scale_shift = 10; /* 1024 */
 				break;
 			case 'm':
-			case 'M':
-				absolute = 1000000;
+				scale_shift = 20; /* 1024*1024 */
 				break;
 			case 'g':
-			case 'G':
-				absolute = 1000000000;
+				scale_shift = 30; /* 1024*1024*1024 */
+				break;
+			case 't':
+				scale_shift = 40; /* 1024*1024*1024*1024 */
 				break;
 			default:
 				break;
 			}
-			if (absolute) {
+			if (scale_shift) {
 				ullong bytes;
 				unsigned long unit;
 
-				bytes = (ullong) value * absolute;
+				bytes = (ullong) value << scale_shift;
 				unit = sector_size * units_per_sector;
 				bytes += unit/2; /* round */
 				bytes /= unit;
-				value = bytes;
+				value = (bytes != 0 ? bytes - 1 : 0);
 			}
 			if (minus)
 				value = -value;
 			value += base;
 		} else {
-			value = atoi(line_ptr);
+			if (sizeof(value) <= sizeof(long))
+				value = strtoul(line_ptr, NULL, 10);
+			else
+				value = strtoull(line_ptr, NULL, 10);
 			while (isdigit(*line_ptr)) {
 				line_ptr++;
 				use_default = 0;
@@ -1778,7 +1781,7 @@ toggle_dos_compatibility_flag(void)
 		sector_offset = g_sectors;
 		printf("DOS Compatibility flag is %sset\n", "");
 	} else {
-		sector_offset = 2048;
+		sector_offset = 1;
 		printf("DOS Compatibility flag is %sset\n", "not ");
 	}
 }
@@ -2001,18 +2004,12 @@ check_consistency(const struct partition *p, int partition)
 		printf("     phys=(%u,%u,%u) ", pec, peh, pes);
 		printf("logical=(%u,%u,%u)\n", lec, leh, les);
 	}
-
-/* Ending on cylinder boundary? */
-	if (peh != (g_heads - 1) || pes != g_sectors) {
-		printf("Partition %u does not end on cylinder boundary\n",
-			partition + 1);
-	}
 }
 
 static void
 list_disk_geometry(void)
 {
-	ullong bytes = ((ullong)total_number_of_sectors * sector_size);
+	ullong bytes = ((ullong)total_number_of_sectors << 9);
 	ullong xbytes = bytes / (1024*1024);
 	char x = 'M';
 
@@ -2529,8 +2526,9 @@ add_partition(int n, int sys)
 		stop = limit;
 	} else {
 		snprintf(mesg, sizeof(mesg),
-			 "Last %s or +size or +sizeM or +sizeK",
-			 str_units(SINGULAR));
+			 "Last %s or +size{,K,M,G,T}",
+			 str_units(SINGULAR)
+		);
 		stop = read_int(cround(start), cround(limit), cround(limit), cround(start), mesg);
 		if (display_in_cyl_units) {
 			stop = stop * units_per_sector - 1;
@@ -2614,9 +2612,9 @@ new_partition(void)
 	} else {
 		char c, line[80];
 		snprintf(line, sizeof(line),
-			"Command action\n"
-			"   %s\n"
-			"   p   primary partition (1-4)\n",
+			"Partition type\n"
+			"   p   primary partition (1-4)\n"
+			"   %s\n",
 			(extended_offset ?
 			"l   logical (5 or over)" : "e   extended"));
 		while (1) {

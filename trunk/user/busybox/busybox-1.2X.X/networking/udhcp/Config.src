@@ -1,6 +1,6 @@
 #
 # For a description of the syntax of this configuration file,
-# see scripts/kbuild/config-language.txt.
+# see docs/Kconfig-language.txt.
 #
 
 config UDHCPD
@@ -94,7 +94,7 @@ config FEATURE_UDHCPC_SANITIZEOPT
 config UDHCPC_DEFAULT_SCRIPT
 	string "Absolute path to config script"
 	default "/usr/share/udhcpc/default.script"
-	depends on UDHCPC
+	depends on UDHCPC || UDHCPC6
 	help
 	This script is called after udhcpc receives an answer. See
 	examples/udhcp for a working example. Normally it is safe
@@ -118,7 +118,7 @@ config UDHCP_DEBUG
 	int "Maximum verbosity level (0..9)"
 	default 9
 	range 0 9
-	depends on UDHCPD || UDHCPC || UDHCPC6 || DHCPRELAY || DHCP6C
+	depends on UDHCPD || UDHCPC || UDHCPC6 || DHCPRELAY
 	help
 	Verbosity can be increased with multiple -v options.
 	This option controls how high it can be cranked up.
@@ -152,7 +152,7 @@ config UDHCPC_SLACK_FOR_BUGGY_SERVERS
 config FEATURE_UDHCP_RFC3397
 	bool "Support RFC 3397 domain search options"
 	default y
-	depends on UDHCPD || UDHCPC || DHCP6C
+	depends on UDHCPD || UDHCPC
 	help
 	If selected, both client and server will support passing of domain
 	search lists via option 119, specified in RFC 3397,
@@ -165,26 +165,3 @@ config FEATURE_UDHCP_8021Q
 	help
 	If selected, both client and server will support passing of VLAN
 	ID and priority via options 132 and 133 as per 802.1Q.
-
-config FEATURE_UDHCP_RFC5969
-	bool "Support for RFC5969 IPv6 Rapid Deployment (6RD)"
-	default y
-	depends on FEATURE_IPV6 && UDHCPC
-	help
-	  None.
-
-config DHCP6C
-	bool "DHCPv6 client daemon (dhcp6c)"
-	default n
-	depends on PLATFORM_LINUX && FEATURE_IPV6
-	help
-	  dhcp6c is a DHCPv6 client geared primarily toward embedded systems,
-	  while striving to be fully functional and RFC compliant.
-
-config FEATURE_DHCP6_AUTH
-	bool "Support DHCPv6 messages authentication"
-	default n
-	depends on DHCP6C
-	help
-	  If selected, client will support DHCPv6 messages authentication,
-	  currently HMAC-MD5 only.

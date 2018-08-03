@@ -157,8 +157,6 @@ enum {
 //#define DHCP_PXE_CONF_FILE    0xd1 /* RFC 5071 Configuration File */
 //#define DHCP_PXE_PATH_PREFIX  0xd2 /* RFC 5071 Configuration File */
 //#define DHCP_MS_STATIC_ROUTES 0xf9 /* Microsoft's pre-RFC 3442 code for 0x79? */
-//#define DHCP_6RD              0xd4 /* RFC 5969 6RD option */
-//#define DHCP_COMCAST_6RD      0x96 /* Comcast ISP RFC 5969 compatible 6RD option */
 //#define DHCP_WPAD             0xfc /* MSIE's Web Proxy Autodiscovery Protocol */
 #define DHCP_END                0xff
 
@@ -166,6 +164,10 @@ enum {
 #define OPT_CODE                0
 #define OPT_LEN                 1
 #define OPT_DATA                2
+/* Offsets in option byte sequence for DHCPv6 */
+#define D6_OPT_CODE				0
+#define D6_OPT_LEN				2
+#define D6_OPT_DATA				4
 /* Bits in "overload" option */
 #define OPTION_FIELD            0
 #define FILE_FIELD              1
@@ -289,15 +291,18 @@ void udhcp_dump_packet(struct dhcp_packet *packet) FAST_FUNC;
 
 /*** Other shared functions ***/
 
-int FAST_FUNC sprint_nip6(char *, const uint8_t *);
-
 /* 2nd param is "uint32_t*" */
 int FAST_FUNC udhcp_str2nip(const char *str, void *arg);
 /* 2nd param is "struct option_set**" */
+#if !ENABLE_UDHCPC6
+#define udhcp_str2optset(str, arg, optflags, option_strings, dhcpv6) \
+	udhcp_str2optset(str, arg, optflags, option_strings)
+#endif
 int FAST_FUNC udhcp_str2optset(const char *str,
 		void *arg,
 		const struct dhcp_optflag *optflags,
-		const char *option_strings);
+		const char *option_strings,
+		bool dhcpv6);
 
 #if ENABLE_UDHCPC || ENABLE_UDHCPD
 void udhcp_init_header(struct dhcp_packet *packet, char type) FAST_FUNC;
@@ -312,15 +317,13 @@ int udhcp_send_raw_packet(struct dhcp_packet *dhcp_pkt,
 
 int udhcp_send_kernel_packet(struct dhcp_packet *dhcp_pkt,
 		uint32_t source_nip, int source_port,
-		uint32_t dest_nip, int dest_port,
-		int send_flags
-) FAST_FUNC;
+		uint32_t dest_nip, int dest_port) FAST_FUNC;
 
 void udhcp_sp_setup(void) FAST_FUNC;
 void udhcp_sp_fd_set(struct pollfd *pfds, int extra_fd) FAST_FUNC;
 int udhcp_sp_read(void) FAST_FUNC;
 
-int udhcp_read_interface(const char *interface, int *ifindex, uint32_t *nip, uint8_t *mac, uint16_t *mtu) FAST_FUNC;
+int udhcp_read_interface(const char *interface, int *ifindex, uint32_t *nip, uint8_t *mac) FAST_FUNC;
 
 int udhcp_listen_socket(/*uint32_t ip,*/ int port, const char *inf) FAST_FUNC;
 
