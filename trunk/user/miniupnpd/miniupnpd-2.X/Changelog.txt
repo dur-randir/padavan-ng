@@ -1,4 +1,7 @@
-$Id: Changelog.txt,v 1.441 2018/05/08 21:34:18 nanard Exp $
+$Id: Changelog.txt,v 1.442 2018/07/06 12:05:46 nanard Exp $
+
+2018/07/06:
+  STUN support
 
 VERSION 2.1 : released on 2018/05/08
 

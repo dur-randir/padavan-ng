@@ -42,6 +42,7 @@ BASEOBJS = miniupnpd.o upnphttp.o upnpdescgen.o upnpsoap.o \
            upnpredirect.o getifaddr.o daemonize.o upnpglobalvars.o \
            options.o upnppermissions.o minissdp.o natpmp.o pcpserver.o \
            upnpevents.o upnputils.o getconnstatus.o \
+           upnpstun.o \
            upnppinhole.o pcplearndscp.o asyncsendto.o
 
 LNXOBJS = linux/getifstats.o linux/ifacewatcher.o linux/getroute.o
@@ -229,3 +230,4 @@ testgetroute.o: config.h miniupnpdtypes.h
 testasyncsendto.o: miniupnpdtypes.h config.h upnputils.h asyncsendto.h
 testportinuse.o: macros.h config.h portinuse.h
 miniupnpdctl.o: macros.h
+upnpstun.o: config.h upnpstun.h netfilter/iptcrdr.h

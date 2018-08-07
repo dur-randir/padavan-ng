@@ -1,4 +1,4 @@
-# $Id: Makefile.linux,v 1.96 2018/04/06 10:17:08 nanard Exp $
+# $Id: Makefile.linux,v 1.97 2018/07/06 12:04:48 nanard Exp $
 # MiniUPnP project
 # (c) 2006-2017 Thomas Bernard
 # http://miniupnp.free.fr/ or http://miniupnp.tuxfamily.org/
@@ -63,6 +63,7 @@ BASEOBJS = miniupnpd.o upnphttp.o upnpdescgen.o upnpsoap.o \
            upnpredirect.o getifaddr.o daemonize.o upnpglobalvars.o \
            options.o upnppermissions.o minissdp.o natpmp.o pcpserver.o \
            upnpevents.o upnputils.o getconnstatus.o \
+           upnpstun.o \
            upnppinhole.o pcplearndscp.o asyncsendto.o
 
 LNXOBJS = linux/getifstats.o linux/ifacewatcher.o
@@ -249,3 +250,4 @@ testasyncsendto.o: miniupnpdtypes.h config.h upnputils.h asyncsendto.h
 testportinuse.o: macros.h config.h portinuse.h
 miniupnpdctl.o: macros.h
 testssdppktgen.o: macros.h config.h miniupnpdpath.h upnphttp.h
+upnpstun.o: config.h upnpstun.h netfilter/iptcrdr.h
