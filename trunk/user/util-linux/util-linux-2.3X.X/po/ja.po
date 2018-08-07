@@ -17,8 +17,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.32-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2018-03-21 13:12+0100\n"
-"PO-Revision-Date: 2018-03-04 19:03+0900\n"
+"POT-Creation-Date: 2018-08-07 15:30+0300\n"
+"PO-Revision-Date: 2018-07-15 15:37+0900\n"
 "Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
 "Language: ja\n"
@@ -51,7 +51,7 @@ msgid "not enough arguments"
 msgstr "十分な引数がありません"
 
 #: disk-utils/addpart.c:58 disk-utils/blockdev.c:295 disk-utils/blockdev.c:439
-#: disk-utils/blockdev.c:465 disk-utils/cfdisk.c:2718 disk-utils/delpart.c:59
+#: disk-utils/blockdev.c:465 disk-utils/cfdisk.c:2722 disk-utils/delpart.c:59
 #: disk-utils/fdformat.c:229 disk-utils/fdisk.c:764 disk-utils/fdisk.c:1066
 #: disk-utils/fdisk-list.c:321 disk-utils/fdisk-list.c:361
 #: disk-utils/fdisk-list.c:380 disk-utils/fsck.c:1470
@@ -68,10 +68,10 @@ msgstr "十分な引数がありません"
 #: login-utils/sulogin.c:443 login-utils/sulogin.c:480
 #: login-utils/utmpdump.c:134 login-utils/utmpdump.c:352
 #: login-utils/utmpdump.c:374 login-utils/vipw.c:261 login-utils/vipw.c:279
-#: misc-utils/findmnt.c:1099 misc-utils/logger.c:1223 misc-utils/mcookie.c:115
+#: misc-utils/findmnt.c:1099 misc-utils/logger.c:1224 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:198 sys-utils/blkdiscard.c:182 sys-utils/blkzone.c:96
 #: sys-utils/dmesg.c:524 sys-utils/eject.c:499 sys-utils/eject.c:695
-#: sys-utils/fallocate.c:396 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:74
+#: sys-utils/fallocate.c:396 sys-utils/fsfreeze.c:117 sys-utils/fstrim.c:72
 #: sys-utils/hwclock.c:227 sys-utils/hwclock.c:814 sys-utils/hwclock-rtc.c:400
 #: sys-utils/hwclock-rtc.c:435 sys-utils/ldattach.c:392 sys-utils/nsenter.c:129
 #: sys-utils/rfkill.c:193 sys-utils/rfkill.c:544 sys-utils/rtcwake.c:136
@@ -79,7 +79,7 @@ msgstr "十分な引数がありません"
 #: sys-utils/setpriv.c:637 sys-utils/swapon.c:375 sys-utils/swapon.c:518
 #: sys-utils/switch_root.c:167 sys-utils/unshare.c:108 sys-utils/unshare.c:123
 #: sys-utils/wdctl.c:322 sys-utils/wdctl.c:378 sys-utils/zramctl.c:508
-#: term-utils/agetty.c:2752 term-utils/mesg.c:127 term-utils/script.c:460
+#: term-utils/agetty.c:2761 term-utils/mesg.c:127 term-utils/script.c:460
 #: term-utils/script.c:468 term-utils/script.c:559
 #: term-utils/scriptreplay.c:198 term-utils/scriptreplay.c:201
 #: term-utils/wall.c:419 text-utils/colcrt.c:282 text-utils/more.c:534
@@ -224,7 +224,7 @@ msgstr " %-25s 512バイトセクタのサイズを取得\n"
 #: disk-utils/fsck.minix.c:1341 disk-utils/isosize.c:205
 #: disk-utils/mkfs.bfs.c:181 disk-utils/mkfs.c:116 disk-utils/mkfs.minix.c:813
 #: disk-utils/swaplabel.c:181 misc-utils/wipefs.c:718
-#: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:394 sys-utils/tunelp.c:242
+#: sys-utils/blkdiscard.c:171 sys-utils/blkzone.c:395 sys-utils/tunelp.c:242
 #: sys-utils/zramctl.c:689 sys-utils/zramctl.c:715
 msgid "no device specified"
 msgstr "デバイスが指定されていません"
@@ -273,437 +273,437 @@ msgstr "%s: パーティションの始まりを sysfs から読み込めませ�
 msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
 msgstr "RO    RA   SSZ   BSZ   開始セクタ          サイズ デバイス\n"
 
-#: disk-utils/cfdisk.c:186
+#: disk-utils/cfdisk.c:190
 msgid "Bootable"
 msgstr "起動可能"
 
-#: disk-utils/cfdisk.c:186
+#: disk-utils/cfdisk.c:190
 msgid "Toggle bootable flag of the current partition"
 msgstr "カーソル上のパーティションの起動可能フラグを切り替えます"
 
-#: disk-utils/cfdisk.c:187
+#: disk-utils/cfdisk.c:191
 msgid "Delete"
 msgstr "削除"
 
-#: disk-utils/cfdisk.c:187
+#: disk-utils/cfdisk.c:191
 msgid "Delete the current partition"
 msgstr "カーソル上のパーティションを削除します"
 
-#: disk-utils/cfdisk.c:188
+#: disk-utils/cfdisk.c:192
 msgid "Resize"
 msgstr "サイズ変更"
 
-#: disk-utils/cfdisk.c:188
+#: disk-utils/cfdisk.c:192
 msgid "Reduce or enlarge the current partition"
 msgstr "カーソル上のパーティションを 縮小 または 拡張 します"
 
-#: disk-utils/cfdisk.c:189
+#: disk-utils/cfdisk.c:193
 msgid "New"
 msgstr "新規作成"
 
-#: disk-utils/cfdisk.c:189
+#: disk-utils/cfdisk.c:193
 msgid "Create new partition from free space"
 msgstr "空き領域から新しくパーティションを作成します"
 
-#: disk-utils/cfdisk.c:190
+#: disk-utils/cfdisk.c:194
 msgid "Quit"
 msgstr "終了"
 
-#: disk-utils/cfdisk.c:190
+#: disk-utils/cfdisk.c:194
 msgid "Quit program without writing changes"
 msgstr "変更を書き込まずにプログラムを終了します"
 
-#: disk-utils/cfdisk.c:191 libfdisk/src/bsd.c:438 libfdisk/src/bsd.c:1022
+#: disk-utils/cfdisk.c:195 libfdisk/src/bsd.c:438 libfdisk/src/bsd.c:1022
 #: libfdisk/src/dos.c:2431 libfdisk/src/gpt.c:3132 libfdisk/src/sgi.c:1159
 #: libfdisk/src/sun.c:1126
 msgid "Type"
 msgstr "タイプ"
 
-#: disk-utils/cfdisk.c:191
+#: disk-utils/cfdisk.c:195
 msgid "Change the partition type"
 msgstr "パーティションタイプを変更します"
 
-#: disk-utils/cfdisk.c:192
+#: disk-utils/cfdisk.c:196
 msgid "Help"
 msgstr "ヘルプ"
 
-#: disk-utils/cfdisk.c:192
+#: disk-utils/cfdisk.c:196
 msgid "Print help screen"
 msgstr "ヘルプ画面を表示します"
 
-#: disk-utils/cfdisk.c:193
+#: disk-utils/cfdisk.c:197
 msgid "Sort"
 msgstr "並べ替え"
 
-#: disk-utils/cfdisk.c:193
+#: disk-utils/cfdisk.c:197
 msgid "Fix partitions order"
 msgstr "パーティションの順序を修正します"
 
-#: disk-utils/cfdisk.c:194
+#: disk-utils/cfdisk.c:198
 msgid "Write"
 msgstr "書き込み"
 
-#: disk-utils/cfdisk.c:194
+#: disk-utils/cfdisk.c:198
 msgid "Write partition table to disk (this might destroy data)"
 msgstr "パーティション情報をディスクに書き込みます (データを破壊する可能性があります)"
 
-#: disk-utils/cfdisk.c:195
+#: disk-utils/cfdisk.c:199
 msgid "Dump"
 msgstr "スクリプト出力"
 
-#: disk-utils/cfdisk.c:195
+#: disk-utils/cfdisk.c:199
 msgid "Dump partition table to sfdisk compatible script file"
 msgstr "パーティション情報を sfdisk 互換のスクリプトファイルに出力します"
 
-#: disk-utils/cfdisk.c:642 disk-utils/fdisk.c:461
+#: disk-utils/cfdisk.c:646 disk-utils/fdisk.c:461
 #, c-format
 msgid "internal error: unsupported dialog type %d"
 msgstr "内部エラー: サポート外のダイアログタイプ %d です"
 
-#: disk-utils/cfdisk.c:1277
+#: disk-utils/cfdisk.c:1281
 #, c-format
 msgid "%s (mounted)"
 msgstr "%s (マウント済)"
 
-#: disk-utils/cfdisk.c:1297
+#: disk-utils/cfdisk.c:1301
 msgid "Partition name:"
 msgstr "パーティション名:"
 
-#: disk-utils/cfdisk.c:1304
+#: disk-utils/cfdisk.c:1308
 msgid "Partition UUID:"
 msgstr "パーティション UUID:"
 
-#: disk-utils/cfdisk.c:1316
+#: disk-utils/cfdisk.c:1320
 msgid "Partition type:"
 msgstr "パーティションタイプ:"
 
-#: disk-utils/cfdisk.c:1323
+#: disk-utils/cfdisk.c:1327
 msgid "Attributes:"
 msgstr "属性:"
 
-#: disk-utils/cfdisk.c:1347
+#: disk-utils/cfdisk.c:1351
 msgid "Filesystem UUID:"
 msgstr "ファイルシステムの UUID:"
 
-#: disk-utils/cfdisk.c:1354
+#: disk-utils/cfdisk.c:1358
 msgid "Filesystem LABEL:"
 msgstr "ファイルシステムのラベル:"
 
-#: disk-utils/cfdisk.c:1360
+#: disk-utils/cfdisk.c:1364
 msgid "Filesystem:"
 msgstr "ファイルシステム:"
 
-#: disk-utils/cfdisk.c:1365
+#: disk-utils/cfdisk.c:1369
 msgid "Mountpoint:"
 msgstr "マウントポイント:"
 
-#: disk-utils/cfdisk.c:1708
+#: disk-utils/cfdisk.c:1712
 #, c-format
 msgid "Disk: %s"
 msgstr "ディスク: %s"
 
 # Translator's NOTE: 2nd %s is size_to_human_string bytes
-#: disk-utils/cfdisk.c:1710
-#, c-format
-msgid "Size: %s, %ju bytes, %ju sectors"
+#: disk-utils/cfdisk.c:1714
+#, fuzzy, c-format
+msgid "Size: %s, %<PRIu64> bytes, %ju sectors"
 msgstr "サイズ: %s, %ju バイト, %ju セクタ"
 
-#: disk-utils/cfdisk.c:1713
+#: disk-utils/cfdisk.c:1717
 #, c-format
 msgid "Label: %s, identifier: %s"
 msgstr "ラベル: %s, ディスク識別子: %s"
 
-#: disk-utils/cfdisk.c:1716
+#: disk-utils/cfdisk.c:1720
 #, c-format
 msgid "Label: %s"
 msgstr "ラベル: %s"
 
-#: disk-utils/cfdisk.c:1866
+#: disk-utils/cfdisk.c:1870
 msgid "May be followed by M for MiB, G for GiB, T for TiB, or S for sectors."
 msgstr "M(MiBで指定), G(GiBで指定), T(TiBで指定) または S(セクタ数で指定)を後に続けることができます。"
 
-#: disk-utils/cfdisk.c:1872
+#: disk-utils/cfdisk.c:1876
 msgid "Please, specify size."
 msgstr "サイズを指定してください。"
 
-#: disk-utils/cfdisk.c:1894
-#, c-format
-msgid "Minimum size is %ju bytes."
+#: disk-utils/cfdisk.c:1898
+#, fuzzy, c-format
+msgid "Minimum size is %<PRIu64> bytes."
 msgstr "最小サイズは %ju バイト。"
 
-#: disk-utils/cfdisk.c:1903
-#, c-format
-msgid "Maximum size is %ju bytes."
+#: disk-utils/cfdisk.c:1907
+#, fuzzy, c-format
+msgid "Maximum size is %<PRIu64> bytes."
 msgstr "最大サイズは %ju バイト。"
 
-#: disk-utils/cfdisk.c:1910
+#: disk-utils/cfdisk.c:1914
 msgid "Failed to parse size."
-msgstr "サイズ情報の解釈に失敗しました"
+msgstr "サイズ情報の解釈に失敗しました。"
 
-#: disk-utils/cfdisk.c:1968
+#: disk-utils/cfdisk.c:1972
 msgid "Select partition type"
 msgstr "パーティションタイプを選択"
 
-#: disk-utils/cfdisk.c:2018 disk-utils/cfdisk.c:2048
+#: disk-utils/cfdisk.c:2022 disk-utils/cfdisk.c:2052
 msgid "Enter script file name: "
 msgstr "スクリプトファイル名を入力: "
 
-#: disk-utils/cfdisk.c:2019
+#: disk-utils/cfdisk.c:2023
 msgid "The script file will be applied to in-memory partition table."
 msgstr "スクリプトファイルをメモリ内のパーティションテーブルに適用します。"
 
-#: disk-utils/cfdisk.c:2028 disk-utils/cfdisk.c:2070
+#: disk-utils/cfdisk.c:2032 disk-utils/cfdisk.c:2074
 #: disk-utils/fdisk-menu.c:480 disk-utils/fdisk-menu.c:524
 #, c-format
 msgid "Cannot open %s"
 msgstr "%s を open できません"
 
-#: disk-utils/cfdisk.c:2030 disk-utils/fdisk-menu.c:482
+#: disk-utils/cfdisk.c:2034 disk-utils/fdisk-menu.c:482
 #, c-format
 msgid "Failed to parse script file %s"
 msgstr "スクリプトファイル %s の読み込みに失敗しました"
 
-#: disk-utils/cfdisk.c:2032 disk-utils/fdisk-menu.c:484
+#: disk-utils/cfdisk.c:2036 disk-utils/fdisk-menu.c:484
 #, c-format
 msgid "Failed to apply script %s"
 msgstr "スクリプトファイル %s の適用に失敗しました"
 
-#: disk-utils/cfdisk.c:2049
+#: disk-utils/cfdisk.c:2053
 msgid "The current in-memory partition table will be dumped to the file."
 msgstr "メモリ内のパーティションテーブルをファイルに書き出します。"
 
-#: disk-utils/cfdisk.c:2057 disk-utils/fdisk-menu.c:512
+#: disk-utils/cfdisk.c:2061 disk-utils/fdisk-menu.c:512
 msgid "Failed to allocate script handler"
 msgstr "スクリプトハンドラの割り当てに失敗しました"
 
-#: disk-utils/cfdisk.c:2063
+#: disk-utils/cfdisk.c:2067
 msgid "Failed to read disk layout into script."
 msgstr "ディスクのレイアウトのスクリプトへの書き出しに失敗しました。"
 
-#: disk-utils/cfdisk.c:2077
+#: disk-utils/cfdisk.c:2081
 msgid "Disk layout successfully dumped."
 msgstr "ディスクのレイアウトを出力しました。"
 
-#: disk-utils/cfdisk.c:2080 disk-utils/fdisk-menu.c:530
+#: disk-utils/cfdisk.c:2084 disk-utils/fdisk-menu.c:530
 #, c-format
 msgid "Failed to write script %s"
 msgstr "スクリプトファイル %s への書き込みに失敗しました"
 
-#: disk-utils/cfdisk.c:2116
+#: disk-utils/cfdisk.c:2120
 msgid "Select label type"
 msgstr "ラベルのタイプを選択"
 
-#: disk-utils/cfdisk.c:2119 disk-utils/fdisk.c:1074 disk-utils/fdisk-menu.c:488
+#: disk-utils/cfdisk.c:2123 disk-utils/fdisk.c:1074 disk-utils/fdisk-menu.c:488
 msgid "Device does not contain a recognized partition table."
 msgstr "デバイスには認識可能なパーティション情報が含まれていません。"
 
-#: disk-utils/cfdisk.c:2127
+#: disk-utils/cfdisk.c:2131
 msgid "Select a type to create a new label or press 'L' to load script file."
 msgstr "新しく作成するラベルのタイプを選択するか、'L' を押してスクリプトを読み込みます。"
 
-#: disk-utils/cfdisk.c:2176
+#: disk-utils/cfdisk.c:2180
 msgid "This is cfdisk, a curses-based disk partitioning program."
 msgstr "これはcfdisk、端末型ディスクパーティション作成プログラムです。"
 
-#: disk-utils/cfdisk.c:2177
+#: disk-utils/cfdisk.c:2181
 msgid "It lets you create, delete, and modify partitions on a block device."
 msgstr "ブロックデバイスのパーティションを作成／削除／変更することができます。"
 
-#: disk-utils/cfdisk.c:2179
+#: disk-utils/cfdisk.c:2183
 msgid "Command      Meaning"
 msgstr "コマンド      説明"
 
-#: disk-utils/cfdisk.c:2180
+#: disk-utils/cfdisk.c:2184
 msgid "-------      -------"
 msgstr "-------      -------"
 
-#: disk-utils/cfdisk.c:2181
+#: disk-utils/cfdisk.c:2185
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          カーソル上のパーティションの起動可能フラグを切り替えます"
 
-#: disk-utils/cfdisk.c:2182
+#: disk-utils/cfdisk.c:2186
 msgid "  d          Delete the current partition"
 msgstr "  d          カーソル上のパーティションを削除します"
 
-#: disk-utils/cfdisk.c:2183
+#: disk-utils/cfdisk.c:2187
 msgid "  h          Print this screen"
 msgstr "  h          この画面を表示します"
 
-#: disk-utils/cfdisk.c:2184
+#: disk-utils/cfdisk.c:2188
 msgid "  n          Create new partition from free space"
 msgstr "  n          空き領域から新しく領域を作成します"
 
-#: disk-utils/cfdisk.c:2185
+#: disk-utils/cfdisk.c:2189
 msgid "  q          Quit program without writing partition table"
 msgstr "  q          パーティション情報を書き込まずにプログラムを終了します"
 
-#: disk-utils/cfdisk.c:2186
+#: disk-utils/cfdisk.c:2190
 msgid "  s          Fix partitions order (only when in disarray)"
 msgstr "  s          パーティションの順序を修正 (順番に並んでいない場合)"
 
-#: disk-utils/cfdisk.c:2187
+#: disk-utils/cfdisk.c:2191
 msgid "  t          Change the partition type"
 msgstr "  t          パーティションタイプを変更します"
 
-#: disk-utils/cfdisk.c:2188
+#: disk-utils/cfdisk.c:2192
 msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr "  u          ディスクのレイアウトを sfdisk 互換のスクリプトに書き出します"
 
-#: disk-utils/cfdisk.c:2189
+#: disk-utils/cfdisk.c:2193
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
 msgstr "  W          パーティション情報をディスクに書き込む (W は大文字で入力してください)。"
 
-#: disk-utils/cfdisk.c:2190
+#: disk-utils/cfdisk.c:2194
 msgid "               since this might destroy data on the disk, you must either"
-msgstr "             このオプションは、ディスク上のデータを破壊する可能性があるため、"
+msgstr "             このオプションは、ディスク上のデータを破壊する可能性があるため"
 
-#: disk-utils/cfdisk.c:2191
+#: disk-utils/cfdisk.c:2195
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
-msgstr "              'yes' または 'no' による最終確認が必要です。"
+msgstr "              'yes' または 'no' による最終確認が必要です"
 
-#: disk-utils/cfdisk.c:2192
+#: disk-utils/cfdisk.c:2196
 msgid "  x          Display/hide extra information about a partition"
 msgstr "  x          パーティションの詳細情報の表示/非表示を切り替えます"
 
-#: disk-utils/cfdisk.c:2193
+#: disk-utils/cfdisk.c:2197
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "上矢印キー   上の領域にカーソルを移動します"
 
-#: disk-utils/cfdisk.c:2194
+#: disk-utils/cfdisk.c:2198
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "下矢印キー   下の領域にカーソルを移動します"
 
-#: disk-utils/cfdisk.c:2195
+#: disk-utils/cfdisk.c:2199
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "左矢印キー   前のメニュー項目にカーソルを移動します"
 
-#: disk-utils/cfdisk.c:2196
+#: disk-utils/cfdisk.c:2200
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "右矢印キー   次のメニュー項目にカーソルを移動します"
 
-#: disk-utils/cfdisk.c:2198
+#: disk-utils/cfdisk.c:2202
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "注意: コマンドはすべて大文字、小文字どちらでも使用できます"
 
-#: disk-utils/cfdisk.c:2199
+#: disk-utils/cfdisk.c:2203
 msgid "case letters (except for Write)."
 msgstr "(ただし、 書き込みの 'W' を除きます) 。"
 
-#: disk-utils/cfdisk.c:2201
+#: disk-utils/cfdisk.c:2205
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr "lsblk(8) または partx(8) を使うとデバイスについてより詳しく見ることができます。"
 
-#: disk-utils/cfdisk.c:2211 disk-utils/cfdisk.c:2514
+#: disk-utils/cfdisk.c:2215 disk-utils/cfdisk.c:2518
 msgid "Press a key to continue."
 msgstr "何かキーを押してください。"
 
-#: disk-utils/cfdisk.c:2297
+#: disk-utils/cfdisk.c:2301
 msgid "Could not toggle the flag."
 msgstr "起動可能フラグを切り替えられませんでした。"
 
-#: disk-utils/cfdisk.c:2307
+#: disk-utils/cfdisk.c:2311
 #, c-format
 msgid "Could not delete partition %zu."
 msgstr "パーティション %zu を削除できませんでした。"
 
-#: disk-utils/cfdisk.c:2309 disk-utils/fdisk-menu.c:658
+#: disk-utils/cfdisk.c:2313 disk-utils/fdisk-menu.c:658
 #, c-format
 msgid "Partition %zu has been deleted."
 msgstr "パーティション %zu を削除しました。"
 
-#: disk-utils/cfdisk.c:2330
+#: disk-utils/cfdisk.c:2334
 msgid "Partition size: "
 msgstr "パーティションのサイズ: "
 
-#: disk-utils/cfdisk.c:2371
+#: disk-utils/cfdisk.c:2375
 #, c-format
 msgid "Changed type of partition %zu."
 msgstr "パーティション %zu のタイプを変更しました。"
 
-#: disk-utils/cfdisk.c:2373
+#: disk-utils/cfdisk.c:2377
 #, c-format
 msgid "The type of partition %zu is unchanged."
 msgstr "パーティション %zu のタイプは変更していません。"
 
-#: disk-utils/cfdisk.c:2394
+#: disk-utils/cfdisk.c:2398
 msgid "New size: "
 msgstr "新しいサイズ: "
 
-#: disk-utils/cfdisk.c:2409
+#: disk-utils/cfdisk.c:2413
 #, c-format
 msgid "Partition %zu resized."
 msgstr "パーティション %zu のサイズを変更しました。"
 
-#: disk-utils/cfdisk.c:2427 disk-utils/cfdisk.c:2543 disk-utils/fdisk.c:1063
+#: disk-utils/cfdisk.c:2431 disk-utils/cfdisk.c:2547 disk-utils/fdisk.c:1063
 #: disk-utils/fdisk-menu.c:591
 msgid "Device is open in read-only mode."
 msgstr "デバイスは読み込み専用でオープンされています。"
 
-#: disk-utils/cfdisk.c:2432
+#: disk-utils/cfdisk.c:2436
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "パーティション情報をディスクに書き込んでもよろしいですか？ "
 
-#: disk-utils/cfdisk.c:2434
+#: disk-utils/cfdisk.c:2438
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "\"yes\" または \"no\" と入力してください。ESC を押すとこのダイアログを抜けます。"
 
-#: disk-utils/cfdisk.c:2439 login-utils/lslogins.c:209 sys-utils/lscpu.c:1436
-#: sys-utils/lscpu.c:1446 sys-utils/lsmem.c:268
+#: disk-utils/cfdisk.c:2443 login-utils/lslogins.c:209 sys-utils/lscpu.c:1438
+#: sys-utils/lscpu.c:1448 sys-utils/lsmem.c:268
 msgid "yes"
 msgstr "yes"
 
-#: disk-utils/cfdisk.c:2440
+#: disk-utils/cfdisk.c:2444
 msgid "Did not write partition table to disk."
 msgstr "パーティション情報をディスクに書き込みませんでした。"
 
-#: disk-utils/cfdisk.c:2445
+#: disk-utils/cfdisk.c:2449
 msgid "Failed to write disklabel."
 msgstr "ディスクラベルの書き込みに失敗しました。"
 
-#: disk-utils/cfdisk.c:2451 disk-utils/fdisk-menu.c:599
+#: disk-utils/cfdisk.c:2455 disk-utils/fdisk-menu.c:599
 msgid "The partition table has been altered."
 msgstr "パーティション情報が変更されました。"
 
-#: disk-utils/cfdisk.c:2474 disk-utils/cfdisk.c:2545
+#: disk-utils/cfdisk.c:2478 disk-utils/cfdisk.c:2549
 msgid "Note that partition table entries are not in disk order now."
 msgstr "パーティション情報の項目順がディスク上の順序と一致しません。"
 
-#: disk-utils/cfdisk.c:2511
+#: disk-utils/cfdisk.c:2515
 #, c-format
 msgid "Device already contains a %s signature; it will be removed by a write command."
 msgstr "デバイスには既に %s 署名が書き込まれており、write (書き込み)コマンドを実行すると消えてしまいます。"
 
-#: disk-utils/cfdisk.c:2522
+#: disk-utils/cfdisk.c:2526
 msgid "failed to create a new disklabel"
 msgstr "新しいディスクラベルの作成に失敗しました"
 
-#: disk-utils/cfdisk.c:2530
+#: disk-utils/cfdisk.c:2534
 msgid "failed to read partitions"
 msgstr "パーティションの読み込みに失敗しました"
 
-#: disk-utils/cfdisk.c:2629
+#: disk-utils/cfdisk.c:2633
 #, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr " %1$s [オプション] <ディスクデバイス>\n"
 
-#: disk-utils/cfdisk.c:2632 disk-utils/fdisk.c:808 disk-utils/sfdisk.c:1843
+#: disk-utils/cfdisk.c:2636 disk-utils/fdisk.c:808 disk-utils/sfdisk.c:1843
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "ディスクのパーティション情報を表示または操作します。\n"
 
-#: disk-utils/cfdisk.c:2635
+#: disk-utils/cfdisk.c:2639
 msgid " -L, --color[=<when>]     colorize output (auto, always or never)\n"
 msgstr " -L, --color[=<いつ>]     メッセージを色づけします(auto、always、never のどれか)\n"
 
-#: disk-utils/cfdisk.c:2638
+#: disk-utils/cfdisk.c:2642
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero               パーティションテーブルを何もない状態から作成します\n"
 
-#: disk-utils/cfdisk.c:2676 disk-utils/fdisk.c:950 disk-utils/sfdisk.c:2120
-#: misc-utils/cal.c:429 sys-utils/dmesg.c:1410 text-utils/hexdump.c:114
+#: disk-utils/cfdisk.c:2680 disk-utils/fdisk.c:950 disk-utils/sfdisk.c:2120
+#: misc-utils/cal.c:429 sys-utils/dmesg.c:1409 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "未対応の色モードです"
 
-#: disk-utils/cfdisk.c:2696 disk-utils/fdisk.c:888 disk-utils/sfdisk.c:224
+#: disk-utils/cfdisk.c:2700 disk-utils/fdisk.c:888 disk-utils/sfdisk.c:224
 msgid "failed to allocate libfdisk context"
 msgstr "libfdisk コンテキストの割り当てに失敗しました"
 
@@ -803,7 +803,7 @@ msgstr "引数が正しくありません - 修復試行回数"
 #: login-utils/last.c:688 login-utils/utmpdump.c:137 misc-utils/namei.c:135
 #: misc-utils/rename.c:63 sys-utils/blkdiscard.c:185 sys-utils/blkzone.c:99
 #: sys-utils/dmesg.c:526 sys-utils/fallocate.c:197 sys-utils/fsfreeze.c:120
-#: sys-utils/fstrim.c:79 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
+#: sys-utils/fstrim.c:77 sys-utils/nsenter.c:164 sys-utils/nsenter.c:168
 #: sys-utils/swapon.c:523 sys-utils/switch_root.c:94
 #: sys-utils/switch_root.c:137 term-utils/mesg.c:129 text-utils/more.c:525
 #, c-format
@@ -846,7 +846,7 @@ msgstr "ユーザーが定義した終了トラックがメディアの最大値
 msgid "user defined start track exceeds the user defined end track"
 msgstr "ユーザーが定義した終了トラックが開始トラックを超えています"
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:1022
+#: disk-utils/fdformat.c:253 misc-utils/logger.c:1023
 msgid "close failed"
 msgstr "閉じるのに失敗しました"
 
@@ -1097,9 +1097,9 @@ msgstr "デバイスのプロパティ (セクタサイズ及びジオメトリ)
 #: misc-utils/findfs.c:58 misc-utils/look.c:150 misc-utils/whereis.c:573
 #: misc-utils/whereis.c:584 misc-utils/whereis.c:595 misc-utils/whereis.c:637
 #: schedutils/chrt.c:504 schedutils/ionice.c:262 schedutils/taskset.c:189
-#: sys-utils/chcpu.c:344 sys-utils/chmem.c:419 sys-utils/dmesg.c:1469
+#: sys-utils/chcpu.c:344 sys-utils/chmem.c:419 sys-utils/dmesg.c:1468
 #: sys-utils/ipcmk.c:135 sys-utils/ldattach.c:321 sys-utils/losetup.c:888
-#: sys-utils/lscpu.c:2025 sys-utils/lsmem.c:628 sys-utils/mount.c:698
+#: sys-utils/lscpu.c:2028 sys-utils/lsmem.c:628 sys-utils/mount.c:698
 #: sys-utils/mount.c:711 sys-utils/mount.c:780 sys-utils/mountpoint.c:181
 #: sys-utils/pivot_root.c:72 sys-utils/swapoff.c:230 sys-utils/swapon.c:988
 #: sys-utils/switch_root.c:250 sys-utils/umount.c:528 term-utils/setterm.c:1176
@@ -1171,35 +1171,35 @@ msgid "failed to allocate iterator"
 msgstr "列挙子の割り当てに失敗しました"
 
 #: disk-utils/fdisk-list.c:122 disk-utils/fdisk-list.c:242
-#: disk-utils/partx.c:667 login-utils/lslogins.c:916 misc-utils/fincore.c:361
-#: misc-utils/findmnt.c:1596 misc-utils/lsblk.c:1908 misc-utils/lslocks.c:449
+#: disk-utils/partx.c:667 login-utils/lslogins.c:986 misc-utils/fincore.c:361
+#: misc-utils/findmnt.c:1596 misc-utils/lsblk.c:1908 misc-utils/lslocks.c:452
 #: misc-utils/uuidparse.c:252 misc-utils/wipefs.c:151 sys-utils/losetup.c:321
-#: sys-utils/lscpu.c:1609 sys-utils/lscpu.c:1712 sys-utils/lsipc.c:338
+#: sys-utils/lscpu.c:1611 sys-utils/lscpu.c:1714 sys-utils/lsipc.c:338
 #: sys-utils/prlimit.c:297 sys-utils/rfkill.c:457 sys-utils/swapon.c:284
-#: sys-utils/wdctl.c:260 sys-utils/zramctl.c:487 text-utils/column.c:209
+#: sys-utils/wdctl.c:260 sys-utils/zramctl.c:487 text-utils/column.c:207
 msgid "failed to allocate output table"
 msgstr "出力テーブルの準備に失敗しました"
 
 #: disk-utils/fdisk-list.c:163 disk-utils/fdisk-list.c:266
-#: disk-utils/partx.c:581 login-utils/lslogins.c:974 misc-utils/fincore.c:123
+#: disk-utils/partx.c:581 login-utils/lslogins.c:1044 misc-utils/fincore.c:123
 #: misc-utils/findmnt.c:688 misc-utils/findmnt.c:706 misc-utils/lsblk.c:1176
-#: misc-utils/lslocks.c:391 misc-utils/uuidparse.c:154 misc-utils/wipefs.c:210
-#: sys-utils/losetup.c:340 sys-utils/losetup.c:369 sys-utils/lscpu.c:1635
-#: sys-utils/lscpu.c:1663 sys-utils/lsipc.c:470 sys-utils/lsipc.c:545
+#: misc-utils/lslocks.c:394 misc-utils/uuidparse.c:154 misc-utils/wipefs.c:210
+#: sys-utils/losetup.c:340 sys-utils/losetup.c:369 sys-utils/lscpu.c:1637
+#: sys-utils/lscpu.c:1665 sys-utils/lsipc.c:470 sys-utils/lsipc.c:545
 #: sys-utils/lsipc.c:647 sys-utils/lsipc.c:739 sys-utils/lsipc.c:900
 #: sys-utils/prlimit.c:229 sys-utils/rfkill.c:374 sys-utils/swapon.c:179
-#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:407 text-utils/column.c:453
+#: sys-utils/wdctl.c:214 sys-utils/zramctl.c:407 text-utils/column.c:451
 msgid "failed to allocate output line"
 msgstr "出力先への行追加に失敗しました"
 
 #: disk-utils/fdisk-list.c:173 disk-utils/fdisk-list.c:273
-#: disk-utils/partx.c:644 login-utils/lslogins.c:1072 misc-utils/fincore.c:159
+#: disk-utils/partx.c:644 login-utils/lslogins.c:1142 misc-utils/fincore.c:159
 #: misc-utils/findmnt.c:692 misc-utils/findmnt.c:711 misc-utils/lsblk.c:1167
-#: misc-utils/lslocks.c:436 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:250
-#: sys-utils/losetup.c:301 sys-utils/lscpu.c:1643 sys-utils/lscpu.c:1674
+#: misc-utils/lslocks.c:439 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:250
+#: sys-utils/losetup.c:301 sys-utils/lscpu.c:1645 sys-utils/lscpu.c:1676
 #: sys-utils/lsipc.c:504 sys-utils/lsipc.c:629 sys-utils/prlimit.c:261
 #: sys-utils/rfkill.c:402 sys-utils/swapon.c:227 sys-utils/wdctl.c:242
-#: sys-utils/zramctl.c:472 text-utils/column.c:460
+#: sys-utils/zramctl.c:472 text-utils/column.c:458
 msgid "failed to add output data"
 msgstr "出力データの追加に失敗しました"
 
@@ -1225,7 +1225,7 @@ msgstr "開始位置"
 #: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2426
 #: libfdisk/src/gpt.c:3129 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1121
 msgid "End"
-msgstr "最後から"
+msgstr "終了位置"
 
 #: disk-utils/fdisk-list.c:228 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2427
 #: libfdisk/src/gpt.c:3130 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1122
@@ -1628,7 +1628,7 @@ msgstr "表示項目の単位をシリンダに変更します (古い機能で�
 
 #: disk-utils/fdisk-menu.c:687
 msgid "Changing display/entry units to sectors."
-msgstr "表示項目の単位をセクタに変更します"
+msgstr "表示項目の単位をセクタに変更します。"
 
 #: disk-utils/fdisk-menu.c:697 disk-utils/fdisk-menu.c:868
 msgid "Leaving nested disklabel."
@@ -2044,7 +2044,7 @@ msgstr "romfs の読み込みに失敗しました"
 
 #: disk-utils/fsck.cramfs.c:340
 msgid "root inode is not directory"
-msgstr "root inode がディレクトリではありません "
+msgstr "root inode がディレクトリではありません"
 
 #: disk-utils/fsck.cramfs.c:344
 #, c-format
@@ -2384,7 +2384,7 @@ msgstr "inode カウンタ用のバッファを確保できません。"
 
 #: disk-utils/fsck.minix.c:628
 msgid "Unable to allocate buffer for zone count"
-msgstr "ゾーンカウンタ用のバッファを確保できません。"
+msgstr "ゾーンカウンタ用のバッファを確保できません"
 
 #: disk-utils/fsck.minix.c:632
 msgid "Unable to read inode map"
@@ -2650,7 +2650,7 @@ msgstr ""
 "--------------------------------\n"
 
 #: disk-utils/fsck.minix.c:1432 disk-utils/mkfs.minix.c:838
-#: disk-utils/mkswap.c:541 disk-utils/partx.c:1058 disk-utils/resizepart.c:114
+#: disk-utils/mkswap.c:541 disk-utils/partx.c:1060 disk-utils/resizepart.c:114
 #: login-utils/su-common.c:323 login-utils/su-common.c:400
 #: login-utils/utmpdump.c:391 sys-utils/dmesg.c:661 sys-utils/wdctl.c:347
 #: sys-utils/wdctl.c:412 term-utils/script.c:298 term-utils/script.c:375
@@ -3522,7 +3522,7 @@ msgid "%s: failed to set up loop device"
 msgstr "%s: ループバックデバイスの設定に失敗しました"
 
 #: disk-utils/partx.c:161 login-utils/lslogins.c:307 misc-utils/fincore.c:92
-#: misc-utils/findmnt.c:376 misc-utils/lsblk.c:367 misc-utils/lslocks.c:342
+#: misc-utils/findmnt.c:376 misc-utils/lsblk.c:367 misc-utils/lslocks.c:345
 #: misc-utils/uuidparse.c:125 misc-utils/wipefs.c:126 sys-utils/losetup.c:110
 #: sys-utils/lscpu.c:220 sys-utils/lsipc.c:232 sys-utils/lsmem.c:180
 #: sys-utils/lsns.c:223 sys-utils/prlimit.c:277 sys-utils/rfkill.c:160
@@ -3623,8 +3623,8 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "#%2d: %9ju-%9ju (%9ju セクタ, %6ju MB)\n"
 
 #: disk-utils/partx.c:678 misc-utils/fincore.c:373 misc-utils/findmnt.c:1622
-#: misc-utils/lsblk.c:1930 misc-utils/lslocks.c:462 sys-utils/losetup.c:333
-#: sys-utils/lscpu.c:1618 sys-utils/prlimit.c:306 sys-utils/rfkill.c:467
+#: misc-utils/lsblk.c:1930 misc-utils/lslocks.c:465 sys-utils/losetup.c:333
+#: sys-utils/lscpu.c:1620 sys-utils/prlimit.c:306 sys-utils/rfkill.c:467
 #: sys-utils/swapon.c:293 sys-utils/wdctl.c:271
 msgid "failed to allocate output column"
 msgstr "出力先への桁数割当に失敗しました"
@@ -4006,7 +4006,7 @@ msgstr "%s: パーティション %zu: 削除できませんでした"
 #: disk-utils/sfdisk.c:972
 #, c-format
 msgid "%s: does not contain a recognized partition table"
-msgstr "%s: 認識可能なパーティション情報が含まれていません。"
+msgstr "%s: 認識可能なパーティション情報が含まれていません"
 
 #: disk-utils/sfdisk.c:976
 msgid "failed to allocate dump struct"
@@ -4025,7 +4025,7 @@ msgstr "%s: パーティションテーブルが見つかりませんでした"
 #: disk-utils/sfdisk.c:1014
 #, c-format
 msgid "%s: partition %zu: partition table contains only %zu partitions"
-msgstr "%s: パーティション %zu: パーティション情報に %zu パーティションだけが含まれています。"
+msgstr "%s: パーティション %zu: パーティション情報に %zu パーティションだけが含まれています"
 
 #: disk-utils/sfdisk.c:1017
 #, c-format
@@ -4166,7 +4166,7 @@ msgstr " 例:\n"
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "   , 4G     デフォルトのオフセット位置より 4GiB のパーティションを作成します。\n"
 
-#: disk-utils/sfdisk.c:1357 sys-utils/dmesg.c:1539
+#: disk-utils/sfdisk.c:1357 sys-utils/dmesg.c:1538
 msgid "unsupported command"
 msgstr "未対応のコマンドです"
 
@@ -4196,7 +4196,7 @@ msgstr "%s: パーティション %d を変更できません: パーティシ�
 #: disk-utils/sfdisk.c:1590
 #, c-format
 msgid "%s: cannot modify partition %d: partition table contains only %zu partitions"
-msgstr "%s: パーティション %d を変更できません: パーティション情報に %zu パーティションだけが含まれています。"
+msgstr "%s: パーティション %d を変更できません: パーティション情報に %zu パーティションだけが含まれています"
 
 #: disk-utils/sfdisk.c:1596
 #, c-format
@@ -4299,7 +4299,7 @@ msgstr "#%d パーティションを追加できませんでした"
 
 #: disk-utils/sfdisk.c:1777
 msgid "Script header accepted."
-msgstr "スクリプトのヘッダを"
+msgstr "スクリプトのヘッダを受け付けました。"
 
 #: disk-utils/sfdisk.c:1802
 msgid ""
@@ -5272,24 +5272,23 @@ msgid "The kernel still uses the old table. The new table will be used at the ne
 msgstr "カーネルは古い情報を使用しています。新しい情報を利用するには、システムを再起動するか、もしくは partprobe(8) または kpartx(8) を実行してください。"
 
 #: libfdisk/src/context.c:852
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to remove partition %zu from system"
-msgstr "パーティションの削除に失敗しました"
+msgstr "パーティション %zu の削除に失敗しました"
 
 #: libfdisk/src/context.c:860
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to update system information about partition %zu"
-msgstr "パーティションの情報を表示します"
+msgstr "システム内のパーティション %zu の情報更新に失敗しました"
 
 #: libfdisk/src/context.c:868
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to add partition %zu to system"
-msgstr "パーティションを追加できませんでした"
+msgstr "パーティション %zu をシステムに追加できませんでした"
 
 #: libfdisk/src/context.c:874
-#, fuzzy
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
-msgstr "カーネルは古い情報を使用しています。新しい情報を利用するには、システムを再起動するか、もしくは partprobe(8) または kpartx(8) を実行してください。"
+msgstr "カーネルは古い情報を使用しています。新しい情報はシステムを再起動した後に利用されます。"
 
 #: libfdisk/src/context.c:1084
 msgid "cylinder"
@@ -5307,12 +5306,11 @@ msgstr "ジオメトリ設定が不完全です。"
 
 #: libfdisk/src/dos.c:213
 msgid "All primary partitions have been defined already."
-msgstr "全ての基本パーティションが設定済みです"
+msgstr "全ての基本パーティションが設定済みです。"
 
 #: libfdisk/src/dos.c:216
-#, fuzzy
 msgid "Primary partition not available."
-msgstr "空きパーティションがありません！"
+msgstr "基本パーティションは追加できません。"
 
 #: libfdisk/src/dos.c:270
 #, c-format
@@ -5489,7 +5487,7 @@ msgstr "未割り当ての %2$ld バイトセクタが %1$lld 個あります。
 
 #: libfdisk/src/dos.c:1601 libfdisk/src/dos.c:1616 libfdisk/src/dos.c:2063
 msgid "Extended partition already exists."
-msgstr "拡張パーティションは既に存在します"
+msgstr "拡張パーティションは既に存在します。"
 
 #: libfdisk/src/dos.c:1631
 msgid "Extended partition does not exists. Failed to add logical partition."
@@ -5929,24 +5927,20 @@ msgid "Ceph crypt disk in creation"
 msgstr ""
 
 #: libfdisk/src/gpt.c:275
-#, fuzzy
 msgid "VMware Diagnostic"
-msgstr "Compaq 診断"
+msgstr "VMware 診断"
 
 #: libfdisk/src/gpt.c:276
-#, fuzzy
 msgid "VMware Virtual SAN"
-msgstr "VMware VMFS"
+msgstr "VMware Virtual SAN"
 
 #: libfdisk/src/gpt.c:277
-#, fuzzy
 msgid "VMware Virsto"
-msgstr "VMware VMFS"
+msgstr "VMware Virsto"
 
 #: libfdisk/src/gpt.c:278
-#, fuzzy
 msgid "VMware Reserved"
-msgstr "ChromeOS 予約領域"
+msgstr "VMware 予約領域"
 
 #: libfdisk/src/gpt.c:281
 msgid "OpenBSD data"
@@ -5973,9 +5967,9 @@ msgid "Last LBA specified by script is out of range."
 msgstr ""
 
 #: libfdisk/src/gpt.c:895
-#, fuzzy, c-format
+#, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
-msgstr "GPT PMBR のサイズが合致していません (%u != %u) が、w (書き込み) コマンドで修正されます。"
+msgstr "GPT PMBR のサイズが合致していません (%<PRIu64> != %<PRIu64>) が、w (書き込み) コマンドで修正されます。"
 
 #: libfdisk/src/gpt.c:917
 msgid "gpt: stat() failed"
@@ -6009,14 +6003,12 @@ msgstr "代替 LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
 #: libfdisk/src/gpt.c:1245
-#, fuzzy
 msgid "Partition entries LBA"
-msgstr "パーティションエントリー LBA: %ju"
+msgstr "パーティションエントリー LBA"
 
 #: libfdisk/src/gpt.c:1250
-#, fuzzy
 msgid "Allocated partition entries"
-msgstr "割り当てたパーティションエントリー: %u"
+msgstr "割り当てたパーティションエントリー"
 
 #: libfdisk/src/gpt.c:1595
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
@@ -6036,9 +6028,9 @@ msgid "unsupported GPT attribute bit '%s'"
 msgstr "未対応の GPT 属性ビット '%s' です"
 
 #: libfdisk/src/gpt.c:1805
-#, fuzzy, c-format
+#, c-format
 msgid "failed to parse GPT attribute string '%s'"
-msgstr "一覧 '%s' の処理に失敗しました"
+msgstr "GPT属性文字列 '%s' の処理に失敗しました"
 
 #: libfdisk/src/gpt.c:1905
 #, c-format
@@ -6046,9 +6038,8 @@ msgid "Partition UUID changed from %s to %s."
 msgstr "パーティション UUID を `%s' から `%s' に変更しました。"
 
 #: libfdisk/src/gpt.c:1914
-#, fuzzy
 msgid "Failed to translate partition name, name not changed."
-msgstr "パーティション名の割り当てに失敗しました"
+msgstr "パーティション名の翻訳に失敗しました、名前は変更していません。"
 
 #: libfdisk/src/gpt.c:1916
 #, c-format
@@ -6197,9 +6188,9 @@ msgid "Not enough space for new partition table!"
 msgstr "新しくパーティションを作成するための十分な空き領域がありません！"
 
 #: libfdisk/src/gpt.c:2698
-#, fuzzy, c-format
+#, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
-msgstr "パーティション %zd の開始点セクタが不正な値 (0) になっています。"
+msgstr "パーティション #%zu の範囲が間違っています（開始セクタは最小で %<PRIu64>セクターです）"
 
 #: libfdisk/src/gpt.c:2703
 #, c-format
@@ -6207,23 +6198,23 @@ msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr ""
 
 #: libfdisk/src/gpt.c:2746
-#, fuzzy, c-format
+#, c-format
 msgid "The number of the partition has to be smaller than %zu."
-msgstr "パーティションは最大数まで作成済みです。"
+msgstr "パーティション番号は %zu より小さい数です。"
 
 #: libfdisk/src/gpt.c:2769
 msgid "Cannot allocate memory!"
 msgstr "メモリの割り当てに失敗しました!"
 
 #: libfdisk/src/gpt.c:2799
-#, fuzzy, c-format
+#, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
-msgstr "パーティションの名前を `%s' から `%.*s' に変更しました。"
+msgstr "パーティションテーブルの長さを %<PRIu32> から %<PRIu64> に変更しました。"
 
 #: libfdisk/src/gpt.c:2908
-#, fuzzy, c-format
+#, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
-msgstr "パーティション %zu のタイプは変更していません。"
+msgstr "パーティション %zu の属性を 0x%016<PRIx64> に変更しました。"
 
 #: libfdisk/src/gpt.c:2958
 msgid "Enter GUID specific bit"
@@ -6235,9 +6226,9 @@ msgid "failed to toggle unsupported bit %lu"
 msgstr "サポートされていないビット %lu を変更できませんでした"
 
 #: libfdisk/src/gpt.c:2986
-#, fuzzy, c-format
+#, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
-msgstr "パーティション %zu のタイプは変更していません: %s。"
+msgstr "GUID特定ビット %d をパーティション %zu で有効にしました。"
 
 #: libfdisk/src/gpt.c:2987
 #, c-format
@@ -6274,7 +6265,7 @@ msgstr "空き領域"
 #: libfdisk/src/partition.c:1255
 #, c-format
 msgid "Failed to resize partition #%zu."
-msgstr "パーティション #%zu のサイズ変更に失敗しました"
+msgstr "パーティション #%zu のサイズ変更に失敗しました。"
 
 #: libfdisk/src/parttype.c:258 misc-utils/findmnt.c:655
 #: misc-utils/uuidparse.c:199 misc-utils/uuidparse.c:217 schedutils/chrt.c:205
@@ -6617,15 +6608,15 @@ msgid "Sector %d is already allocated"
 msgstr "セクタ %d は既に割り当て済みです"
 
 #: libfdisk/src/sun.c:696
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You haven't covered the whole disk with the 3rd partition, but your value\n"
 "%lu %s covers some other partition. Your entry has been changed\n"
 "to %lu %s"
 msgstr ""
-"3 番目のパーティションはディスク全体を表わしてはいませんが、 %d %s\n"
-"の値が他のパーティションを表わすように設定してあります。設定値を\n"
-"%d %s に変更します"
+"あなたの入力では 3番目のパーティションがディスク全体を表わしておらず、 \n"
+"%lu %s が他のパーティションに重なっています。設定値を\n"
+"%lu %s に変更します"
 
 #: libfdisk/src/sun.c:739
 #, c-format
@@ -6687,191 +6678,191 @@ msgstr ""
 "パーティションのタグを Linux swap に設定してよろしいですか？"
 
 #: libmount/src/context.c:2377
-#, fuzzy, c-format
+#, c-format
 msgid "operation failed: %m"
-msgstr "readlink に失敗しました: %s"
+msgstr "処理に失敗しました: %m"
 
-#: libmount/src/context_mount.c:1335
+#: libmount/src/context_mount.c:1363
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "警告: 伝播フラグの適用に失敗しました"
 
-#: libmount/src/context_mount.c:1345
-#, fuzzy, c-format
+#: libmount/src/context_mount.c:1373
+#, c-format
 msgid "WARNING: device write-protected, mounted read-only"
-msgstr "%s は書き込み禁止です、読み込み専用でマウントします"
+msgstr "警告: デバイスは書き込み禁止です、読み込み専用でマウントします"
 
-#: libmount/src/context_mount.c:1359
+#: libmount/src/context_mount.c:1387
 #, c-format
 msgid "operation permitted for root only"
 msgstr "この操作を実行できるのは root だけです"
 
-#: libmount/src/context_mount.c:1363
+#: libmount/src/context_mount.c:1391
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s はマウント済みです"
 
-#: libmount/src/context_mount.c:1369
+#: libmount/src/context_mount.c:1397
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "%2$s 内に %1$s が見つかりません"
 
-#: libmount/src/context_mount.c:1372
-#, fuzzy, c-format
+#: libmount/src/context_mount.c:1400
+#, c-format
 msgid "can't find mount point in %s"
-msgstr "%2$s 内に %1$s のマウントポイントが見つかりません"
+msgstr "%s 内にマウントポイントが見つかりません"
 
-#: libmount/src/context_mount.c:1375
+#: libmount/src/context_mount.c:1403
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "%2$s 内にマウント元 %1$s が見つかりません"
 
-#: libmount/src/context_mount.c:1380
+#: libmount/src/context_mount.c:1408
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1385
-#, fuzzy, c-format
+#: libmount/src/context_mount.c:1413
+#, c-format
 msgid "failed to determine filesystem type"
-msgstr "%s: マウント元の判別に失敗しました"
+msgstr "ファイルシステムの判別に失敗しました"
 
-#: libmount/src/context_mount.c:1386
-#, fuzzy, c-format
+#: libmount/src/context_mount.c:1414
+#, c-format
 msgid "no filesystem type specified"
-msgstr "ファイル名が指定されていません"
+msgstr "ファイルシステムタイプが指定されていません"
 
-#: libmount/src/context_mount.c:1393
+#: libmount/src/context_mount.c:1421
 #, c-format
 msgid "can't find %s"
 msgstr "%s が見つかりません"
 
-#: libmount/src/context_mount.c:1395
+#: libmount/src/context_mount.c:1423
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "マウントポイントが指定されていません"
 
-#: libmount/src/context_mount.c:1401
-#, fuzzy, c-format
+#: libmount/src/context_mount.c:1429
+#, c-format
 msgid "failed to parse mount options: %m"
-msgstr "マウントオプションの解釈に失敗しました"
+msgstr "マウントオプションの解釈に失敗しました: %m"
 
-#: libmount/src/context_mount.c:1402
+#: libmount/src/context_mount.c:1430
 #, c-format
 msgid "failed to parse mount options"
 msgstr "マウントオプションの解釈に失敗しました"
 
-#: libmount/src/context_mount.c:1406
-#, fuzzy, c-format
+#: libmount/src/context_mount.c:1434
+#, c-format
 msgid "failed to setup loop device for %s"
-msgstr "%s: ループバックデバイスの設定に失敗しました"
+msgstr "%s 用のループバックデバイスの設定に失敗しました"
 
-#: libmount/src/context_mount.c:1410
-#, fuzzy, c-format
+#: libmount/src/context_mount.c:1438
+#, c-format
 msgid "overlapping loop device exists for %s"
-msgstr "%s は lp デバイスではありません。"
+msgstr "%s 用の重複するループバックデバイスが存在します"
 
-#: libmount/src/context_mount.c:1414 libmount/src/context_umount.c:1076
-#, fuzzy, c-format
+#: libmount/src/context_mount.c:1442 libmount/src/context_umount.c:1077
+#, c-format
 msgid "locking failed"
-msgstr "%s を閉じる際にエラーが発生しました"
+msgstr "ロックに失敗しました"
 
-#: libmount/src/context_mount.c:1417
-#, fuzzy, c-format
+#: libmount/src/context_mount.c:1445
+#, c-format
 msgid "mount failed: %m"
-msgstr "マウントに失敗しました"
+msgstr "マウントに失敗しました: %m"
 
-#: libmount/src/context_mount.c:1427
+#: libmount/src/context_mount.c:1455
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "%s: ファイルシステムをアンマウントしましたが、 mount(8) が失敗しました"
 
-#: libmount/src/context_mount.c:1432
+#: libmount/src/context_mount.c:1460
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "%s: ファイルシステムをアンマウントしましたが、 mount(8) が失敗しました"
 
-#: libmount/src/context_mount.c:1450 libmount/src/context_mount.c:1507
+#: libmount/src/context_mount.c:1478 libmount/src/context_mount.c:1535
 #, fuzzy, c-format
 msgid "mount point is not a directory"
 msgstr "マウントポイント %s はディレクトリではありません"
 
-#: libmount/src/context_mount.c:1452 login-utils/newgrp.c:227
+#: libmount/src/context_mount.c:1480 login-utils/newgrp.c:227
 #, c-format
 msgid "permission denied"
 msgstr "アクセスが拒否されました"
 
-#: libmount/src/context_mount.c:1454
+#: libmount/src/context_mount.c:1482
 #, c-format
 msgid "must be superuser to use mount"
-msgstr " mount を使用するにはスーパーユーザでなければなりません"
+msgstr "mount を使用するにはスーパーユーザでなければなりません"
 
-#: libmount/src/context_mount.c:1464
+#: libmount/src/context_mount.c:1492
 #, c-format
 msgid "mount point is busy"
 msgstr "マウントポイントは使用中です"
 
-#: libmount/src/context_mount.c:1477
+#: libmount/src/context_mount.c:1505
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s は %s にマウント済みです"
 
-#: libmount/src/context_mount.c:1483
+#: libmount/src/context_mount.c:1511
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s はマウント済み、もしくはマウントポイントが使用中です"
 
-#: libmount/src/context_mount.c:1489
+#: libmount/src/context_mount.c:1517
 #, c-format
 msgid "mount point does not exist"
 msgstr "マウントポイントが存在しません"
 
-#: libmount/src/context_mount.c:1492
+#: libmount/src/context_mount.c:1520
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "マウントポイントは存在しない場所を指すシンボリックリンクです"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1525
 #, c-format
 msgid "special device %s does not exist"
 msgstr "スペシャルデバイス %s が存在しません"
 
-#: libmount/src/context_mount.c:1500 libmount/src/context_mount.c:1516
-#: libmount/src/context_mount.c:1600 libmount/src/context_mount.c:1623
+#: libmount/src/context_mount.c:1528 libmount/src/context_mount.c:1544
+#: libmount/src/context_mount.c:1628 libmount/src/context_mount.c:1651
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) システムコールが失敗しました: %m"
 
-#: libmount/src/context_mount.c:1512
+#: libmount/src/context_mount.c:1540
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "スペシャルデバイス %s が存在しません (パスプレフィクスがディレクトリではありません)"
 
-#: libmount/src/context_mount.c:1524
+#: libmount/src/context_mount.c:1552
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "マウントポイントにはマウントされていないか、オプション設定が正しくありません"
 
-#: libmount/src/context_mount.c:1526
+#: libmount/src/context_mount.c:1554
 #, c-format
 msgid "not mount point or bad option"
 msgstr "マウントポイントではないか、オプション設定が正しくありません"
 
-#: libmount/src/context_mount.c:1529
+#: libmount/src/context_mount.c:1557
 #, fuzzy, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 "オプション設定が正しくありません。なお、共有マウント内にマウントを\n"
 "       移動する処理には、対応していません。"
 
-#: libmount/src/context_mount.c:1533
+#: libmount/src/context_mount.c:1561
 #, fuzzy, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "       (nfs, cifs など、ファイルシステムによっては /sbin/mount.<タイプ>\n"
 "       のヘルパープログラムが必要です)"
 
-#: libmount/src/context_mount.c:1537
+#: libmount/src/context_mount.c:1565
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
@@ -6880,132 +6871,132 @@ msgstr ""
 "       ブロック, 必要なコードページ指定／ヘルパープログラム\n"
 "       など、何らかの設定が間違っているものと思われます。"
 
-#: libmount/src/context_mount.c:1544
+#: libmount/src/context_mount.c:1572
 #, c-format
 msgid "mount table full"
 msgstr "マウントテーブルがいっぱいです"
 
-#: libmount/src/context_mount.c:1549
+#: libmount/src/context_mount.c:1577
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "%s のスーパーブロックを読み込むことができません"
 
-#: libmount/src/context_mount.c:1556
+#: libmount/src/context_mount.c:1584
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "未知のファイルシステムタイプ '%s' です"
 
-#: libmount/src/context_mount.c:1559
+#: libmount/src/context_mount.c:1587
 #, c-format
 msgid "unknown filesystem type"
 msgstr "未知のファイルシステムタイプです"
 
-#: libmount/src/context_mount.c:1568
+#: libmount/src/context_mount.c:1596
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s はブロックデバイスではありません (そのために stat(2) が失敗した可能性があります)"
 
-#: libmount/src/context_mount.c:1571
+#: libmount/src/context_mount.c:1599
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "このカーネルは %s をブロックデバイスとして認識していません;おそらく `modprobe ドライバ' を実行する必要があります"
 
-#: libmount/src/context_mount.c:1574
+#: libmount/src/context_mount.c:1602
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s はブロックデバイスではありません (`-o loop' を指定すると解決できるかもしれません)"
 
-#: libmount/src/context_mount.c:1576
+#: libmount/src/context_mount.c:1604
 #, c-format
 msgid "%s is not a block device"
-msgstr " %s はブロックデバイスではありません"
+msgstr "%s はブロックデバイスではありません"
 
-#: libmount/src/context_mount.c:1583
+#: libmount/src/context_mount.c:1611
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s は正常なブロックデバイスではありません"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1619
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "%s を読み込み専用でマウントできません"
 
-#: libmount/src/context_mount.c:1593
+#: libmount/src/context_mount.c:1621
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s は書き込み禁止ですが、明示的に読み書きモードが指定されています"
 
-#: libmount/src/context_mount.c:1595
+#: libmount/src/context_mount.c:1623
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "%s を読み書き可能な状態で再マウントできません、ライトプロテクトされています"
 
-#: libmount/src/context_mount.c:1597
+#: libmount/src/context_mount.c:1625
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "%s に失敗しました。"
 
-#: libmount/src/context_mount.c:1608
+#: libmount/src/context_mount.c:1636
 #, c-format
 msgid "no medium found on %s"
 msgstr "%s にメディアが挿入されていません"
 
-#: libmount/src/context_mount.c:1615
+#: libmount/src/context_mount.c:1643
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "'%s' 上にファイルシステムを作らないようにします"
 
-#: libmount/src/context_umount.c:1072 libmount/src/context_umount.c:1110
+#: libmount/src/context_umount.c:1073 libmount/src/context_umount.c:1111
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "%s: マウントされていません"
 
-#: libmount/src/context_umount.c:1080
+#: libmount/src/context_umount.c:1081
 #, c-format
 msgid "umount failed: %m"
 msgstr "アンマウントに失敗しました: %m"
 
-#: libmount/src/context_umount.c:1089
+#: libmount/src/context_umount.c:1090
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "%s: ファイルシステムをアンマウントしましたが、 mount(8) が失敗しました"
 
-#: libmount/src/context_umount.c:1094
+#: libmount/src/context_umount.c:1095
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "%s: ファイルシステムをアンマウントしましたが、 mount(8) が失敗しました"
 
-#: libmount/src/context_umount.c:1107
+#: libmount/src/context_umount.c:1108
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "%s: 不正なブロックデバイスです"
 
-#: libmount/src/context_umount.c:1113
+#: libmount/src/context_umount.c:1114
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "%s: スーパーブロックに書き込むことができません"
 
-#: libmount/src/context_umount.c:1116
+#: libmount/src/context_umount.c:1117
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "%s は使用中です"
 
-#: libmount/src/context_umount.c:1119
+#: libmount/src/context_umount.c:1120
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "マウントポイントが指定されていません"
 
-#: libmount/src/context_umount.c:1122
+#: libmount/src/context_umount.c:1123
 #, fuzzy, c-format
 msgid "must be superuser to unmount"
 msgstr "%s: アンマウントするにはスーパーユーザでなければなりません"
 
-#: libmount/src/context_umount.c:1125
+#: libmount/src/context_umount.c:1126
 #, fuzzy, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "%s: 指定したブロックデバイスはファイルシステム上で許可されていません"
 
-#: libmount/src/context_umount.c:1128
+#: libmount/src/context_umount.c:1129
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "mount(2) に失敗しました"
@@ -7015,7 +7006,7 @@ msgstr "mount(2) に失敗しました"
 msgid "waitpid failed (%s)"
 msgstr "waitpid に失敗しました (%s)"
 
-#: lib/path.c:239 sys-utils/lscpu.c:1760
+#: lib/path.c:239 sys-utils/lscpu.c:1762
 msgid "failed to callocate cpu set"
 msgstr "callocate cpu set に失敗しました"
 
@@ -7049,12 +7040,12 @@ msgstr "コンソールを開くことができません"
 msgid "the plymouth request %c is not implemented"
 msgstr ""
 
-#: lib/randutils.c:186
+#: lib/randutils.c:191
 #, fuzzy
 msgid "getrandom() function"
 msgstr "libc 擬似乱数関数"
 
-#: lib/randutils.c:199
+#: lib/randutils.c:204
 msgid "libc pseudo-random functions"
 msgstr "libc 擬似乱数関数"
 
@@ -7224,17 +7215,17 @@ msgstr " -l, --list-shells    シェルの一覧を表示して終了します\n
 
 #: login-utils/chsh.c:230
 msgid "shell must be a full path name"
-msgstr "シェルはフルパスで無ければなりません。"
+msgstr "シェルはフルパスで無ければなりません"
 
 #: login-utils/chsh.c:232
 #, c-format
 msgid "\"%s\" does not exist"
-msgstr "\"%s\" は存在しません。"
+msgstr "\"%s\" は存在しません"
 
 #: login-utils/chsh.c:234
 #, c-format
 msgid "\"%s\" is not executable"
-msgstr "\"%s\" は実行できません。"
+msgstr "\"%s\" は実行できません"
 
 #: login-utils/chsh.c:240
 #, c-format
@@ -7299,7 +7290,7 @@ msgstr "シェルを変更しました。\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "使い方: %s <パスワードファイル> <ユーザ名>...\n"
 
-#: login-utils/last.c:169 login-utils/lslogins.c:1217 sys-utils/dmesg.c:1269
+#: login-utils/last.c:169 login-utils/lslogins.c:1287 sys-utils/dmesg.c:1268
 #: sys-utils/lsipc.c:269
 #, c-format
 msgid "unknown time format: %s"
@@ -7386,13 +7377,13 @@ msgstr ""
 "                               notime|short|full|iso\n"
 
 #: login-utils/last.c:893
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "%s begins %s\n"
 msgstr ""
 "\n"
-"%s は %s から始まります"
+"%s は %s から始まっています\n"
 
 #: login-utils/last.c:972 term-utils/scriptreplay.c:65
 #: term-utils/scriptreplay.c:69
@@ -7572,9 +7563,8 @@ msgid "Begin a session on the system.\n"
 msgstr "Session key が確立しました:\n"
 
 #: login-utils/login.c:1103
-#, fuzzy
 msgid " -p             do not destroy the environment"
-msgstr " -f           長い行を分割しないようにします\n"
+msgstr " -p             環境を破壊しません"
 
 #: login-utils/login.c:1104
 msgid " -f             skip a second login authentication"
@@ -7602,7 +7592,7 @@ msgstr "login: -h はスーパーユーザ専用です\n"
 #: login-utils/login.c:1242
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
-msgstr "無効なユーザ名 \"%s\" が %s:%d にあります。中断します"
+msgstr "無効なユーザ名 \"%s\" が %s:%d にあります。中断します。"
 
 #: login-utils/login.c:1263
 #, c-format
@@ -7654,7 +7644,7 @@ msgstr "%s: %s に含まれている数値が正しくありません: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "ハッシュログイン状態: オリジナルの ID の復元に失敗しました"
 
-#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1436 sys-utils/lscpu.c:1446
+#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1438 sys-utils/lscpu.c:1448
 #: sys-utils/lsmem.c:268
 msgid "no"
 msgstr "no"
@@ -7700,9 +7690,8 @@ msgid "log in disabled by nologin(8) or pam_nologin(8)"
 msgstr "ログインが nologin(8) または pam_nologin(8) によって無効になっています"
 
 #: login-utils/lslogins.c:222
-#, fuzzy
 msgid "No login"
-msgstr "ログイン: "
+msgstr "ログイン禁止"
 
 #: login-utils/lslogins.c:223
 msgid "primary group name"
@@ -7884,16 +7873,16 @@ msgstr "サポートされてない LDAP URI タイプです: %s"
 msgid "failed to compose time string"
 msgstr "--timeout の解釈に失敗しました"
 
-#: login-utils/lslogins.c:643
+#: login-utils/lslogins.c:713
 #, fuzzy
 msgid "failed to get supplementary groups"
 msgstr "補助グループ"
 
-#: login-utils/lslogins.c:1068
+#: login-utils/lslogins.c:1138
 msgid "internal error: unknown column"
 msgstr "内部エラー: 未知の欄があります"
 
-#: login-utils/lslogins.c:1166
+#: login-utils/lslogins.c:1236
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -7902,124 +7891,124 @@ msgstr ""
 "\n"
 "最終更新: "
 
-#: login-utils/lslogins.c:1226 login-utils/nologin.c:27
-#: misc-utils/lslocks.c:495 misc-utils/mcookie.c:83 misc-utils/uuidd.c:62
+#: login-utils/lslogins.c:1296 login-utils/nologin.c:27
+#: misc-utils/lslocks.c:498 misc-utils/mcookie.c:83 misc-utils/uuidd.c:62
 #: misc-utils/uuidgen.c:26 sys-utils/dmesg.c:266 sys-utils/ipcmk.c:67
-#: sys-utils/lscpu.c:1900 sys-utils/lsipc.c:278 sys-utils/lsmem.c:496
+#: sys-utils/lscpu.c:1902 sys-utils/lsipc.c:278 sys-utils/lsmem.c:496
 #: sys-utils/readprofile.c:104 sys-utils/rtcwake.c:98 term-utils/setterm.c:379
 #: text-utils/line.c:31
 #, c-format
 msgid " %s [options]\n"
 msgstr " %s [オプション]\n"
 
-#: login-utils/lslogins.c:1229
+#: login-utils/lslogins.c:1299
 msgid "Display information about known users in the system.\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1232
+#: login-utils/lslogins.c:1302
 msgid " -a, --acc-expiration     display info about passwords expiration\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1233
+#: login-utils/lslogins.c:1303
 msgid " -c, --colon-separate     display data in a format similar to /etc/passwd\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1234 sys-utils/lsipc.c:297
+#: login-utils/lslogins.c:1304 sys-utils/lsipc.c:297
 #, fuzzy
 msgid " -e, --export             display in an export-able output format\n"
 msgstr " -r, --raw              特に加工を行わずに出力します\n"
 
-#: login-utils/lslogins.c:1235
+#: login-utils/lslogins.c:1305
 #, fuzzy
 msgid " -f, --failed             display data about the users' last failed logins\n"
 msgstr " -u, --userspace             ユーザスペースのメッセージを出力します\n"
 
-#: login-utils/lslogins.c:1236
+#: login-utils/lslogins.c:1306
 #, fuzzy
 msgid " -G, --supp-groups        display information about groups\n"
 msgstr " -h, --help           使用法 (これ) を表示します\n"
 
-#: login-utils/lslogins.c:1237
+#: login-utils/lslogins.c:1307
 msgid " -g, --groups=<groups>    display users belonging to a group in <groups>\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1238
+#: login-utils/lslogins.c:1308
 msgid " -L, --last               show info about the users' last login sessions\n"
 msgstr " -L, --last               ユーザの前回のログインセッションについて表示します\n"
 
-#: login-utils/lslogins.c:1239
+#: login-utils/lslogins.c:1309
 #, fuzzy
 msgid " -l, --logins=<logins>    display only users from <logins>\n"
 msgstr " -w, --fullnames          ユーザ名とドメイン名を完全な形式で表示します\n"
 
-#: login-utils/lslogins.c:1240 sys-utils/lsipc.c:299
+#: login-utils/lslogins.c:1310 sys-utils/lsipc.c:299
 #, fuzzy
 msgid " -n, --newline            display each piece of information on a new line\n"
 msgstr " -h, --help           使用法 (これ) を表示します\n"
 
-#: login-utils/lslogins.c:1241 sys-utils/lsipc.c:292
+#: login-utils/lslogins.c:1311 sys-utils/lsipc.c:292
 msgid "     --noheadings         don't print headings\n"
 msgstr " -n, --noheadings        ヘッダを表示しません\n"
 
-#: login-utils/lslogins.c:1242 sys-utils/lsipc.c:293
+#: login-utils/lslogins.c:1312 sys-utils/lsipc.c:293
 #, fuzzy
 msgid "     --notruncate         don't truncate output\n"
 msgstr "     --nohints              ヒントを表示しないようにします\n"
 
-#: login-utils/lslogins.c:1243 sys-utils/lsipc.c:301
+#: login-utils/lslogins.c:1313 sys-utils/lsipc.c:301
 #, fuzzy
 msgid " -o, --output[=<list>]    define the columns to output\n"
 msgstr " -o, --output <list> 出力する列を指定します\n"
 
-#: login-utils/lslogins.c:1244
+#: login-utils/lslogins.c:1314
 #, fuzzy
 msgid " -p, --pwd                display information related to login by password.\n"
 msgstr " -h, --help           使用法 (これ) を表示します\n"
 
-#: login-utils/lslogins.c:1245 sys-utils/lsipc.c:303
+#: login-utils/lslogins.c:1315 sys-utils/lsipc.c:303
 #, fuzzy
 msgid " -r, --raw                display in raw mode\n"
 msgstr " -r, --raw            加工を行なわない出力形式を使用します\n"
 
-#: login-utils/lslogins.c:1246
+#: login-utils/lslogins.c:1316
 #, fuzzy
 msgid " -s, --system-accs        display system accounts\n"
 msgstr " -a, --hostlast           最後の列に表示するホスト名\n"
 
-#: login-utils/lslogins.c:1247 sys-utils/lsipc.c:294
+#: login-utils/lslogins.c:1317 sys-utils/lsipc.c:294
 #, fuzzy
 msgid "     --time-format=<type> display dates in short, full or iso format\n"
 msgstr "     --time-format <形式> タイムスタンプを指定した形式で表示します:\n"
 
-#: login-utils/lslogins.c:1248
+#: login-utils/lslogins.c:1318
 #, fuzzy
 msgid " -u, --user-accs          display user accounts\n"
 msgstr " -u, --userspace             ユーザスペースのメッセージを出力します\n"
 
-#: login-utils/lslogins.c:1249
+#: login-utils/lslogins.c:1319
 #, fuzzy
 msgid " -Z, --context            display SELinux contexts\n"
 msgstr " -k, --kernel                カーネルメッセージを表示します\n"
 
-#: login-utils/lslogins.c:1250
+#: login-utils/lslogins.c:1320
 #, fuzzy
 msgid " -z, --print0             delimit user entries with a nul character\n"
 msgstr " -p, --pid              シグナルを送信せず、 PID を表示します\n"
 
-#: login-utils/lslogins.c:1251
+#: login-utils/lslogins.c:1321
 msgid "     --wtmp-file <path>   set an alternate path for wtmp\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1252
+#: login-utils/lslogins.c:1322
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1434
+#: login-utils/lslogins.c:1504
 #, fuzzy
 msgid "failed to request selinux state"
 msgstr "名前の取得に失敗しました: %s"
 
-#: login-utils/lslogins.c:1448 login-utils/lslogins.c:1452
+#: login-utils/lslogins.c:1518 login-utils/lslogins.c:1522
 msgid "Only one user may be specified. Use -l for multiple users."
 msgstr "一つのユーザのみ指定できます。複数のユーザを指定するには -l を使用してください。"
 
@@ -8045,9 +8034,8 @@ msgid " %s <group>\n"
 msgstr " %s <グループ>\n"
 
 #: login-utils/newgrp.c:176
-#, fuzzy
 msgid "Log in to a new group.\n"
-msgstr "新規グループ"
+msgstr "新しいグループにログインします。\n"
 
 #: login-utils/newgrp.c:213
 msgid "who are you?"
@@ -8242,15 +8230,13 @@ msgstr ""
 " %1$s [オプション] <コマンド>\n"
 
 #: login-utils/su-common.c:1118
-#, fuzzy
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
 "The options -c, -f, -l, and -s are mutually exclusive with -u.\n"
 msgstr ""
-"\n"
 "<ユーザ> で指定した実効ユーザ ID とグループ ID で、<コマンド>を実行します。\n"
-"-u を指定しない場合、従来の su(1) と互換性のある動作となり、シェルが起動\n"
+"-u を指定しない場合、従来の su(1) と互換性のある動作となり、標準シェルが起動\n"
 "されます。なお、-c, -f, -l, -s のオプションは -u と排他関係にあります。\n"
 
 #: login-utils/su-common.c:1123
@@ -8264,12 +8250,10 @@ msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [オプション] [-] [<ユーザ> [<引数>...]]\n"
 
 #: login-utils/su-common.c:1138
-#, fuzzy
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
 msgstr ""
-"\n"
 "実効ユーザ ID とグループ ID を、指定した<ユーザ>のものに切り替えます。\n"
 "なお、 - は -l の意味を含みます。<ユーザ>を指定しない場合は root であるものと\n"
 "みなされます。\n"
@@ -8291,7 +8275,6 @@ msgid "--pty is not supported for your system"
 msgstr "--reload はあなたのシステムではサポートされていません"
 
 #: login-utils/su-common.c:1326
-#, fuzzy
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "--preserve-environment を無視します。--login と排他的なためです。"
 
@@ -8372,9 +8355,9 @@ msgid "Give root password for maintenance\n"
 msgstr "メンテナンスを行います。 root のパスワードを入力してください\n"
 
 #: login-utils/sulogin.c:542
-#, fuzzy, c-format
+#, c-format
 msgid "Press Enter for maintenance\n"
-msgstr "メンテナンスを行うには Enter を押してください"
+msgstr "メンテナンスを行うには Enter を押してください\n"
 
 #: login-utils/sulogin.c:543
 #, c-format
@@ -8454,7 +8437,7 @@ msgstr ""
 #: login-utils/utmpdump.c:174
 #, c-format
 msgid "%s: cannot add inotify watch."
-msgstr "%s: inotify の監視を追加することができません"
+msgstr "%s: inotify の監視を追加することができません。"
 
 #: login-utils/utmpdump.c:183
 #, c-format
@@ -8556,9 +8539,9 @@ msgid "Would you like to edit %s now [y/n]? "
 msgstr "今すぐ %s を編集しますか [y/n]? "
 
 #: misc-utils/blkid.c:66
-#, fuzzy, c-format
+#, c-format
 msgid "%s from %s  (libblkid %s, %s)\n"
-msgstr "%s from %s (libmount %s"
+msgstr "%s (パッケージ %s)  (libblkid %s, %s)\n"
 
 #: misc-utils/blkid.c:76
 #, c-format
@@ -8689,14 +8672,12 @@ msgid "(mounted, mtpt unknown)"
 msgstr ""
 
 #: misc-utils/blkid.c:237
-#, fuzzy
 msgid "(in use)"
-msgstr "使用済みとしてマークします"
+msgstr "(使用中)"
 
 #: misc-utils/blkid.c:239
-#, fuzzy
 msgid "(not mounted)"
-msgstr "%s: マウントされていません"
+msgstr "(マウントされていません)"
 
 #: misc-utils/blkid.c:503
 #, fuzzy, c-format
@@ -8876,9 +8857,8 @@ msgid "     --reform <val>    Gregorian reform date (1752|gregorian|iso|julian)\
 msgstr ""
 
 #: misc-utils/cal.c:1110
-#, fuzzy
 msgid "     --iso             alias for --reform=iso\n"
-msgstr "                t - 生の形式のパーティション情報"
+msgstr "     --iso             --reform=iso と同じ\n"
 
 #: misc-utils/cal.c:1111
 msgid " -y, --year            show the whole year\n"
@@ -9116,7 +9096,7 @@ msgstr "%s を読み込むことができません"
 
 #: misc-utils/findmnt.c:1017 misc-utils/findmnt.c:1083
 #: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:481
-#: sys-utils/fstrim.c:189 sys-utils/mount.c:133 sys-utils/mount.c:181
+#: sys-utils/fstrim.c:187 sys-utils/mount.c:133 sys-utils/mount.c:181
 #: sys-utils/swapoff.c:55 sys-utils/swapoff.c:154 sys-utils/swapon.c:248
 #: sys-utils/swapon.c:278 sys-utils/swapon.c:737 sys-utils/umount.c:174
 msgid "failed to initialize libmount iterator"
@@ -9144,9 +9124,8 @@ msgstr ""
 " %1$s [オプション] [--source <デバイス>] [--target <パス>] | --mountpoint <ディレクトリ> ]\n"
 
 #: misc-utils/findmnt.c:1199
-#, fuzzy
 msgid "Find a (mounted) filesystem.\n"
-msgstr "該当するファイルシステムが見つかりません: %s"
+msgstr "マウントされたファイルシステムを見つけます。\n"
 
 #: misc-utils/findmnt.c:1202
 #, fuzzy
@@ -9246,7 +9225,7 @@ msgstr " -t, --types <リスト>    ファイルシステムの種類を指定�
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -s, --inverse        依存関係を逆転します\n"
 
-#: misc-utils/findmnt.c:1224 misc-utils/lslocks.c:501 sys-utils/lsns.c:901
+#: misc-utils/findmnt.c:1224 misc-utils/lslocks.c:504 sys-utils/lsns.c:901
 #: sys-utils/rfkill.c:572
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
@@ -9317,7 +9296,7 @@ msgstr ""
 " -l, --lazy              今すぐファイルシステムを切り離しますが、\n"
 "                           クリーンアップは後から行うようにします\n"
 
-#: misc-utils/findmnt.c:1240 misc-utils/lslocks.c:507 sys-utils/lsns.c:907
+#: misc-utils/findmnt.c:1240 misc-utils/lslocks.c:510 sys-utils/lsns.c:907
 #, fuzzy
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr ""
@@ -9359,7 +9338,7 @@ msgstr "--poll では 1 つのファイルしか指定できません。複数�
 
 #: misc-utils/findmnt.c:1520
 msgid "options --target and --source can't be used together with command line element that is not an option"
-msgstr "オプション --target と --source は任意指定でない場合、コマンドライン上で同時に使用できません。"
+msgstr "オプション --target と --source は任意指定でない場合、コマンドライン上で同時に使用できません"
 
 #: misc-utils/findmnt.c:1573
 msgid "failed to initialize libmount cache"
@@ -9448,9 +9427,9 @@ msgid "non-bind mount source %s is a directory or regular file"
 msgstr ""
 
 #: misc-utils/findmnt-verify.c:214
-#, fuzzy, c-format
+#, c-format
 msgid "source %s is not a block device"
-msgstr " %s はブロックデバイスではありません"
+msgstr "ソース %s はブロックデバイスではありません"
 
 #: misc-utils/findmnt-verify.c:216
 #, fuzzy, c-format
@@ -9458,19 +9437,19 @@ msgid "source %s exists"
 msgstr "ソースデバイス"
 
 #: misc-utils/findmnt-verify.c:229
-#, fuzzy, c-format
+#, c-format
 msgid "VFS options: %s"
-msgstr "%s: オプション "
+msgstr "VFS オプション: %s"
 
 #: misc-utils/findmnt-verify.c:233
-#, fuzzy, c-format
+#, c-format
 msgid "FS options: %s"
-msgstr "%s: オプション "
+msgstr "VFS オプション: %s"
 
 #: misc-utils/findmnt-verify.c:237
-#, fuzzy, c-format
+#, c-format
 msgid "userspace options: %s"
-msgstr "リソースオプション:\n"
+msgstr "ユーザースペースオプション: %s"
 
 #: misc-utils/findmnt-verify.c:251
 #, fuzzy, c-format
@@ -9708,129 +9687,129 @@ msgstr "%s へのシグナル送信に失敗しました"
 msgid "cannot find process \"%s\""
 msgstr "プロセス \"%s\" が見つかりません"
 
-#: misc-utils/logger.c:225
+#: misc-utils/logger.c:226
 #, c-format
 msgid "unknown facility name: %s"
 msgstr "不明な分類名です: %s"
 
-#: misc-utils/logger.c:231
+#: misc-utils/logger.c:232
 #, c-format
 msgid "unknown priority name: %s"
 msgstr "不明な優先順位名です: %s"
 
-#: misc-utils/logger.c:243
+#: misc-utils/logger.c:244
 #, c-format
 msgid "openlog %s: pathname too long"
 msgstr "openlog %s: パス名が長すぎます"
 
-#: misc-utils/logger.c:270
+#: misc-utils/logger.c:271
 #, c-format
 msgid "socket %s"
 msgstr "ソケット %s"
 
-#: misc-utils/logger.c:307
+#: misc-utils/logger.c:308
 #, c-format
 msgid "failed to resolve name %s port %s: %s"
 msgstr "%s ポート %s の名前を解決できませんでした: %s"
 
-#: misc-utils/logger.c:324
+#: misc-utils/logger.c:325
 #, c-format
 msgid "failed to connect to %s port %s"
 msgstr "%s ポート %s に接続できませんでした"
 
-#: misc-utils/logger.c:353
+#: misc-utils/logger.c:354
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr "最大入力行数 (%d) を超えました"
 
-#: misc-utils/logger.c:505
+#: misc-utils/logger.c:506
 msgid "send message failed"
 msgstr "メッセージの送信に失敗しました"
 
-#: misc-utils/logger.c:575
+#: misc-utils/logger.c:576
 #, c-format
 msgid "structured data ID '%s' is not unique"
 msgstr ""
 
-#: misc-utils/logger.c:589
+#: misc-utils/logger.c:590
 #, c-format
 msgid "--sd-id was not specified for --sd-param %s"
 msgstr ""
 
-#: misc-utils/logger.c:768
+#: misc-utils/logger.c:769
 msgid "localtime() failed"
 msgstr "localtime() が失敗しました"
 
-#: misc-utils/logger.c:778
+#: misc-utils/logger.c:779
 #, c-format
 msgid "hostname '%s' is too long"
 msgstr "ホスト名 '%s' が長すぎます"
 
-#: misc-utils/logger.c:784
+#: misc-utils/logger.c:785
 #, c-format
 msgid "tag '%s' is too long"
 msgstr "タグ '%s' が長すぎます"
 
-#: misc-utils/logger.c:847
+#: misc-utils/logger.c:848
 #, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "不明なオプション引数を無視します: %s"
 
-#: misc-utils/logger.c:859
+#: misc-utils/logger.c:860
 #, fuzzy, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "--auto/-a オプションの引数が間違っています"
 
-#: misc-utils/logger.c:1030
+#: misc-utils/logger.c:1031
 #, c-format
 msgid " %s [options] [<message>]\n"
 msgstr " %s [オプション] [<メッセージ>]\n"
 
-#: misc-utils/logger.c:1033
+#: misc-utils/logger.c:1034
 msgid "Enter messages into the system log.\n"
 msgstr "メッセージをシステムログに記録します。\n"
 
-#: misc-utils/logger.c:1036
+#: misc-utils/logger.c:1037
 #, fuzzy
 msgid " -i                       log the logger command's PID\n"
 msgstr " --help                            このヘルプを表示して終了します\n"
 
-#: misc-utils/logger.c:1037
+#: misc-utils/logger.c:1038
 #, fuzzy
 msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr " -i, --id[=<id>]          <id> を記録します(既定値は PID)\n"
 
-#: misc-utils/logger.c:1038
+#: misc-utils/logger.c:1039
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr " -f, ---file <ファイル>   指定したファイルの内容をログに記録します\n"
 
-#: misc-utils/logger.c:1039
+#: misc-utils/logger.c:1040
 #, fuzzy
 msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr " -n, --skip-login           ログインプロンプトを表示しないようにします\n"
 
-#: misc-utils/logger.c:1040
+#: misc-utils/logger.c:1041
 #, fuzzy
 msgid "     --no-act             do everything except the write the log\n"
 msgstr " -n, --no-act              デバイスに書き込まないこと以外は通常に動作します\n"
 
-#: misc-utils/logger.c:1041
+#: misc-utils/logger.c:1042
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr " -p, --priority <優先順位> 対象のメッセージを指定した優先順位にします\n"
 
-#: misc-utils/logger.c:1042
+#: misc-utils/logger.c:1043
 msgid "     --octet-count        use rfc6587 octet counting\n"
 msgstr ""
 
-#: misc-utils/logger.c:1043
+#: misc-utils/logger.c:1044
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr "     --prio-prefix        標準入力の各行から先頭一致で検索します\n"
 
-#: misc-utils/logger.c:1044
+#: misc-utils/logger.c:1045
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr " -s, --stderr             メッセージを標準エラーにも出力します\n"
 
-#: misc-utils/logger.c:1045
+#: misc-utils/logger.c:1046
 #, fuzzy
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr ""
@@ -9838,98 +9817,98 @@ msgstr ""
 "使い方:\n"
 " %s [オプション] デバイス [サイズ]\n"
 
-#: misc-utils/logger.c:1046
+#: misc-utils/logger.c:1047
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr " -t, --tag <タグ>         各行全てにこのタグを付けます\n"
 
-#: misc-utils/logger.c:1047
+#: misc-utils/logger.c:1048
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <名前>      指定したリモート syslog サーバに書き込みます\n"
 
-#: misc-utils/logger.c:1048
+#: misc-utils/logger.c:1049
 #, fuzzy
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
 msgstr " -P, --port <番号>        指定した UDP ポートを利用します\n"
 
-#: misc-utils/logger.c:1049
+#: misc-utils/logger.c:1050
 msgid " -T, --tcp                use TCP only\n"
 msgstr " -T, --tcp                TCP のみを使用します\n"
 
-#: misc-utils/logger.c:1050
+#: misc-utils/logger.c:1051
 msgid " -d, --udp                use UDP only\n"
 msgstr " -d, --udp                UDP のみを使用します\n"
 
-#: misc-utils/logger.c:1051
+#: misc-utils/logger.c:1052
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "     --rfc3164            古い BSD syslog プロトコルを使用します\n"
 
-#: misc-utils/logger.c:1052
+#: misc-utils/logger.c:1053
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
 msgstr ""
 
-#: misc-utils/logger.c:1054
+#: misc-utils/logger.c:1055
 #, fuzzy
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr " --rgid <gid>             実際の GID を設定します\n"
 
-#: misc-utils/logger.c:1055
+#: misc-utils/logger.c:1056
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr ""
 
-#: misc-utils/logger.c:1056
+#: misc-utils/logger.c:1057
 #, fuzzy
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr " --rgid <gid>             実際の GID を設定します\n"
 
-#: misc-utils/logger.c:1057
+#: misc-utils/logger.c:1058
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr " -u, --socket <ソケット>   指定した Unix ソケットに書き込みます\n"
 
-#: misc-utils/logger.c:1058
+#: misc-utils/logger.c:1059
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
 msgstr ""
 
-#: misc-utils/logger.c:1061
+#: misc-utils/logger.c:1062
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr ""
 
-#: misc-utils/logger.c:1147
+#: misc-utils/logger.c:1148
 #, c-format
 msgid "file %s"
 msgstr "ファイル %s"
 
-#: misc-utils/logger.c:1162
+#: misc-utils/logger.c:1163
 msgid "failed to parse id"
 msgstr "ID の解析に失敗しました"
 
-#: misc-utils/logger.c:1180
+#: misc-utils/logger.c:1181
 #, fuzzy
 msgid "failed to parse message size"
 msgstr "サイズ情報の解釈に失敗しました"
 
-#: misc-utils/logger.c:1215
+#: misc-utils/logger.c:1216
 msgid "--msgid cannot contain space"
 msgstr ""
 
-#: misc-utils/logger.c:1237
+#: misc-utils/logger.c:1238
 #, fuzzy, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "引数が正しくありません: %s"
 
-#: misc-utils/logger.c:1242
+#: misc-utils/logger.c:1243
 #, fuzzy, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "制限時間の引数が正しくありません: %s"
 
-#: misc-utils/logger.c:1252
+#: misc-utils/logger.c:1253
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr ""
 
-#: misc-utils/logger.c:1259
+#: misc-utils/logger.c:1260
 msgid "journald entry could not be written"
 msgstr ""
 
@@ -10307,46 +10286,50 @@ msgstr "ID の解析に失敗しました"
 msgid "failed to parse pid"
 msgstr "pid の解析に失敗しました"
 
-#: misc-utils/lslocks.c:284
+#: misc-utils/lslocks.c:285
 msgid "(unknown)"
 msgstr "(不明)"
 
-#: misc-utils/lslocks.c:293
+#: misc-utils/lslocks.c:287
+msgid "(undefined)"
+msgstr ""
+
+#: misc-utils/lslocks.c:296
 msgid "failed to parse start"
 msgstr "開始位置の処理に失敗しました"
 
-#: misc-utils/lslocks.c:300
+#: misc-utils/lslocks.c:303
 msgid "failed to parse end"
 msgstr "終了位置の処理に失敗しました"
 
-#: misc-utils/lslocks.c:498
+#: misc-utils/lslocks.c:501
 msgid "List local system locks.\n"
 msgstr "ローカルシステムのロックを表示します。\n"
 
-#: misc-utils/lslocks.c:502
+#: misc-utils/lslocks.c:505
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:503 sys-utils/lsns.c:903 sys-utils/rfkill.c:573
+#: misc-utils/lslocks.c:506 sys-utils/lsns.c:903 sys-utils/rfkill.c:573
 #, fuzzy
 msgid " -n, --noheadings       don't print headings\n"
 msgstr " -n, --noheadings     ヘッダを表示しません\n"
 
-#: misc-utils/lslocks.c:504 sys-utils/lsns.c:904 sys-utils/rfkill.c:574
+#: misc-utils/lslocks.c:507 sys-utils/lsns.c:904 sys-utils/rfkill.c:574
 #, fuzzy
 msgid " -o, --output <list>    define which output columns to use\n"
 msgstr " -o, --output <list> 出力する列を指定します\n"
 
-#: misc-utils/lslocks.c:505
+#: misc-utils/lslocks.c:508
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:506 sys-utils/lsns.c:906 sys-utils/rfkill.c:575
+#: misc-utils/lslocks.c:509 sys-utils/lsns.c:906 sys-utils/rfkill.c:575
 #, fuzzy
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -r, --raw              特に加工を行わずに出力します\n"
 
-#: misc-utils/lslocks.c:563 schedutils/chrt.c:475 schedutils/ionice.c:177
+#: misc-utils/lslocks.c:566 schedutils/chrt.c:475 schedutils/ionice.c:177
 #: schedutils/taskset.c:171 sys-utils/lsns.c:983 sys-utils/prlimit.c:585
 msgid "invalid PID argument"
 msgstr "PID 引数が正しくありません"
@@ -10380,7 +10363,7 @@ msgstr[0] "%2$s から %1$zu バイト取得しました\n"
 msgid "closing %s failed"
 msgstr "%s を閉じる際にエラーが発生しました"
 
-#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:146 sys-utils/fstrim.c:310
+#: misc-utils/mcookie.c:164 sys-utils/blkdiscard.c:146 sys-utils/fstrim.c:308
 #: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "長さの解釈に失敗しました"
@@ -10463,9 +10446,9 @@ msgid "%s: readlink failed"
 msgstr "%s: readlink に失敗しました"
 
 #: misc-utils/rename.c:82
-#, c-format
-msgid "Skipping existing link: `%s'\n"
-msgstr ""
+#, fuzzy, c-format
+msgid "Skipping existing link: `%s' -> `%s'\n"
+msgstr "...下記の数だけファイルを飛ばします "
 
 #: misc-utils/rename.c:89
 #, c-format
@@ -10659,8 +10642,8 @@ msgstr "ファイル記述子を使用しすぎている状態です。uuidd.soc
 msgid "timeout [%d sec]\n"
 msgstr "時間切れ [%d sec]\n"
 
-#: misc-utils/uuidd.c:434 term-utils/setterm.c:899 text-utils/column.c:496
-#: text-utils/column.c:529
+#: misc-utils/uuidd.c:434 term-utils/setterm.c:899 text-utils/column.c:482
+#: text-utils/column.c:502
 msgid "read failed"
 msgstr "読み込みに失敗しました"
 
@@ -10713,11 +10696,11 @@ msgstr "サーバから予期しない応答 %d が返されました"
 
 #: misc-utils/uuidd.c:591
 msgid "failed to parse --uuids"
-msgstr " --uuid の解釈に失敗しました"
+msgstr "--uuid の解釈に失敗しました"
 
 #: misc-utils/uuidd.c:608
 msgid "uuidd has been built without support for socket activation"
-msgstr "現在の uuidd は、ソケットの有効化機能を含めずに構築されています。"
+msgstr "現在の uuidd は、ソケットの有効化機能を含めずに構築されています"
 
 #: misc-utils/uuidd.c:627
 msgid "failed to parse --timeout"
@@ -10845,9 +10828,8 @@ msgstr " -r, --raw              特に加工を行わずに出力します\n"
 
 #: misc-utils/uuidparse.c:172 misc-utils/uuidparse.c:191
 #: misc-utils/uuidparse.c:222
-#, fuzzy
 msgid "invalid"
-msgstr "ID が正しくありません"
+msgstr "無効"
 
 #: misc-utils/uuidparse.c:186
 msgid "other"
@@ -10873,7 +10855,7 @@ msgstr ""
 msgid "sha1-based"
 msgstr ""
 
-#: misc-utils/uuidparse.c:267 misc-utils/wipefs.c:170 sys-utils/lscpu.c:1722
+#: misc-utils/uuidparse.c:267 misc-utils/wipefs.c:170 sys-utils/lscpu.c:1724
 #: sys-utils/lsns.c:806 sys-utils/zramctl.c:496
 msgid "failed to initialize output column"
 msgstr "出力カラムの準備に失敗しました"
@@ -10951,9 +10933,8 @@ msgid "type description"
 msgstr "フラグの説明"
 
 #: misc-utils/wipefs.c:109
-#, fuzzy
 msgid "block device name"
-msgstr "ブロックデバイス "
+msgstr "ブロックデバイス名"
 
 #: misc-utils/wipefs.c:318
 #, fuzzy
@@ -11005,9 +10986,8 @@ msgid "Use the --force option to force erase."
 msgstr "強制消去するには --force オプションを使用してください。"
 
 #: misc-utils/wipefs.c:605
-#, fuzzy
 msgid "Wipe signatures from a device."
-msgstr "シグネチャをデバイスから完全に削除します。\n"
+msgstr "シグネチャをデバイスから完全に削除します。"
 
 #: misc-utils/wipefs.c:608
 #, fuzzy
@@ -11525,7 +11505,7 @@ msgstr " -n, --nonblock           待機が必要な場合、失敗させるよ�
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose    何が行われるのかを詳しく表示します\n"
 
-#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:314 sys-utils/losetup.c:691
+#: sys-utils/blkdiscard.c:150 sys-utils/fstrim.c:312 sys-utils/losetup.c:691
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "開始位置の解釈に失敗しました"
@@ -11535,8 +11515,8 @@ msgstr "開始位置の解釈に失敗しました"
 msgid "failed to parse step"
 msgstr "サイズ情報の解釈に失敗しました"
 
-#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:398 sys-utils/fallocate.c:373
-#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:336
+#: sys-utils/blkdiscard.c:176 sys-utils/blkzone.c:399 sys-utils/fallocate.c:373
+#: sys-utils/fsfreeze.c:111 sys-utils/fstrim.c:334
 msgid "unexpected number of arguments"
 msgstr "引数の個数が正しくありません"
 
@@ -11555,7 +11535,7 @@ msgstr "%s: BLKSSZGET ioctl に失敗しました"
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: オフセット %<PRIu64> はセクタのサイズ %i の倍数ではありません"
 
-#: sys-utils/blkdiscard.c:201 sys-utils/blkzone.c:173 sys-utils/blkzone.c:261
+#: sys-utils/blkdiscard.c:201 sys-utils/blkzone.c:174 sys-utils/blkzone.c:262
 #, c-format
 msgid "%s: offset is greater than device size"
 msgstr "%s: オフセットがデバイスサイズよりも大きいです"
@@ -11594,95 +11574,95 @@ msgstr ""
 msgid "%s: blkdev_get_sectors ioctl failed"
 msgstr "%s: ディレクトリの変更に失敗しました"
 
-#: sys-utils/blkzone.c:177 sys-utils/blkzone.c:251
+#: sys-utils/blkzone.c:178 sys-utils/blkzone.c:252
 #, fuzzy, c-format
 msgid "%s: unable to determine zone size"
 msgstr "%s: ゾーンマップに書き込むことができません"
 
-#: sys-utils/blkzone.c:195
+#: sys-utils/blkzone.c:196
 #, fuzzy, c-format
 msgid "%s: BLKREPORTZONE ioctl failed"
 msgstr "%s: BLKGETSIZE64 ioctl に失敗しました"
 
-#: sys-utils/blkzone.c:198
+#: sys-utils/blkzone.c:199
 #, c-format
 msgid "Found %d zones from 0x%<PRIx64>\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:219
+#: sys-utils/blkzone.c:220
 #, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:256
+#: sys-utils/blkzone.c:257
 #, fuzzy, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: オフセット %<PRIu64> はセクタのサイズ %i の倍数ではありません"
 
-#: sys-utils/blkzone.c:275
+#: sys-utils/blkzone.c:276
 #, fuzzy, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: オフセット %<PRIu64> はセクタのサイズ %i の倍数ではありません"
 
-#: sys-utils/blkzone.c:283
+#: sys-utils/blkzone.c:284
 #, fuzzy, c-format
 msgid "%s: BLKRESETZONE ioctl failed"
 msgstr "%s: BLKSSZGET ioctl に失敗しました"
 
-#: sys-utils/blkzone.c:285
+#: sys-utils/blkzone.c:286
 #, fuzzy, c-format
 msgid "%s: successfully reset in range from %<PRIu64>, to %<PRIu64>"
 msgstr "パーティションの名前を `%s' から `%.*s' に変更しました。"
 
-#: sys-utils/blkzone.c:299
+#: sys-utils/blkzone.c:300
 #, fuzzy, c-format
 msgid " %s <command> [options] <device>\n"
 msgstr " %s [オプション] <デバイス>\n"
 
-#: sys-utils/blkzone.c:302
+#: sys-utils/blkzone.c:303
 msgid "Run zone command on the given block device.\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:309
+#: sys-utils/blkzone.c:310
 #, fuzzy
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr " -o, --offset <番号>    ファイル内の <番号> で示されたオフセット位置から始めます\n"
 
-#: sys-utils/blkzone.c:310
+#: sys-utils/blkzone.c:311
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:311
+#: sys-utils/blkzone.c:312
 #, fuzzy
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr " -s, --sectors <数値>   利用するセクタの数をセットします\n"
 
-#: sys-utils/blkzone.c:312
+#: sys-utils/blkzone.c:313
 #, fuzzy
 msgid " -v, --verbose          display more details\n"
 msgstr " -v, --verbose             冗長なデータ出力を行います\n"
 
-#: sys-utils/blkzone.c:354
+#: sys-utils/blkzone.c:355
 #, fuzzy, c-format
 msgid "%s is not valid command name"
 msgstr "%s は正常なブロックデバイスではありません"
 
-#: sys-utils/blkzone.c:369
+#: sys-utils/blkzone.c:370
 #, fuzzy
 msgid "failed to parse number of zones"
 msgstr "行数の解析に失敗"
 
-#: sys-utils/blkzone.c:373
+#: sys-utils/blkzone.c:374
 #, fuzzy
 msgid "failed to parse number of sectors"
 msgstr "行数の解析に失敗"
 
-#: sys-utils/blkzone.c:377
+#: sys-utils/blkzone.c:378
 #, fuzzy
 msgid "failed to parse zone offset"
 msgstr "開始位置の解釈に失敗しました"
 
-#: sys-utils/blkzone.c:391 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:392 sys-utils/setsid.c:92
 #, fuzzy
 msgid "no command specified"
 msgstr "コマンドが指定されていません"
@@ -12301,23 +12281,23 @@ msgstr "不明な分類 '%s' です"
 msgid "cannot mmap: %s"
 msgstr "mmap に失敗しました: %s"
 
-#: sys-utils/dmesg.c:1436
+#: sys-utils/dmesg.c:1435
 msgid "invalid buffer size argument"
 msgstr "バッファサイズの引数が正しくありません"
 
-#: sys-utils/dmesg.c:1488
+#: sys-utils/dmesg.c:1487
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr "時刻の表示形式として iso8601 を同時に指定した場合 --show-delta は無視されます。"
 
-#: sys-utils/dmesg.c:1511
+#: sys-utils/dmesg.c:1510
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr "--raw を --level, --facility と同時に指定できるのはメッセージを /dev/kmsg から読んでいる時だけです"
 
-#: sys-utils/dmesg.c:1526
+#: sys-utils/dmesg.c:1525
 msgid "read kernel buffer failed"
 msgstr "カーネルバッファの読み込みに失敗しました"
 
-#: sys-utils/dmesg.c:1545
+#: sys-utils/dmesg.c:1544
 msgid "klogctl failed"
 msgstr "klogctl に失敗しました"
 
@@ -12879,69 +12859,69 @@ msgstr "%s: 凍結処理に失敗しました"
 msgid "%s: unfreeze failed"
 msgstr "%s: 凍結状態の解除処理に失敗しました"
 
-#: sys-utils/fstrim.c:84
+#: sys-utils/fstrim.c:82
 #, c-format
 msgid "%s: not a directory"
 msgstr "%s: ディレクトリではありません"
 
-#: sys-utils/fstrim.c:93
+#: sys-utils/fstrim.c:91
 #, c-format
 msgid "%s: FITRIM ioctl failed"
 msgstr "%s: FITRIM ioctl に失敗しました"
 
 #. TRANSLATORS: The standard value here is a very large number.
-#: sys-utils/fstrim.c:102
+#: sys-utils/fstrim.c:100
 #, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: %s (%<PRIu64> バイト) に切り揃えました\n"
 
-#: sys-utils/fstrim.c:193 sys-utils/lsns.c:1066 sys-utils/swapon.c:733
+#: sys-utils/fstrim.c:191 sys-utils/lsns.c:1066 sys-utils/swapon.c:733
 #: sys-utils/umount.c:229
 #, c-format
 msgid "failed to parse %s"
 msgstr "%s の処理に失敗しました"
 
-#: sys-utils/fstrim.c:254
+#: sys-utils/fstrim.c:252
 #, c-format
 msgid " %s [options] <mount point>\n"
 msgstr " %s [オプション] <マウントポイント>\n"
 
-#: sys-utils/fstrim.c:257
+#: sys-utils/fstrim.c:255
 msgid "Discard unused blocks on a mounted filesystem.\n"
 msgstr ""
 
-#: sys-utils/fstrim.c:260
+#: sys-utils/fstrim.c:258
 #, fuzzy
 msgid " -a, --all           trim all mounted filesystems that are supported\n"
 msgstr " -a, --all               すべてのファイルシステムをアンマウントします\n"
 
-#: sys-utils/fstrim.c:261
+#: sys-utils/fstrim.c:259
 msgid " -o, --offset <num>  the offset in bytes to start discarding from\n"
 msgstr ""
 
-#: sys-utils/fstrim.c:262
+#: sys-utils/fstrim.c:260
 #, fuzzy
 msgid " -l, --length <num>  the number of bytes to discard\n"
 msgstr " -c, --cylinders <数値> 利用するシリンダの数をセットします\n"
 
-#: sys-utils/fstrim.c:263
+#: sys-utils/fstrim.c:261
 msgid " -m, --minimum <num> the minimum extent length to discard\n"
 msgstr ""
 
-#: sys-utils/fstrim.c:264
+#: sys-utils/fstrim.c:262
 #, fuzzy
 msgid " -v, --verbose       print number of discarded bytes\n"
 msgstr " -v, --verbose             冗長なデータ出力を行います\n"
 
-#: sys-utils/fstrim.c:318
+#: sys-utils/fstrim.c:316
 msgid "failed to parse minimum extent length"
 msgstr "最小エクステント長の解釈に失敗しました"
 
-#: sys-utils/fstrim.c:331
+#: sys-utils/fstrim.c:329
 msgid "no mountpoint specified"
 msgstr "マウントポイントが指定されていません"
 
-#: sys-utils/fstrim.c:345
+#: sys-utils/fstrim.c:343
 #, fuzzy, c-format
 msgid "%s: the discard operation is not supported"
 msgstr "未対応の破棄ポリシーです: %s"
@@ -13319,9 +13299,9 @@ msgid "--date is required for --set or --predict"
 msgstr ""
 
 #: sys-utils/hwclock.c:1335
-#, fuzzy, c-format
+#, c-format
 msgid "invalid date '%s'"
-msgstr "ID が正しくありません: %s"
+msgstr "無効な日付 '%s'"
 
 #: sys-utils/hwclock.c:1349
 #, fuzzy, c-format
@@ -13329,9 +13309,8 @@ msgid "System Time: %ld.%06ld\n"
 msgstr "現在のシステム時刻: %ld = %s\n"
 
 #: sys-utils/hwclock.c:1365
-#, fuzzy
 msgid "Test mode: nothing was changed."
-msgstr "スワップ領域のサイズ"
+msgstr "テストモード: 何も変更していません。"
 
 #: sys-utils/hwclock-cmos.c:389
 msgid "ISA port access is not implemented"
@@ -13343,9 +13322,8 @@ msgid "iopl() port access failed"
 msgstr "ファイル %s にアクセスできません"
 
 #: sys-utils/hwclock-cmos.c:397
-#, fuzzy
 msgid "Using direct ISA access to the clock"
-msgstr "直接 I/O 命令を使って ISA クロックにアクセスします。"
+msgstr "直接 ISA でクロックにアクセスします"
 
 #: sys-utils/hwclock-rtc.c:128
 #, fuzzy, c-format
@@ -13353,9 +13331,8 @@ msgid "Trying to open: %s\n"
 msgstr "%s をアンマウントしようとしています\n"
 
 #: sys-utils/hwclock-rtc.c:150 sys-utils/hwclock-rtc.c:253
-#, fuzzy
 msgid "cannot open rtc device"
-msgstr "下記のものを開くことができません "
+msgstr "rtc デバイスを開くことができません"
 
 #: sys-utils/hwclock-rtc.c:186
 #, c-format
@@ -13989,7 +13966,7 @@ msgstr "使用済み領域"
 
 #: sys-utils/ipcs.c:489
 msgid " bytes\n"
-msgstr "バイト\n"
+msgstr " バイト\n"
 
 #: sys-utils/ipcs.c:493
 #, c-format
@@ -14195,7 +14172,7 @@ msgstr "pid"
 #: sys-utils/ipcutils.c:242
 #, c-format
 msgid "%s failed"
-msgstr "%s に失敗しました。"
+msgstr "%s に失敗しました"
 
 #: sys-utils/ipcutils.c:503
 #, c-format
@@ -14673,19 +14650,19 @@ msgstr "CPU 番号の判別に失敗しました: %s"
 msgid "cannot restore signal handler"
 msgstr "シグナルハンドラを設定できません"
 
-#: sys-utils/lscpu.c:1307
+#: sys-utils/lscpu.c:1309
 msgid "Failed to extract the node number"
 msgstr "ノード番号の抽出に失敗しました"
 
-#: sys-utils/lscpu.c:1433 sys-utils/lscpu.c:1443
+#: sys-utils/lscpu.c:1435 sys-utils/lscpu.c:1445
 msgid "Y"
 msgstr "Y"
 
-#: sys-utils/lscpu.c:1433 sys-utils/lscpu.c:1443
+#: sys-utils/lscpu.c:1435 sys-utils/lscpu.c:1445
 msgid "N"
 msgstr "N"
 
-#: sys-utils/lscpu.c:1527
+#: sys-utils/lscpu.c:1529
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -14695,218 +14672,218 @@ msgstr ""
 "# 下記は、他のプログラムに渡して処理することのできる形式での出力です。\n"
 "# 各行の冒頭には、0から始まるユニークな番号が書かれています。\n"
 
-#: sys-utils/lscpu.c:1724
+#: sys-utils/lscpu.c:1726
 msgid "Architecture:"
 msgstr "アーキテクチャ:"
 
-#: sys-utils/lscpu.c:1737
+#: sys-utils/lscpu.c:1739
 msgid "CPU op-mode(s):"
 msgstr "CPU 操作モード:"
 
-#: sys-utils/lscpu.c:1740 sys-utils/lscpu.c:1742
+#: sys-utils/lscpu.c:1742 sys-utils/lscpu.c:1744
 msgid "Byte Order:"
 msgstr "バイト順序:"
 
-#: sys-utils/lscpu.c:1744
+#: sys-utils/lscpu.c:1746
 msgid "CPU(s):"
 msgstr "CPU:"
 
-#: sys-utils/lscpu.c:1747
+#: sys-utils/lscpu.c:1749
 msgid "On-line CPU(s) mask:"
 msgstr "オンラインになっている CPU のマスク:"
 
-#: sys-utils/lscpu.c:1748
+#: sys-utils/lscpu.c:1750
 msgid "On-line CPU(s) list:"
 msgstr "オンラインになっている CPU のリスト:"
 
-#: sys-utils/lscpu.c:1767
+#: sys-utils/lscpu.c:1769
 msgid "Off-line CPU(s) mask:"
 msgstr "オフラインになっている CPU のマスク:"
 
-#: sys-utils/lscpu.c:1768
+#: sys-utils/lscpu.c:1770
 msgid "Off-line CPU(s) list:"
 msgstr "オフラインになっている CPU のリスト:"
 
-#: sys-utils/lscpu.c:1803
+#: sys-utils/lscpu.c:1805
 msgid "Thread(s) per core:"
 msgstr "コアあたりのスレッド数:"
 
-#: sys-utils/lscpu.c:1805
+#: sys-utils/lscpu.c:1807
 msgid "Core(s) per socket:"
 msgstr "ソケットあたりのコア数:"
 
-#: sys-utils/lscpu.c:1808
+#: sys-utils/lscpu.c:1810
 msgid "Socket(s) per book:"
 msgstr "ブックあたりのソケット数:"
 
-#: sys-utils/lscpu.c:1811
+#: sys-utils/lscpu.c:1813
 msgid "Book(s) per drawer:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1813
+#: sys-utils/lscpu.c:1815
 msgid "Drawer(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1815
+#: sys-utils/lscpu.c:1817
 msgid "Book(s):"
 msgstr "ブック数:"
 
-#: sys-utils/lscpu.c:1818
+#: sys-utils/lscpu.c:1820
 msgid "Socket(s):"
 msgstr "ソケット数:"
 
-#: sys-utils/lscpu.c:1822
+#: sys-utils/lscpu.c:1824
 msgid "NUMA node(s):"
 msgstr "NUMA ノード数:"
 
-#: sys-utils/lscpu.c:1824
+#: sys-utils/lscpu.c:1826
 msgid "Vendor ID:"
 msgstr "ベンダー ID:"
 
-#: sys-utils/lscpu.c:1826
+#: sys-utils/lscpu.c:1828
 #, fuzzy
 msgid "Machine type:"
 msgstr "パーティションタイプ:"
 
-#: sys-utils/lscpu.c:1828
+#: sys-utils/lscpu.c:1830
 msgid "CPU family:"
 msgstr "CPU ファミリー:"
 
-#: sys-utils/lscpu.c:1830
+#: sys-utils/lscpu.c:1832
 msgid "Model:"
 msgstr "モデル:"
 
-#: sys-utils/lscpu.c:1832
+#: sys-utils/lscpu.c:1834
 msgid "Model name:"
 msgstr "モデル名:"
 
-#: sys-utils/lscpu.c:1834
+#: sys-utils/lscpu.c:1836
 msgid "Stepping:"
 msgstr "ステッピング:"
 
-#: sys-utils/lscpu.c:1836
+#: sys-utils/lscpu.c:1838
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:1838
+#: sys-utils/lscpu.c:1840
 #, fuzzy
 msgid "CPU dynamic MHz:"
 msgstr "CPU 最小 MHz:"
 
-#: sys-utils/lscpu.c:1840
+#: sys-utils/lscpu.c:1842
 #, fuzzy
 msgid "CPU static MHz:"
 msgstr "CPU 最大 MHz:"
 
-#: sys-utils/lscpu.c:1842
+#: sys-utils/lscpu.c:1844
 msgid "CPU max MHz:"
 msgstr "CPU 最大 MHz:"
 
-#: sys-utils/lscpu.c:1844
+#: sys-utils/lscpu.c:1846
 msgid "CPU min MHz:"
 msgstr "CPU 最小 MHz:"
 
-#: sys-utils/lscpu.c:1846
+#: sys-utils/lscpu.c:1848
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:1849 sys-utils/lscpu.c:1851
+#: sys-utils/lscpu.c:1851 sys-utils/lscpu.c:1853
 msgid "Virtualization:"
 msgstr "仮想化:"
 
-#: sys-utils/lscpu.c:1854
+#: sys-utils/lscpu.c:1856
 msgid "Hypervisor:"
 msgstr "ハイパーバイザ:"
 
-#: sys-utils/lscpu.c:1856
+#: sys-utils/lscpu.c:1858
 msgid "Hypervisor vendor:"
 msgstr "ハイパーバイザのベンダー:"
 
-#: sys-utils/lscpu.c:1857
+#: sys-utils/lscpu.c:1859
 msgid "Virtualization type:"
 msgstr "仮想化タイプ:"
 
-#: sys-utils/lscpu.c:1860
+#: sys-utils/lscpu.c:1862
 msgid "Dispatching mode:"
 msgstr "ディスパッチモード:"
 
-#: sys-utils/lscpu.c:1864 sys-utils/lscpu.c:1871
+#: sys-utils/lscpu.c:1866 sys-utils/lscpu.c:1873
 #, c-format
 msgid "%s cache:"
 msgstr "%s キャッシュ:"
 
-#: sys-utils/lscpu.c:1877
+#: sys-utils/lscpu.c:1879
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "NUMA ノード %d CPU:"
 
-#: sys-utils/lscpu.c:1882
+#: sys-utils/lscpu.c:1884
 #, fuzzy
 msgid "Physical sockets:"
 msgstr "物理シリンダ数"
 
-#: sys-utils/lscpu.c:1883
+#: sys-utils/lscpu.c:1885
 #, fuzzy
 msgid "Physical chips:"
 msgstr "物理シリンダ数"
 
-#: sys-utils/lscpu.c:1884
+#: sys-utils/lscpu.c:1886
 #, fuzzy
 msgid "Physical cores/chip:"
 msgstr "物理セクタサイズ"
 
-#: sys-utils/lscpu.c:1888
+#: sys-utils/lscpu.c:1890
 msgid "Flags:"
 msgstr "フラグ:"
 
-#: sys-utils/lscpu.c:1903
+#: sys-utils/lscpu.c:1905
 msgid "Display information about the CPU architecture.\n"
 msgstr "CPUアーキテクチャについての情報を表示します。\n"
 
-#: sys-utils/lscpu.c:1906
+#: sys-utils/lscpu.c:1908
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all               オンラインの CPU とオフラインの CPU を両方表示します (-e を指定した場合の既定値)\n"
 
-#: sys-utils/lscpu.c:1907
+#: sys-utils/lscpu.c:1909
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online            オンラインの CPU のみを表示します (-p を指定した場合の既定値)\n"
 
-#: sys-utils/lscpu.c:1908
+#: sys-utils/lscpu.c:1910
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline           オフラインの CPU のみを表示します\n"
 
-#: sys-utils/lscpu.c:1909
+#: sys-utils/lscpu.c:1911
 #, fuzzy
 msgid " -J, --json              use JSON for default or extended format\n"
 msgstr " -r, --raw              特に加工を行わずに出力します\n"
 
-#: sys-utils/lscpu.c:1910
+#: sys-utils/lscpu.c:1912
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<リスト>] 読みやすい拡張形式で表示します\n"
 
-#: sys-utils/lscpu.c:1911
+#: sys-utils/lscpu.c:1913
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<list>]    プログラムなどで処理しやすい形式で表示します\n"
 
-#: sys-utils/lscpu.c:1912
+#: sys-utils/lscpu.c:1914
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <dir>     指定したディレクトリをシステムルートとみなすようにします\n"
 
-#: sys-utils/lscpu.c:1913
+#: sys-utils/lscpu.c:1915
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex               CPU をリストではなく 16 進数のマスク形式で表示します\n"
 
-#: sys-utils/lscpu.c:1914
+#: sys-utils/lscpu.c:1916
 #, fuzzy
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -a, --all            すべてのデバイスを表示します\n"
 
-#: sys-utils/lscpu.c:1999 sys-utils/lsmem.c:601
+#: sys-utils/lscpu.c:2002 sys-utils/lsmem.c:601
 #, fuzzy, c-format
 msgid "invalid argument to %s"
 msgstr "引数が正しくありません: %s"
 
-#: sys-utils/lscpu.c:2018
+#: sys-utils/lscpu.c:2021
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: --all, --online, --offline の各パラメータは、 --extended か --parse のオプションと共に使用します。\n"
@@ -15310,9 +15287,8 @@ msgstr ""
 "共有メモリセグメント shmid=%d\n"
 
 #: sys-utils/lsipc.c:1073
-#, fuzzy
 msgid "Shared memory pages"
-msgstr "共有メモリ ID: %d\n"
+msgstr "共有メモリページ"
 
 #: sys-utils/lsipc.c:1074
 #, fuzzy
@@ -15347,9 +15323,8 @@ msgid "online status of the memory range"
 msgstr ""
 
 #: sys-utils/lsmem.c:131
-#, fuzzy
 msgid "memory is removable"
-msgstr " 取り出し可能"
+msgstr "メモリは取り外し可能"
 
 #: sys-utils/lsmem.c:132
 msgid "memory block number or blocks range"
@@ -15380,9 +15355,8 @@ msgid "on->off"
 msgstr ""
 
 #: sys-utils/lsmem.c:322 sys-utils/lsmem.c:329
-#, fuzzy
 msgid "Memory block size:"
-msgstr "ブロックサイズを取得"
+msgstr "メモリブロックサイズ"
 
 #: sys-utils/lsmem.c:323 sys-utils/lsmem.c:333
 #, fuzzy
@@ -16764,44 +16738,44 @@ msgstr " -v, --verbose           何が行われるのかを表示します\n"
 msgid "     --list               list settable architectures, and exit\n"
 msgstr "     --list               設定可能なアーキテクチャを表示して終了します\n"
 
-#: sys-utils/setarch.c:217
+#: sys-utils/setarch.c:219
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr " %s: 認識できないアーキテクチャです"
 
-#: sys-utils/setarch.c:238
+#: sys-utils/setarch.c:240
 #, fuzzy, c-format
 msgid "Kernel cannot set architecture to %s"
 msgstr "%s に対する制限時間を設定することができません"
 
-#: sys-utils/setarch.c:286
+#: sys-utils/setarch.c:288
 msgid "Not enough arguments"
 msgstr "引数が不足しています"
 
-#: sys-utils/setarch.c:295
+#: sys-utils/setarch.c:297
 #, c-format
 msgid "Failed to set personality to %s"
 msgstr "パーソナリティを %s に設定する処理が失敗しました"
 
-#: sys-utils/setarch.c:360
+#: sys-utils/setarch.c:362
 #, fuzzy
 msgid "unrecognized option '--list'"
 msgstr "認識できないオプション '%c' です"
 
-#: sys-utils/setarch.c:368
+#: sys-utils/setarch.c:370
 #, fuzzy
 msgid "no architecture argument specified"
 msgstr "アーキテクチャ:"
 
-#: sys-utils/setarch.c:374
+#: sys-utils/setarch.c:376
 #, fuzzy, c-format
 msgid "failed to set personality to %s"
 msgstr "パーソナリティを %s に設定する処理が失敗しました"
 
-#: sys-utils/setarch.c:377
-#, fuzzy, c-format
+#: sys-utils/setarch.c:379
+#, c-format
 msgid "Execute command `%s'.\n"
-msgstr "date コマンドを発行しています: %s\n"
+msgstr "コマンドを実行します。 `%s'\n"
 
 #: sys-utils/setpriv.c:115
 #, c-format
@@ -17229,9 +17203,8 @@ msgid " %s [options] <program> [arguments ...]\n"
 msgstr " %s [オプション] <プログラム> [引数 ...]\n"
 
 #: sys-utils/setsid.c:37
-#, fuzzy
 msgid "Run a program in a new session.\n"
-msgstr "実行するコマンドのために新しい PAM セッションを生成する"
+msgstr "新しいセッションでプログラムを実行します。\n"
 
 #: sys-utils/setsid.c:40
 msgid " -c, --ctty     set the controlling terminal to the current one\n"
@@ -17824,9 +17797,9 @@ msgid "%s: failed to determine source (--all-targets is unsupported on systems w
 msgstr ""
 
 #: sys-utils/unshare.c:91
-#, fuzzy, c-format
+#, c-format
 msgid "unsupported --setgroups argument '%s'"
-msgstr "未対応の引数です: %s"
+msgstr "未対応の --setgroups 引数です '%s'"
 
 #: sys-utils/unshare.c:112 sys-utils/unshare.c:127
 #, c-format
@@ -18279,9 +18252,9 @@ msgstr "%s: プロセスの優先順位を変更できません: %m"
 msgid "%s: can't exec %s: %m"
 msgstr "%s: %s を実行できません: %m"
 
-#: term-utils/agetty.c:574 term-utils/agetty.c:901 term-utils/agetty.c:1419
-#: term-utils/agetty.c:1437 term-utils/agetty.c:1474 term-utils/agetty.c:1484
-#: term-utils/agetty.c:1526 term-utils/agetty.c:2093 term-utils/agetty.c:2655
+#: term-utils/agetty.c:574 term-utils/agetty.c:901 term-utils/agetty.c:1428
+#: term-utils/agetty.c:1446 term-utils/agetty.c:1483 term-utils/agetty.c:1493
+#: term-utils/agetty.c:1535 term-utils/agetty.c:2102 term-utils/agetty.c:2664
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "メモリの割り当てに失敗しました: %m"
@@ -18357,41 +18330,41 @@ msgstr "%s: dup で問題が発生しました: %m"
 msgid "%s: failed to get terminal attributes: %m"
 msgstr "%s: 端末の属性取得に失敗しました: %m"
 
-#: term-utils/agetty.c:1325 term-utils/agetty.c:1345
+#: term-utils/agetty.c:1334 term-utils/agetty.c:1354
 #, c-format
 msgid "setting terminal attributes failed: %m"
 msgstr "端末の属性設定に失敗しました: %m"
 
-#: term-utils/agetty.c:1464
+#: term-utils/agetty.c:1473
 msgid "cannot open os-release file"
 msgstr "os-release ファイルを開くことができません"
 
-#: term-utils/agetty.c:1631
+#: term-utils/agetty.c:1640
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "リロードファイル %s の作成に失敗しました: %m"
 
-#: term-utils/agetty.c:1835
+#: term-utils/agetty.c:1844
 msgid "[press ENTER to login]"
 msgstr "[Enter を押すとログインできます]"
 
-#: term-utils/agetty.c:1859
+#: term-utils/agetty.c:1868
 msgid "Num Lock off"
 msgstr "Num Lock は無効な状態です"
 
-#: term-utils/agetty.c:1862
+#: term-utils/agetty.c:1871
 msgid "Num Lock on"
 msgstr "Num Lock が有効な状態です"
 
-#: term-utils/agetty.c:1865
+#: term-utils/agetty.c:1874
 msgid "Caps Lock on"
 msgstr "Caps Lock が有効な状態です"
 
-#: term-utils/agetty.c:1868
+#: term-utils/agetty.c:1877
 msgid "Scroll Lock on"
 msgstr "Scroll Lock が有効な状態です"
 
-#: term-utils/agetty.c:1871
+#: term-utils/agetty.c:1880
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -18400,32 +18373,32 @@ msgstr ""
 "ヒント: %s\n"
 "\n"
 
-#: term-utils/agetty.c:2008
+#: term-utils/agetty.c:2017
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: 読み込み: %m"
 
-#: term-utils/agetty.c:2072
+#: term-utils/agetty.c:2081
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: 入力が溢れました"
 
-#: term-utils/agetty.c:2089 term-utils/agetty.c:2097
+#: term-utils/agetty.c:2098 term-utils/agetty.c:2106
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: ログイン名の文字変換が失敗しました"
 
-#: term-utils/agetty.c:2103
+#: term-utils/agetty.c:2112
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: ログイン名に不正な文字 0x%x が含まれています"
 
-#: term-utils/agetty.c:2188
+#: term-utils/agetty.c:2197
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: 端末属性の設定に失敗しました: %m"
 
-#: term-utils/agetty.c:2226
+#: term-utils/agetty.c:2235
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -18434,159 +18407,159 @@ msgstr ""
 " %1$s [オプション] <回線> [<ボーレート>,...] [端末タイプ]\n"
 " %1$s [オプション] <ボーレート>,... 回線 [端末タイプ]\n"
 
-#: term-utils/agetty.c:2230
+#: term-utils/agetty.c:2239
 msgid "Open a terminal and set its mode.\n"
 msgstr "端末を開き、モードを指定します。\n"
 
-#: term-utils/agetty.c:2233
+#: term-utils/agetty.c:2242
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                端末が 8 ビットであるものとみなします\n"
 
-#: term-utils/agetty.c:2234
+#: term-utils/agetty.c:2243
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <ユーザ>   指定したユーザで自動ログインします\n"
 
-#: term-utils/agetty.c:2235
+#: term-utils/agetty.c:2244
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              制御モードをリセットしないようにします\n"
 
-#: term-utils/agetty.c:2236
+#: term-utils/agetty.c:2245
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               login(1) に対して -r <ホスト名> を設定します\n"
 
-#: term-utils/agetty.c:2237
+#: term-utils/agetty.c:2246
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -f, --issue-file <file>    issue ファイルを表示します\n"
 
-#: term-utils/agetty.c:2238
+#: term-utils/agetty.c:2247
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         ハードウェアフロー制御を有効にします\n"
 
-#: term-utils/agetty.c:2239
+#: term-utils/agetty.c:2248
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <ホスト名>      ログインホストを指定します\n"
 
-#: term-utils/agetty.c:2240
+#: term-utils/agetty.c:2249
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              issue ファイルを表示しないようにします\n"
 
-#: term-utils/agetty.c:2241
+#: term-utils/agetty.c:2250
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <文字列> 初期化文字列を指定します\n"
 
-#: term-utils/agetty.c:2242
+#: term-utils/agetty.c:2251
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              プロンプトの表示前に画面消去を行いません\n"
 
-#: term-utils/agetty.c:2243
+#: term-utils/agetty.c:2252
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <ファイル> ログインプログラムを指定します\n"
 
-#: term-utils/agetty.c:2244
+#: term-utils/agetty.c:2253
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<モード>] ローカル回線フラグを設定します\n"
 
-#: term-utils/agetty.c:2245
+#: term-utils/agetty.c:2254
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         接続時にボーレートを取得します\n"
 
-#: term-utils/agetty.c:2246
+#: term-utils/agetty.c:2255
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           ログインプロンプトを表示しないようにします\n"
 
-#: term-utils/agetty.c:2247
+#: term-utils/agetty.c:2256
 msgid " -N  --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            issue を表示する前に、改行を表示しないようにします\n"
 
-#: term-utils/agetty.c:2248
+#: term-utils/agetty.c:2257
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <オプション> login コマンドに渡すオプションを指定します\n"
 
-#: term-utils/agetty.c:2249
+#: term-utils/agetty.c:2258
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          ログイン前に任意のキーが入力されるのを待つようにします\n"
 
-#: term-utils/agetty.c:2250
+#: term-utils/agetty.c:2259
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <ディレクトリ> 指定したディレクトリをルートにします\n"
 
-#: term-utils/agetty.c:2251
+#: term-utils/agetty.c:2260
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               tty を擬似的にハングアップするようにします\n"
 
-#: term-utils/agetty.c:2252
+#: term-utils/agetty.c:2261
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            break 後もボーレートを維持するようにします\n"
 
-#: term-utils/agetty.c:2253
+#: term-utils/agetty.c:2262
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <数値>       ログイン処理の制限時間を指定します\n"
 
-#: term-utils/agetty.c:2254
+#: term-utils/agetty.c:2263
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          大文字のみを使用する端末を検出するようにします\n"
 
-#: term-utils/agetty.c:2255
+#: term-utils/agetty.c:2264
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              キャリッジリターンを待機します\n"
 
-#: term-utils/agetty.c:2256
+#: term-utils/agetty.c:2265
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              ヒントを表示しないようにします\n"
 
-#: term-utils/agetty.c:2257
+#: term-utils/agetty.c:2266
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           ホスト名を全く表示しないようにします\n"
 
-#: term-utils/agetty.c:2258
+#: term-utils/agetty.c:2267
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        完全修飾ホスト名を表示します\n"
 
-#: term-utils/agetty.c:2259
+#: term-utils/agetty.c:2268
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <文字列> 追加のバックスペース文字を指定します\n"
 
-#: term-utils/agetty.c:2260
+#: term-utils/agetty.c:2269
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <文字列>  追加の kill 文字を指定します\n"
 
-#: term-utils/agetty.c:2261
+#: term-utils/agetty.c:2270
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <ディレクトリ>  ログインする前にディレクトリを変更します\n"
 
-#: term-utils/agetty.c:2262
+#: term-utils/agetty.c:2271
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <秒数>         プロンプトを表示する前に指定した秒数待ちます\n"
 
-#: term-utils/agetty.c:2263
+#: term-utils/agetty.c:2272
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <優先度>        login を指定した優先度で実行します\n"
 
-#: term-utils/agetty.c:2264
+#: term-utils/agetty.c:2273
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               実行中の agetty インスタンスをリロードします\n"
 
-#: term-utils/agetty.c:2265
+#: term-utils/agetty.c:2274
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-speeds          設定可能なボーレートを表示します\n"
 
-#: term-utils/agetty.c:2615
+#: term-utils/agetty.c:2624
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d ユーザ"
 
-#: term-utils/agetty.c:2743
+#: term-utils/agetty.c:2752
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname に失敗しました: %m"
 
-#: term-utils/agetty.c:2755
+#: term-utils/agetty.c:2764
 #, c-format
 msgid "cannot touch file %s"
 msgstr "ファイル %s にアクセスできません"
 
-#: term-utils/agetty.c:2759
+#: term-utils/agetty.c:2768
 msgid "--reload is unsupported on your system"
 msgstr "--reload はあなたのシステムではサポートされていません"
 
@@ -18796,9 +18769,8 @@ msgid " --initialize                      display init string, and use default s
 msgstr " -q, --stats                        tty に関する統計情報を表示します\n"
 
 #: term-utils/setterm.c:389
-#, fuzzy
 msgid " --default                         use default terminal settings\n"
-msgstr "Ctrl-U でデフォルト値を削除します。\n"
+msgstr " --default                         端末のデフォルト設定を使用します\n"
 
 #: term-utils/setterm.c:390
 msgid " --store                           save current terminal settings as default\n"
@@ -19203,7 +19175,7 @@ msgstr "最初の行以前"
 msgid "-- line already flushed"
 msgstr "行は既に書き込まれてしまったため"
 
-#: text-utils/colcrt.c:82 text-utils/column.c:634
+#: text-utils/colcrt.c:82 text-utils/column.c:607
 #, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr " %s [オプション] [<ファイル>...]\n"
@@ -19243,103 +19215,103 @@ msgstr "1 つ目の値"
 msgid "second argument"
 msgstr "2 つ目の値"
 
-#: text-utils/column.c:235
+#: text-utils/column.c:233
 #, fuzzy
 msgid "failed to parse column"
 msgstr "終了位置の処理に失敗しました"
 
-#: text-utils/column.c:245
+#: text-utils/column.c:243
 #, fuzzy, c-format
 msgid "undefined column name '%s'"
 msgstr "マウントポイントが定義されていません"
 
-#: text-utils/column.c:321
+#: text-utils/column.c:319
 #, fuzzy
 msgid "failed to parse --table-order list"
 msgstr "--timeout の解釈に失敗しました"
 
-#: text-utils/column.c:397
+#: text-utils/column.c:395
 #, fuzzy
 msgid "failed to parse --table-right list"
 msgstr "開始位置の処理に失敗しました"
 
-#: text-utils/column.c:401
+#: text-utils/column.c:399
 #, fuzzy
 msgid "failed to parse --table-trunc list"
 msgstr "--timeout の解釈に失敗しました"
 
-#: text-utils/column.c:405
+#: text-utils/column.c:403
 #, fuzzy
 msgid "failed to parse --table-noextreme list"
 msgstr "--timeout の解釈に失敗しました"
 
-#: text-utils/column.c:409
+#: text-utils/column.c:407
 #, fuzzy
 msgid "failed to parse --table-wrap list"
 msgstr "開始位置の処理に失敗しました"
 
-#: text-utils/column.c:413
+#: text-utils/column.c:411
 #, fuzzy
 msgid "failed to parse --table-hide list"
 msgstr "--timeout の解釈に失敗しました"
 
-#: text-utils/column.c:444
+#: text-utils/column.c:442
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr ""
 
-#: text-utils/column.c:458
+#: text-utils/column.c:456
 #, fuzzy
 msgid "failed to allocate output data"
 msgstr "出力テーブルの準備に失敗しました"
 
-#: text-utils/column.c:637
+#: text-utils/column.c:610
 msgid "Columnate lists.\n"
 msgstr "入力を列ごとに整形します。\n"
 
-#: text-utils/column.c:640
+#: text-utils/column.c:613
 #, fuzzy
 msgid " -t, --table                      create a table\n"
 msgstr " -t, --table              表を作成します\n"
 
-#: text-utils/column.c:641
+#: text-utils/column.c:614
 #, fuzzy
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr " -n, --name <プログラム名>    エラーが報告された場合に使用する名前を指定します\n"
 
-#: text-utils/column.c:642
+#: text-utils/column.c:615
 #, fuzzy
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr " -o, --output <list>  出力する列を指定します\n"
 
-#: text-utils/column.c:643
+#: text-utils/column.c:616
 #, fuzzy
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr " -O, --options <list>   マウントオプションでファイルシステムの出力を制限します\n"
 
-#: text-utils/column.c:644
+#: text-utils/column.c:617
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr ""
 
-#: text-utils/column.c:645
+#: text-utils/column.c:618
 #, fuzzy
 msgid " -d, --table-noheadings           don't print header\n"
 msgstr " -n, --noheadings          ヘッダを表示しません\n"
 
-#: text-utils/column.c:646
+#: text-utils/column.c:619
 msgid " -e, --table-header-repeat        repeat header for each page\n"
 msgstr ""
 
-#: text-utils/column.c:647
+#: text-utils/column.c:620
 #, fuzzy
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr " -n, --noheadings       ヘッダを表示しません\n"
 
-#: text-utils/column.c:648
+#: text-utils/column.c:621
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr ""
 
-#: text-utils/column.c:649
+#: text-utils/column.c:622
 #, fuzzy
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr ""
@@ -19351,64 +19323,64 @@ msgstr ""
 " -h, --help             このヘルプを表示して終了します\n"
 " -V, --version          バージョン情報を表示して終了します\n"
 
-#: text-utils/column.c:650
+#: text-utils/column.c:623
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr ""
 
-#: text-utils/column.c:651
+#: text-utils/column.c:624
 #, fuzzy
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr "     --raw              --list の結果を特に加工を行わずに出力します\n"
 
-#: text-utils/column.c:654
+#: text-utils/column.c:627
 #, fuzzy
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr " -O, --output <cols>    --list で表示する列を指定します\n"
 
-#: text-utils/column.c:655
+#: text-utils/column.c:628
 #, fuzzy
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr " -i, --irq <番号>             パラレルポートの IRQ を指定します\n"
 
-#: text-utils/column.c:656
+#: text-utils/column.c:629
 #, fuzzy
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr " -H, --heads <数値>            ヘッド数を指定します\n"
 
-#: text-utils/column.c:659
+#: text-utils/column.c:632
 #, fuzzy
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr " -c, --columns <幅>       出力幅を文字数で指定します\n"
 
-#: text-utils/column.c:660
+#: text-utils/column.c:633
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr " -o, --output-separator <文字列>  表出力時の列区切りを指定します。(既定値はスペース 2 つ)\n"
 
-#: text-utils/column.c:661
+#: text-utils/column.c:634
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr " -s, --separator <文字列>         表の区切り文字列を指定します\n"
 
-#: text-utils/column.c:662
+#: text-utils/column.c:635
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr " -x, --fillrows                   列の前に行を埋めます\n"
 
-#: text-utils/column.c:731
+#: text-utils/column.c:703
 msgid "invalid columns argument"
 msgstr "列の引数が正しくありません"
 
-#: text-utils/column.c:756
+#: text-utils/column.c:728
 msgid "failed to parse column names"
 msgstr "列の名前の解釈に失敗しました"
 
-#: text-utils/column.c:811
+#: text-utils/column.c:781
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr ""
 
-#: text-utils/column.c:819
+#: text-utils/column.c:789
 msgid "option --table required for all --table-*"
 msgstr ""
 
-#: text-utils/column.c:822
+#: text-utils/column.c:792
 msgid "option --table-columns required for --json"
 msgstr ""
 

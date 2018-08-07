@@ -29,7 +29,7 @@ PACKAGE_VERSION_RELEASE=$(echo $PACKAGE_VERSION | awk -F. '{
 
 dnl libblkid version
 LIBBLKID_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
-LIBBLKID_DATE="21-Mar-2018"
+LIBBLKID_DATE="16-Jul-2018"
 LIBBLKID_LT_MAJOR=1
 LIBBLKID_LT_MINOR=1
 LIBBLKID_LT_MICRO=0
@@ -164,7 +164,7 @@ m4_ifndef([PKG_PROG_PKG_CONFIG],
     macros. These are usually located in /usr/share/aclocal/pkg.m4.
     If your macros are in a different location, try setting the
     environment variable AL_OPTS="-I/other/macro/dir" before running
-    ./autogen.sh or autoreconf again.])])
+    ./autogen.sh or autoreconf again. Make sure pkg-config is installed.])])
 PKG_PROG_PKG_CONFIG
 
 GTK_DOC_CHECK([1.10])
