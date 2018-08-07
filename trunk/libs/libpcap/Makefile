@@ -1,4 +1,4 @@
-SRC_NAME=libpcap-1.8.1
+SRC_NAME=libpcap-1.X.X
 
 all: config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
@@ -21,6 +21,8 @@ configure:
 		--disable-usb \
 		--disable-dbus \
 		--disable-bluetooth \
+		--disable-netmap \
+		--disable-rdma \
 		--with-pcap=linux \
 		--without-dag \
 		--without-septel \
