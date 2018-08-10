@@ -4,5 +4,5 @@
 # DIR320B   # DLINK DIR-320B1     # RT5350  #
 ##################################################################
 
-CFLAGS += -DBOARD_DIR320B -DVENDOR_ASUS
+CFLAGS += -DBOARD_DIR320B -DVENDOR_DLINK
 BOARD_NUM_USB_PORTS=1

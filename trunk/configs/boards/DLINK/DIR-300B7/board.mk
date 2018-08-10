@@ -4,5 +4,5 @@
 # DIR300B7   # Dlink DIR-300B7     # RT5350  #
 ##################################################################
 
-CFLAGS += -DBOARD_DIR300B7 -DVENDOR_ASUS
+CFLAGS += -DBOARD_DIR300B7 -DVENDOR_DLINK
 BOARD_NUM_USB_PORTS=0
