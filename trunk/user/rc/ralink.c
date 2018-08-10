@@ -174,6 +174,8 @@ get_wired_mac_e2p_offset(int is_wan)
 {
 #if defined (BOARD_N14U) || defined (BOARD_N11P)
 	return 0x018E;
+#elif defined (VENDOR_DLINK)
+	return (is_wan) ? 0x40E : 0x408;
 #else
 	return (is_wan) ? OFFSET_MAC_GMAC2 : OFFSET_MAC_GMAC0;
 #endif
