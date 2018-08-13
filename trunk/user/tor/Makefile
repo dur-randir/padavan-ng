@@ -19,7 +19,6 @@ configure:
 		--prefix=/usr \
 		--host=$(HOST_TARGET) \
 		--build=$(HOST_BUILD) \
-		--prefix=/usr \
 		--sysconfdir=/etc/storage \
 		--disable-android \
 		--disable-tool-name-check \
