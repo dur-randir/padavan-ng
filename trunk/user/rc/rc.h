@@ -524,19 +524,19 @@ void restart_zram(void);
 #if defined(APP_TOR)
 int is_tor_run(void);
 void stop_tor(void);
-void run_tor(void);
+void start_tor(void);
 void restart_tor(void);
 #endif
 #if defined(APP_PRIVOXY)
 int is_privoxy_run(void);
 void stop_privoxy(void);
-void run_privoxy(void);
+void start_privoxy(void);
 void restart_privoxy(void);
 #endif
 #if defined(APP_DNSCRYPT)
 int is_dnscrypt_run(void);
 void stop_dnscrypt(void);
-void run_dnscrypt(void);
+void start_dnscrypt(void);
 void restart_dnscrypt(void);
 #endif
 

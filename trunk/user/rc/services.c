@@ -286,7 +286,6 @@ is_tor_run(void)
 		if (pids("tor"))
 			return 1;
 	}
-	
 	return 0;
 }
 
@@ -308,13 +307,8 @@ start_tor(void)
 void
 restart_tor(void)
 {
-	int is_run_before = is_tor_run();
-	int is_run_after;
-
 	stop_tor();
 	start_tor();
-
-	is_run_after = is_tor_run();
 }
 #endif
 #if defined(APP_PRIVOXY)
@@ -326,7 +320,6 @@ is_privoxy_run(void)
 		if (pids("privoxy"))
 			return 1;
 	}
-	
 	return 0;
 }
 
@@ -348,13 +341,8 @@ start_privoxy(void)
 void
 restart_privoxy(void)
 {
-	int is_run_before = is_privoxy_run();
-	int is_run_after;
-
 	stop_privoxy();
 	start_privoxy();
-
-	is_run_after = is_privoxy_run();
 }
 #endif
 #if defined(APP_DNSCRYPT)
@@ -366,7 +354,6 @@ is_dnscrypt_run(void)
 		if (pids("dnscrypt-proxy"))
 			return 1;
 	}
-	
 	return 0;
 }
 
@@ -379,10 +366,8 @@ stop_dnscrypt(void)
 void
 start_dnscrypt(void)
 {
-	if (nvram_invmatch("dnscrypt_enable", "1"))
-		return 1;
-
-	return eval("/usr/bin/dnscrypt-proxy.sh", "start");
+	if (nvram_get_int("dnscrypt_enable") == 1)
+		eval("/usr/bin/dnscrypt-proxy.sh", "start");
 }
 
 void

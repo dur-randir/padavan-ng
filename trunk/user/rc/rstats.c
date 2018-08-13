@@ -569,7 +569,7 @@ static void process_rstats(void)
 	speed_item_t *item, *next;
 	uint64_t counter[MAX_COUNTER];
 	long tick, ticks;
-	int i, ifindex, wan_no, tail_new;
+	int ifindex, wan_no, tail_new;
 
 	tick = g_uptime_now - g_uptime_old;
 	ticks = tick / RSTATS_INTERVAL;
@@ -608,7 +608,7 @@ static void process_rstats(void)
 	}
 
 #if !defined(RSTATS_SKIP_ESW)
-	for (i = 0; i < BOARD_NUM_ETH_EPHY; i++) {
+	for (int i = 0; i < BOARD_NUM_ETH_EPHY; i++) {
 		if (phy_status_port_bytes(i, &counter[0], &counter[1]) < 0)
 			continue;
 		snprintf(buf, sizeof(buf), "ESW_P%d", i);
