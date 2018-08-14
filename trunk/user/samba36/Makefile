@@ -135,8 +135,8 @@ configure:
 		--disable-external-libtevent \
 		--with-included-iniparser \
 		--with-included-popt \
-		--with-static-modules=nss_info_template,idmap_nss \
-		--with-shared-modules=pdb_tdbsam,pdb_wbc_sam,auth_winbind,auth_wbc,auth_domain; \
+		--with-static-modules=nss_info_template,idmap_nss,pdb_tdbsam \
+		--with-shared-modules=pdb_wbc_sam,auth_winbind,auth_wbc,auth_domain; \
 	)
 
 clean:
