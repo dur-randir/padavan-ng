@@ -2,7 +2,7 @@
 
 Welcome to the rt-n56u project
 
-This project aims to improve the rt-n56u and other supported devices on the software part, allowing power user to take full control over their hardware.
+This project aims to improve the rt-n56u and similar devices on the software part, giving power users maximum performance and full control over their Ralink/Mediatek SoC based hardware. Recent Mediatek SDK's get maximum performance on Linux 3.4 kernel with backported patches.
 This project was created in hope to be useful, but comes without warranty or support. Installing it will probably void your warranty. 
 Contributors of this project are not responsible for what happens next.
 
