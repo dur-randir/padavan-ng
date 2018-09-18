@@ -32,6 +32,10 @@ obj-$(CONFIG_RALINK_TIMER_DFS) += rt_timer_dfs.o
 obj-$(CONFIG_RALINK_TIMER_WDG) += rt_timer_wdg.o
 obj-$(CONFIG_DWC_OTG) += lm.o
 
+ifdef CONFIG_USB_DWC2
+obj-y += dev-dwc2.o
+endif
+
 ifdef CONFIG_MTK_MMC
 obj-y += dev-mmc.o
 endif

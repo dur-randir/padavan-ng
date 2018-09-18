@@ -141,8 +141,13 @@ load_usb_modules(void)
 		module_smart_load("xhci_hcd", xhci_param);
 	}
 #else
+#if defined(CONFIG_RALINK_RT3052)
+	module_smart_load("dwc2", NULL);
+	module_smart_load("dwc2_platform", NULL);
+#else
 	module_smart_load("ehci_hcd", NULL);
 	module_smart_load("ohci_hcd", NULL);
+#endif
 #endif
 }
 #endif
