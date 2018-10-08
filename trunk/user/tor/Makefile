@@ -1,4 +1,4 @@
-SRC_NAME=tor-0.3.3.X
+SRC_NAME=tor-0.3.X.X
 
 CFLAGS +=$(COPT) -ffunction-sections -fdata-sections
 LDFLAGS += -Wl,--gc-sections
