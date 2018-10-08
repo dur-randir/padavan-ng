@@ -55,7 +55,7 @@ static void handle_extent (struct file_extent ext, unsigned int sectors_per_bloc
 	printf("%12llu %s %s\n", ext.byte_offset, lba_info, len_info);
 }
 
-static int walk_fibmap (int fd, struct stat *st, unsigned int sectors_per_block, __u64 start_lba)
+static int walk_fibmap (int fd, struct stat *st, unsigned int blksize, unsigned int sectors_per_block, __u64 start_lba)
 {
 	struct file_extent ext;
 	unsigned long num_blocks;
@@ -67,12 +67,12 @@ static int walk_fibmap (int fd, struct stat *st, unsigned int sectors_per_block,
 	 * for each file block.  This can be converted to a disk LBA using the filesystem
 	 * blocksize and LBA offset obtained earlier.
 	 */
-	num_blocks = (st->st_size + st->st_blksize - 1) / st->st_blksize;
+	num_blocks = (st->st_size + blksize - 1) / blksize;
 	memset(&ext, 0, sizeof(ext));
 
 	/*
 	 * Loop through the file, building a map of the extents.
-	 * All of this is done in filesystem blocks size (fs_blksize) units.
+	 * All of this is done in filesystem blocks size units.
 	 *
 	 * Assumptions:
 	 * Throughout the file, there can be any number of blocks backed by holes
@@ -112,7 +112,7 @@ static int walk_fibmap (int fd, struct stat *st, unsigned int sectors_per_block,
 			ext.first_block = blknum64;
 			ext.last_block  = blknum64 ? blknum64 : hole;
 			ext.block_count = 1;
-			ext.byte_offset = blk_idx * st->st_blksize;
+			ext.byte_offset = blk_idx * blksize;
 		}
 	}
 	handle_extent(ext, sectors_per_block, start_lba);
@@ -222,7 +222,7 @@ int do_filemap (const char *file_name)
 	int fd, err;
 	struct stat st;
 	__u64 start_lba = 0;
-	unsigned int sectors_per_block;
+	unsigned int sectors_per_block, blksize;
 
 	if ((fd = open(file_name, O_RDONLY)) == -1) {
 		err = errno;
@@ -253,11 +253,15 @@ int do_filemap (const char *file_name)
 		close(fd);
 		return EIO;
 	}
-
-	sectors_per_block = st.st_blksize / sector_bytes;
-	printf("\n%s:\n filesystem blocksize %lu, begins at LBA %llu;"
+	if((err=ioctl(fd,FIGETBSZ,&blksize))){
+		fprintf(stderr, "Unable to determine block size, aborting.\n");
+		close(fd);
+		return err;
+	};
+	sectors_per_block = blksize / sector_bytes;
+	printf("\n%s:\n filesystem blocksize %u, begins at LBA %llu;"
 	       " assuming %u byte sectors.\n",
-	       file_name, (unsigned long)st.st_blksize, start_lba, sector_bytes);
+	       file_name, blksize, start_lba, sector_bytes);
 	printf("%12s %10s %10s %10s\n", "byte_offset", "begin_LBA", "end_LBA", "sectors");
 
 	if (st.st_size == 0) {
@@ -270,7 +274,7 @@ int do_filemap (const char *file_name)
 
 	err = walk_fiemap(fd, sectors_per_block, start_lba);
 	if (err)
-		err = walk_fibmap(fd, &st, sectors_per_block, start_lba);
+		err = walk_fibmap(fd, &st, blksize, sectors_per_block, start_lba);
 	close (fd);
 	return 0;
 }
