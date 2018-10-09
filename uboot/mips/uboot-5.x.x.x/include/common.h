@@ -556,6 +556,7 @@ void	wait_ticks    (unsigned long);
 
 /* lib_$(ARCH)/time.c */
 __attribute__((nomips16)) void	udelay	      (unsigned long);
+#define milisecdelay(_x)                        udelay((_x) * 1000)
 __attribute__((nomips16)) void	mdelay	      (unsigned long);
 ulong	usec2ticks    (unsigned long usec);
 ulong	ticks2usec    (unsigned long ticks);
@@ -660,5 +661,17 @@ void	show_boot_progress (int status);
 
 #define ALIGN(x,a)		__ALIGN_MASK((x),(typeof(x))(a)-1)
 #define __ALIGN_MASK(x,mask)	(((x)+(mask))&~(mask))
+
+/* For HTTP based recovery */
+/* TODO: move it to httpd related header */
+#define WEBFAILSAFE_PROGRESS_START		0
+#define WEBFAILSAFE_PROGRESS_TIMEOUT		1
+#define WEBFAILSAFE_PROGRESS_UPLOAD_READY	2
+#define WEBFAILSAFE_PROGRESS_UPGRADE_READY	3
+#define WEBFAILSAFE_PROGRESS_UPGRADE_FAILED	4
+
+#define WEBFAILSAFE_UPGRADE_TYPE_FIRMWARE	0
+#define WEBFAILSAFE_UPGRADE_TYPE_UBOOT		1
+#define WEBFAILSAFE_UPGRADE_TYPE_FACTORY	2
 
 #endif	/* __COMMON_H_ */

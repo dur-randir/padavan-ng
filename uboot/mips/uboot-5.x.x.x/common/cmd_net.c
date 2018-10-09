@@ -80,6 +80,18 @@ U_BOOT_CMD(
 );
 #endif
 #endif
+
+#if (CONFIG_COMMANDS & CFG_CMD_HTTPD)
+int do_httpd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{
+        return NetLoopHttpd();
+}
+
+U_BOOT_CMD(httpd, 1, 1, do_httpd,
+           "httpd   - start web server for firmware recovery\n",
+           NULL);
+#endif /* CFG_CMD_HTTPD */
+
 #if (CONFIG_COMMANDS & CFG_CMD_DHCP)
 int do_dhcp (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {

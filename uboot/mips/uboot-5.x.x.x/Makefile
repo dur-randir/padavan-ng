@@ -191,6 +191,7 @@ LIBS += cpu/$(CPU)/$(SOC)/lib$(SOC).a
 endif
 LIBS += lib_$(ARCH)/lib$(ARCH).a
 LIBS += net/libnet.a
+LIBS += httpd/libhttpd.a
 
 #LIBS += rtc/librtc.a
 LIBS += drivers/libdrivers.a
@@ -363,7 +364,7 @@ u-boot.dis:	u-boot
 #			--start-group $(LIBS) --end-group -L $(shell dirname) $(CC) $(CFLAGS) -print-libgcc-file-name -lgcc \
 #			-Map u-boot.map -o u-boot 
 			
-u-boot:		depend $(SUBDIRS) $(OBJS) $(LIBS) $(LDSCRIPT)
+u-boot:		fsdata depend $(SUBDIRS) $(OBJS) $(LIBS) $(LDSCRIPT)
 		UNDEF_SYM=`$(OBJDUMP) -x $(LIBS) |sed  -n -e 's/.*\(__u_boot_cmd_.*\)/-u\1/p'|sort|uniq`;\
 		$(LD) $(LDFLAGS) $$UNDEF_SYM $(OBJS) \
 			--start-group $(LIBS) --end-group $(PLATFORM_LIBS) \
@@ -399,6 +400,11 @@ etags:
 				fs/cramfs fs/fat fs/fdos fs/jffs2 \
 				net disk rtc dtt drivers drivers/sk98lin common \
 			\( -name CVS -prune \) -o \( -name '*.[ch]' -print \)`
+
+fsdata:
+		@echo "Preparing web server files..."
+		@echo
+		cd httpd && ./vendors/makefsdatac
 
 System.map:	u-boot
 		@$(NM) $< | \

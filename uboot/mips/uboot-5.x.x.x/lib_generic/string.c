@@ -39,7 +39,7 @@
 #define __HAVE_ARCH_STRSWAB
 #define __HAVE_ARCH_BCOPY
 #define __HAVE_ARCH_MEMSCAN
-#define __HAVE_ARCH_STRSTR
+#undef	__HAVE_ARCH_STRSTR
 #define __HAVE_ARCH_MEMCHR
 #endif
 #ifndef __HAVE_ARCH_STRNICMP

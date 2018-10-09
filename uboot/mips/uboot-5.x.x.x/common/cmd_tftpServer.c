@@ -49,9 +49,9 @@ int do_tftpd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	{
 		printf(" \n## Enter to Rescue Mode (%s) ##\n", "manual");
 		setenv("autostart", "no");
-		
+
 		LED_ALERT_ON();
-		
+
 #if defined (RALINK_USB) || defined (MTK_USB)
 		if (flash_kernel_image_from_usb(cmdtp) == 0) {
 			perform_system_reset();
@@ -59,7 +59,7 @@ int do_tftpd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		}
 #endif
 		/* Wait forever for an image */
-		NetLoop(TFTPD);
+		NetLoopHttpd();
 		perform_system_reset();
 	}
 	else if (DETECT_BTN_WPS())	/* WPS button */
@@ -68,7 +68,7 @@ int do_tftpd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		while (DETECT_BTN_WPS() && i++ < press_times) {
 			udelay(10000);
 		}
-		
+
 		if (i >= press_times) {
 			while (DETECT_BTN_WPS()) {
 				LED_ALERT_BLINK();
@@ -82,24 +82,24 @@ int do_tftpd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	else
 	{
 		ulong addr_src;
-		
+
 		if (argc < 2) {
 			addr_src = load_addr;
 		} else {
 			addr_src = simple_strtoul(argv[1], NULL, 16);
 		}
-		
+
 		memset(&header, 0, sizeof(header));
 		if (verify_kernel_image(addr_src, NULL, NULL, NULL) <= 0) {
 			printf(" \n## Enter to Rescue Mode (%s) ##\n", "image error");
-			
+
 			LED_ALERT_ON();
-			
+
 			/* Wait forever for an image */
-			NetLoop(TFTPD);
+			NetLoopHttpd();
 			perform_system_reset();
 		}
-		
+
 		LED_POWER_ON();
 		gpio_init_usb(0);
 		do_bootm(cmdtp, 0, argc, argv);

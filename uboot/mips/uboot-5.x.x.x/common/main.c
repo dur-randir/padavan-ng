@@ -43,6 +43,10 @@ extern int do_bootd (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
 
 #define MAX_DELAY_STOP_STR 32
 
+#if defined(CFG_CMD_HTTPD)
+#include <net.h>
+#endif
+
 static char * delete_char (char *buffer, char *p, int *colp, int *np, int plen);
 static int parse_line (char *, char *[]);
 #if defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0)
@@ -455,6 +459,22 @@ void main_loop (void)
 	    video_banner();
 	}
 #endif
+
+#ifndef CFG_HUSH_PARSER
+        if (rc < 0) {
+#else
+        if (rc != 0) {
+#endif
+                puts("\n");
+                printf("*** ERROR: failed to execute 'bootcmd'!\n");
+
+#if defined(CFG_CMD_HTTPD)
+                puts("   Starting web server for update...\n\n");
+                NetLoopHttpd();
+#else
+                puts("\n");
+#endif
+        }
 
 	/*
 	 * Main Loop for Monitor Command Processing
