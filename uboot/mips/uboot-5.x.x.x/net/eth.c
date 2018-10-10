@@ -24,6 +24,9 @@
 #include <common.h>
 #include <command.h>
 #include <net.h>
+#if defined (CFG_ENV_IS_IN_NAND)
+#include <nand_api.h>
+#endif
 
 #if (CONFIG_COMMANDS & CFG_CMD_NET)
 

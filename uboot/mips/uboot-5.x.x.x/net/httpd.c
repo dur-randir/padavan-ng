@@ -60,16 +60,33 @@ void HttpdStart(void){
 	httpd_init();
 }
 
+int flash_erase_write(char *buf, unsigned int offs, int count) {
+	int result;
+#if defined (CFG_ENV_IS_IN_NAND)
+	result = ranand_erase_write(buf, offs, count);
+#elif defined (CFG_ENV_IS_IN_SPI)
+	result = raspi_erase_write(buf, offs, count);
+#else
+	unsigned long e_end = CFG_FLASH_BASE + offs + count - 1;
+	if (get_addr_boundary(&e_end) != 0)
+		return -1;
+
+	flash_sect_erase(CFG_FLASH_BASE + offs, e_end);
+	result = flash_write(buf, CFG_FLASH_BASE + offs, count);
+#endif
+	return result;
+}
+
 int do_http_upgrade(const ulong size, const int upgrade_type){
 	if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT){
 		printf("\n\n****************************\n*     U-BOOT UPGRADING     *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
-		return( raspi_erase_write( ( u8_t * )WEBFAILSAFE_UPLOAD_RAM_ADDRESS, WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS - CFG_FLASH_BASE, WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES ) );
+		return( flash_erase_write((char *) WEBFAILSAFE_UPLOAD_RAM_ADDRESS, WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS - CFG_FLASH_BASE, WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES ) );
 	} else if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_FIRMWARE){
 		printf("\n\n****************************\n*    FIRMWARE UPGRADING    *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
-		return( raspi_erase_write( ( u8_t * )WEBFAILSAFE_UPLOAD_RAM_ADDRESS, WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS - CFG_FLASH_BASE, size ) );
+		return( flash_erase_write((char *) WEBFAILSAFE_UPLOAD_RAM_ADDRESS, WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS - CFG_FLASH_BASE, size ) );
 	} else if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_FACTORY){
 		printf("\n\n****************************\n*    FACTORY  UPGRADING    *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
-		return( raspi_erase_write( ( u8_t * )WEBFAILSAFE_UPLOAD_RAM_ADDRESS, WEBFAILSAFE_UPLOAD_FACTORY_ADDRESS - CFG_FLASH_BASE, WEBFAILSAFE_UPLOAD_FACTORY_SIZE_IN_BYTES ) );
+		return( flash_erase_write((char *) WEBFAILSAFE_UPLOAD_RAM_ADDRESS, WEBFAILSAFE_UPLOAD_FACTORY_ADDRESS - CFG_FLASH_BASE, WEBFAILSAFE_UPLOAD_FACTORY_SIZE_IN_BYTES ) );
 	} else {
 		return(-1);
 	}
