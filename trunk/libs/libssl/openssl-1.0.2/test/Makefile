@@ -145,7 +145,7 @@ install:
 tags:
 	ctags $(SRC)
 
-tests:	exe apps $(TESTS)
+tests:	exe $(TESTS)
 
 apps:
 	@(cd ..; $(MAKE) DIRS=apps all)
@@ -593,7 +593,7 @@ $(DTLSTEST)$(EXE_EXT): $(DTLSTEST).o ssltestlib.o $(DLIBSSL) $(DLIBCRYPTO)
 #	fi
 
 dummytest$(EXE_EXT): dummytest.o $(DLIBCRYPTO)
-	@target=dummytest; $(BUILD_CMD)
+	+@target=dummytest; $(BUILD_CMD)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 

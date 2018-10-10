@@ -72,7 +72,7 @@ top:
 
 all:	lib subdirs
 
-lib:	$(LIBOBJ)
+lib:	$(LIBOBJ) | subdirs
 	@if [ -n "$(SHARED_LIBS)" ]; then \
 		set -e; \
 		for l in $(LIBNAMES); do \
@@ -89,7 +89,7 @@ lib:	$(LIBOBJ)
 
 subdirs:
 	echo $(EDIRS)
-	@target=all; $(RECURSIVE_MAKE)
+	+@target=all; $(RECURSIVE_MAKE)
 
 files:
 	$(PERL) $(TOP)/util/files.pl Makefile >> $(TOP)/MINFO
@@ -128,7 +128,7 @@ install:
 			  mv -f $(INSTALL_PREFIX)$(INSTALLTOP)/$(LIBDIR)/engines/$$pfx$$l$$sfx.new $(INSTALL_PREFIX)$(INSTALLTOP)/$(LIBDIR)/engines/$$pfx$$l$$sfx ); \
 		done; \
 	fi
-	@target=install; $(RECURSIVE_MAKE)
+	+@target=install; $(RECURSIVE_MAKE)
 
 tags:
 	ctags $(SRC)
