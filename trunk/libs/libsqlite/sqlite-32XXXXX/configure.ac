@@ -10,7 +10,7 @@
 #
 
 AC_PREREQ(2.61)
-AC_INIT(sqlite, 3.25.1, http://www.sqlite.org)
+AC_INIT(sqlite, 3.25.2, http://www.sqlite.org)
 AC_CONFIG_SRCDIR([sqlite3.c])
 AC_CONFIG_AUX_DIR([.])
 
@@ -173,7 +173,7 @@ AC_ARG_ENABLE(session, [AS_HELP_STRING(
   [--enable-session], [enable the session extension [default=no]])], 
   [], [])
 if test x"$enable_session" = "xyes"; then
-  BUILD_CFLAGS="$BUILD_CFLAGS-DSQLITE_ENABLE_SESSION -DSQLITE_ENABLE_PREUPDATE_HOOK"
+  BUILD_CFLAGS="$BUILD_CFLAGS -DSQLITE_ENABLE_SESSION -DSQLITE_ENABLE_PREUPDATE_HOOK"
 fi
 #-----------------------------------------------------------------------
 
