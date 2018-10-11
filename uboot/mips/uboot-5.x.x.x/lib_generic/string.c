@@ -15,6 +15,7 @@
  *    reentrant and should be faster). Use only strsep() in new code, please.
  */
 
+#include <common.h>
 #include <linux/types.h>
 #include <linux/string.h>
 #include <linux/ctype.h>
@@ -39,7 +40,11 @@
 #define __HAVE_ARCH_STRSWAB
 #define __HAVE_ARCH_BCOPY
 #define __HAVE_ARCH_MEMSCAN
+#if (CONFIG_COMMANDS & CFG_CMD_HTTPD)
 #undef	__HAVE_ARCH_STRSTR
+#else
+#define __HAVE_ARCH_STRSTR
+#endif
 #define __HAVE_ARCH_MEMCHR
 #endif
 #ifndef __HAVE_ARCH_STRNICMP

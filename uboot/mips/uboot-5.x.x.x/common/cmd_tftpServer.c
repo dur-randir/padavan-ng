@@ -59,7 +59,11 @@ int do_tftpd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		}
 #endif
 		/* Wait forever for an image */
+#if (CFG_CMD_HTTPD)
 		NetLoopHttpd();
+#else
+		NetLoop(TFTPD);
+#endif
 		perform_system_reset();
 	}
 	else if (DETECT_BTN_WPS())	/* WPS button */
@@ -96,7 +100,11 @@ int do_tftpd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 			LED_ALERT_ON();
 
 			/* Wait forever for an image */
+#if (CFG_CMD_HTTPD)
 			NetLoopHttpd();
+#else
+			NetLoop(TFTPD);
+#endif
 			perform_system_reset();
 		}
 

@@ -97,7 +97,9 @@
 #define CFG_CMD_UNIVERSE 0x0800000000000000ULL	/* Tundra Universe Support      */
 #define CFG_CMD_EXT2    0x1000000000000000ULL	/* EXT2 Support                 */
 #define CFG_CMD_TFTPSERVER 0x2000000000000000ULL/* TftpServer                   */
+#ifdef HTTPD_SUPPORT
 #define CFG_CMD_HTTPD	0x4000000000000000ULL /* HttpServer                   */
+#endif
 
 #define CFG_CMD_ALL	0xFFFFFFFFFFFFFFFFULL	/* ALL commands			*/
 

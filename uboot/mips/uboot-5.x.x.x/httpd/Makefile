@@ -16,6 +16,13 @@ OBJS += uip.o \
 
 all: $(LIB)
 
+fs.c:	fsdata.c
+
+fsdata.c:
+	@echo "Preparing web server files..."
+	@echo
+	./vendors/makefsdatac
+
 $(LIB): $(OBJS)
 	$(AR) crv $@ $(OBJS)
 

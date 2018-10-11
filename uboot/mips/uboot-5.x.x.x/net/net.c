@@ -1808,7 +1808,7 @@ IPaddr_t getenv_IPaddr (char *var)
  * HTTPD section
  */
 
-#if defined(CFG_CMD_HTTPD)
+#if (CONFIG_COMMANDS & CFG_CMD_HTTPD)
 
 #define BUF	((struct uip_eth_hdr *)&uip_buf[0])
 
