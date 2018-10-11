@@ -1810,44 +1810,42 @@ IPaddr_t getenv_IPaddr (char *var)
 
 #if (CONFIG_COMMANDS & CFG_CMD_HTTPD)
 
-#define BUF	((struct uip_eth_hdr *)&uip_buf[0])
-
 void NetSendHttpd( void ){
-	volatile uchar *tmpbuf = NetTxPacket;
-	int i;
+        volatile uchar *tmpbuf = NetTxPacket;
+        int i;
 
-	for ( i = 0; i < 40 + UIP_LLH_LEN; i++ ) {
-		tmpbuf[i] = uip_buf[i];
-	}
+        for(i = 0; i < 40 + UIP_LLH_LEN; i++){
+                tmpbuf[i] = uip_buf[i];
+        }
 
-	for( ; i < uip_len; i++ ) {
-		tmpbuf[i] = uip_appdata[ i - 40 - UIP_LLH_LEN ];
-	}
+        for(; i < uip_len; i++){
+                tmpbuf[i] = uip_appdata[i - 40 - UIP_LLH_LEN];
+        }
 
-	eth_send( NetTxPacket, uip_len );
+        eth_send(NetTxPacket, uip_len);
 }
 
 void NetReceiveHttpd( volatile uchar * inpkt, int len ) {
-	memcpy( uip_buf, ( const void * )inpkt, len );
-	uip_len = len;
+        struct uip_eth_hdr *eth_hdr = (struct uip_eth_hdr *)uip_buf;
 
-	if ( BUF->type == htons( UIP_ETHTYPE_IP ) ) {
+        memcpy(uip_buf, (const void *)inpkt, len);
+        uip_len = len;
 
-		uip_arp_ipin();
-		uip_input();
+        if(eth_hdr->type == htons(UIP_ETHTYPE_IP)){
+                uip_arp_ipin();
+                uip_input();
 
-		if ( uip_len > 0 ) {
-			uip_arp_out();
-			NetSendHttpd();
-		}
-	} else if( BUF->type == htons( UIP_ETHTYPE_ARP ) ) {
+                if(uip_len > 0){
+                        uip_arp_out();
+                        NetSendHttpd();
+                }
+        } else if(eth_hdr->type == htons(UIP_ETHTYPE_ARP)){
+                uip_arp_arpin();
 
-		uip_arp_arpin();
-
-		if ( uip_len > 0 ) {
-			NetSendHttpd();
-		}
-	}
+                if(uip_len > 0){
+                        NetSendHttpd();
+                }
+        }
 }
 
 /* *************************************
@@ -1925,7 +1923,7 @@ restart2:
 		} else {
 			ethinit_attempt++;
 			eth_halt();
-			udelay( 1000000 );
+			milisecdelay(1000);
 		}
 	}
 
@@ -1992,7 +1990,7 @@ restart2:
 	ulong led_time = get_timer(0);
 
 	// infinite loop
-	for ( ; ; ) {
+	for (;;) {
 		if (get_timer(led_time) > (CFG_HZ/5)) {
 			LED_ALERT_BLINK();
 			led_time = get_timer(0);
@@ -2037,10 +2035,9 @@ restart2:
 
 		// try to make upgrade!
 		if ( do_http_upgrade( NetBootFileXferSize, webfailsafe_upgrade_type ) >= 0 ) {
-			udelay( 500000 );
+			milisecdelay(500);
 			do_http_progress( WEBFAILSAFE_PROGRESS_UPGRADE_READY );
-			udelay( 500000 );
-
+			milisecdelay(500);
 			/* reset the board */
 			do_reset( NULL, 0, 0, NULL );
 		}

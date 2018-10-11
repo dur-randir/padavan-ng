@@ -61,8 +61,6 @@
 
 #include "uip_arp.h"
 
-//#include <string.h>
-
 struct arp_hdr {
   struct uip_eth_hdr ethhdr;
   u16_t hwtype;
@@ -144,7 +142,7 @@ uip_arp_init(void)
 void
 uip_arp_timer(void)
 {
-  struct arp_entry *tabptr = 0;
+  struct arp_entry *tabptr;
   
   ++arptime;
   for(i = 0; i < UIP_ARPTAB_SIZE; ++i) {
@@ -284,7 +282,7 @@ uip_arp_arpin(void)
   }
 
   uip_len = 0;
-  
+
   switch(BUF->opcode) {
   case HTONS(ARP_REQUEST):
     /* ARP request. If it asked for our address, we send out a
