@@ -231,13 +231,18 @@ write_smb_conf(void)
 	if (i_smb_mode == 1 || i_smb_mode == 3) {
 		char *rootnm = nvram_safe_get("http_username");
 		if (!(*rootnm)) rootnm = "admin";
-
+#if defined (APP_SMBD36)
+		fprintf(fp, "map to guest = %s\n", "Bad Password");
+#else
 		fprintf(fp, "security = %s\n", "SHARE");
+#endif
 		fprintf(fp, "guest ok = %s\n", "yes");
 		fprintf(fp, "guest only = yes\n");
 		fprintf(fp, "guest account = %s\n", rootnm);
 	} else if (i_smb_mode == 4) {
+#if !defined (APP_SMBD36)
 		fprintf(fp, "security = %s\n", "USER");
+#endif
 		fprintf(fp, "guest ok = %s\n", "no");
 		fprintf(fp, "map to guest = Bad User\n");
 		fprintf(fp, "hide unreadable = yes\n");
@@ -452,7 +457,11 @@ clean_smbd_trash(void)
 	for (i=0; locks[i] && *locks[i]; i++)
 		doSystem("rm -f /var/locks/%s", locks[i]);
 
+#if defined (APP_SMBD36)
+	doSystem("rm -f %s", "/var/log.*");
+#else
 	doSystem("rm -f %s", "/var/*.log");
+#endif
 	doSystem("rm -f %s", "/var/log/*");
 }
 

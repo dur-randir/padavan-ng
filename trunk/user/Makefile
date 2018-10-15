@@ -114,6 +114,7 @@ dir_$(CONFIG_FIRMWARE_INCLUDE_ADB)		+= adb
 ifeq ($(SAMBA_ENABLED),y)
 ifeq ($(CONFIG_FIRMWARE_INCLUDE_SMBD36),y)
 dir_y						+= samba36
+dir_y						+= wsdd2
 else
 dir_y						+= samba3
 endif
