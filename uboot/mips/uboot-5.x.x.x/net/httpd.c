@@ -21,19 +21,34 @@ static int arptimer = 0;
 
 void HttpdHandler(void){
 	int i;
-
-	for(i = 0; i < UIP_CONNS; i++){
-		uip_periodic(i);
-
-		if(uip_len > 0){
-			uip_arp_out();
-			NetSendHttpd();
+	struct uip_eth_hdr *eth_hdr = (struct uip_eth_hdr *)uip_buf;
+	if (uip_len == 0) {
+		for(i = 0; i < UIP_CONNS; i++){
+			uip_periodic(i);
+			if(uip_len > 0){
+				uip_arp_out();
+				NetSendHttpd();
+			}
 		}
-	}
 
-	if(++arptimer == 20){
-		uip_arp_timer();
-		arptimer = 0;
+		if(++arptimer == 20){
+			uip_arp_timer();
+			arptimer = 0;
+		}
+	} else {
+		if (eth_hdr->type == htons(UIP_ETHTYPE_IP)) {
+			uip_arp_ipin();
+			uip_input();
+			if(uip_len > 0){
+				uip_arp_out();
+				NetSendHttpd();
+			}
+		} else if (eth_hdr->type == htons(UIP_ETHTYPE_ARP)) {
+			uip_arp_arpin();
+			if(uip_len > 0){
+				NetSendHttpd();
+			}
+		}
 	}
 }
 
