@@ -5,21 +5,21 @@
 #define BOARD_DESC		"YOUHUA WR1200JS Wireless Router"
 #define BOARD_VENDOR_NAME	"Youhua Technology"
 #define BOARD_VENDOR_URL	"http://www.youhuatech.com/"
-#define BOARD_MODEL_URL		"http://www.youhuatech.com/"
+#define BOARD_MODEL_URL		"http://www.youhuatech.com/productArtical.aspx?id=48&Mark=product"
 #define BOARD_BOOT_TIME		30
 #define BOARD_FLASH_TIME	120
-#define BOARD_GPIO_BTN_FN1	18	//WiFi
+#define BOARD_GPIO_BTN_FN1	18
 #define BOARD_GPIO_BTN_RESET	3
 #define BOARD_GPIO_BTN_WPS	12
 #undef  BOARD_GPIO_LED_ALL
 #undef  BOARD_GPIO_LED_WIFI
 #undef  BOARD_GPIO_LED_SW2G
 #undef  BOARD_GPIO_LED_SW5G
-#undef  BOARD_GPIO_LED_POWER
+#define BOARD_GPIO_LED_POWER	7
 #undef  BOARD_GPIO_LED_LAN
-#define BOARD_GPIO_LED_WAN	6
+#undef  BOARD_GPIO_LED_WAN
 #define BOARD_GPIO_LED_USB	8
-#define BOARD_GPIO_LED_ROUTER	7	//WPS
+#undef  BOARD_GPIO_LED_ROUTER
 #undef  BOARD_GPIO_PWR_USB
 #define BOARD_HAS_5G_11AC	1
 #define BOARD_NUM_ANT_5G_TX	2
