@@ -2075,7 +2075,7 @@ static int do_body(X509 **xret, EVP_PKEY *pkey, X509 *x509,
             p = "undef";
         BIO_printf(bio_err, "Subject Name  :%s\n", p);
         ok = -1;                /* This is now a 'bad' error. */
-        goto err;
+            goto err;
     }
 
     if (!default_op) {

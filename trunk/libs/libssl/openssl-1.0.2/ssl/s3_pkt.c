@@ -1424,7 +1424,7 @@ int ssl3_read_bytes(SSL *s, int type, unsigned char *buf, int len, int peek)
     /*
      * If we are a server and get a client hello when renegotiation isn't
      * allowed send back a no renegotiation alert and carry on.
-     */
+         */
     if (s->server
             && SSL_is_init_finished(s)
             && !s->s3->send_connection_binding
@@ -1438,7 +1438,6 @@ int ssl3_read_bytes(SSL *s, int type, unsigned char *buf, int len, int peek)
         ssl3_send_alert(s, SSL3_AL_WARNING, SSL_AD_NO_RENEGOTIATION);
         goto start;
     }
-
     if (s->s3->alert_fragment_len >= 2) {
         int alert_level = s->s3->alert_fragment[0];
         int alert_descr = s->s3->alert_fragment[1];

@@ -160,7 +160,7 @@ int BN_mod_add(BIGNUM *r, const BIGNUM *a, const BIGNUM *b, const BIGNUM *m,
  * move depending on whether or not subtraction borrowed.
  */
 int bn_mod_add_fixed_top(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
-                         const BIGNUM *m)
+                     const BIGNUM *m)
 {
     size_t i, ai, bi, mtop = m->top;
     BN_ULONG storage[1024 / BN_BITS2];
@@ -172,7 +172,7 @@ int bn_mod_add_fixed_top(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
 
     if (mtop > sizeof(storage) / sizeof(storage[0])
         && (tp = OPENSSL_malloc(mtop * sizeof(BN_ULONG))) == NULL)
-	return 0;
+        return 0;
 
     ap = a->d != NULL ? a->d : tp;
     bp = b->d != NULL ? b->d : tp;

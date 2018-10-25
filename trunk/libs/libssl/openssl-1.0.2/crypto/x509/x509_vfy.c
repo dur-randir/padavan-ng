@@ -1958,13 +1958,13 @@ int X509_cmp_time(const ASN1_TIME *ctm, time_t *cmp_time)
     case V_ASN1_UTCTIME:
         if (ctm->length != (int)(utctime_length))
             return 0;
-        break;
+                    break;
     case V_ASN1_GENERALIZEDTIME:
         if (ctm->length != (int)(generalizedtime_length))
-            return 0;
+        return 0;
         break;
     default:
-        return 0;
+            return 0;
     }
 
     /**

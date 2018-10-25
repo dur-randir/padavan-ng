@@ -764,7 +764,7 @@ int OBJ_create_objects(BIO *in)
                     }
                 } else {
                     l = NULL;
-                }
+            }
             }
         } else {
             s = NULL;

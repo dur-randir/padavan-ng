@@ -1827,7 +1827,7 @@ int main(int argc, char *argv[])
         if (sni_in_cert_cb)
             SSL_CTX_set_cert_cb(s_ctx, cert_cb, NULL);
         else
-            SSL_CTX_set_tlsext_servername_callback(s_ctx, servername_cb);
+        SSL_CTX_set_tlsext_servername_callback(s_ctx, servername_cb);
     }
 
 #ifndef OPENSSL_NO_TLSEXT

@@ -179,7 +179,7 @@ static EC_KEY *eckey_type2param(int ptype, void *pval)
     return eckey;
 
  ecerr:
-    EC_KEY_free(eckey);
+        EC_KEY_free(eckey);
     EC_GROUP_free(group);
     return NULL;
 }

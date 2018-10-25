@@ -166,16 +166,16 @@ int RSA_padding_check_PKCS1_OAEP_mgf1(unsigned char *to, int tlen,
             goto cleanup;
         }
 
-        /*
+    /*
          * Caller is encouraged to pass zero-padded message created with
          * BN_bn2binpad, but if it doesn't, we do this zero-padding copy
          * to avoid leaking that information. The copy still leaks some
          * side-channel information, but it's impossible to have a fixed
          * memory access pattern since we can't read out of the bounds of
          * |from|.
-         */
-        memset(em, 0, num);
-        memcpy(em + num - flen, from, flen);
+     */
+    memset(em, 0, num);
+    memcpy(em + num - flen, from, flen);
         from = em;
     }
 

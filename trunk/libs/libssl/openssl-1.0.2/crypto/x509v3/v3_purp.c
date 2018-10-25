@@ -129,7 +129,7 @@ int X509_check_purpose(X509 *x, int id, int ca)
     int idx;
     const X509_PURPOSE *pt;
 
-    x509v3_cache_extensions(x);
+        x509v3_cache_extensions(x);
 
     /* Return if side-effect only call */
     if (id == -1)
@@ -586,7 +586,7 @@ static int check_ca(const X509 *x)
 
 int X509_check_ca(X509 *x)
 {
-    x509v3_cache_extensions(x);
+        x509v3_cache_extensions(x);
 
     return check_ca(x);
 }
@@ -800,7 +800,6 @@ int X509_check_issued(X509 *issuer, X509 *subject)
     if (X509_NAME_cmp(X509_get_subject_name(issuer),
                       X509_get_issuer_name(subject)))
         return X509_V_ERR_SUBJECT_ISSUER_MISMATCH;
-
     x509v3_cache_extensions(issuer);
     x509v3_cache_extensions(subject);
 

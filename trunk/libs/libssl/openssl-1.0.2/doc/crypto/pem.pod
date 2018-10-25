@@ -355,65 +355,65 @@ Read a certificate in PEM format from a BIO:
  X509 *x;
  x = PEM_read_bio_X509(bp, NULL, 0, NULL);
  if (x == NULL)	{
-     /* Error */
- }
+	/* Error */
+	}
 
 Alternative method:
 
  X509 *x = NULL;
  if (!PEM_read_bio_X509(bp, &x, 0, NULL)) {
-     /* Error */
- }
+	/* Error */
+	}
 
 Write a certificate to a BIO:
 
  if (!PEM_write_bio_X509(bp, x)) {
-     /* Error */
- }
+	/* Error */
+	}
 
 Write an unencrypted private key to a FILE pointer:
 
  if (!PEM_write_PrivateKey(fp, key, NULL, NULL, 0, 0, NULL)) {
-     /* Error */
- }
+	/* Error */
+	}
 
 Write a private key (using traditional format) to a BIO using
 triple DES encryption, the pass phrase is prompted for:
 
  if (!PEM_write_bio_PrivateKey(bp, key, EVP_des_ede3_cbc(), NULL, 0, 0, NULL)) {
-     /* Error */
- }
+	/* Error */
+	}
 
 Write a private key (using PKCS#8 format) to a BIO using triple
 DES encryption, using the pass phrase "hello":
 
  if (!PEM_write_bio_PKCS8PrivateKey(bp, key, EVP_des_ede3_cbc(), NULL, 0, 0, "hello")) {
-     /* Error */
- }
+	/* Error */
+	}
 
 Read a private key from a BIO using the pass phrase "hello":
 
  key = PEM_read_bio_PrivateKey(bp, NULL, 0, "hello");
  if (key == NULL) {
-     /* Error */
- }
+	/* Error */
+	}
 
 Read a private key from a BIO using a pass phrase callback:
 
  key = PEM_read_bio_PrivateKey(bp, NULL, pass_cb, "My Private Key");
  if (key == NULL) {
-     /* Error */
- }
+	/* Error */
+	}
 
 Skeleton pass phrase callback:
 
  int pass_cb(char *buf, int size, int rwflag, void *u)
- {
+	{
 
-     /* We'd probably do something else if 'rwflag' is 1 */
-     printf("Enter pass phrase for \"%s\"\n", u);
+	/* We'd probably do something else if 'rwflag' is 1 */
+	printf("Enter pass phrase for \"%s\"\n", u);
 
-     /* get pass phrase, length 'len' into 'tmp' */
+	/* get pass phrase, length 'len' into 'tmp' */
      char *tmp = "hello";
      if (tmp == NULL) /* An error occurred */
          return -1;
@@ -422,9 +422,9 @@ Skeleton pass phrase callback:
 
      if (len > size)
          len = size;
-     memcpy(buf, tmp, len);
-     return len;
- }
+	memcpy(buf, tmp, len);
+	return len;
+	}
 
 =head1 NOTES
 

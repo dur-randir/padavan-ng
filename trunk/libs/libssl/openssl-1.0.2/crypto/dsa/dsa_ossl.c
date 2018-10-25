@@ -202,7 +202,7 @@ static DSA_SIG *dsa_do_sign(const unsigned char *dgst, int dlen, DSA *dsa)
     if (!BN_mod_mul(tmp, blind, dsa->priv_key, dsa->q, ctx))
         goto err;
     if (!BN_mod_mul(tmp, tmp, r, dsa->q, ctx))
-        goto err;
+            goto err;
 
     /* blindm := blind * m mod q */
     if (!BN_mod_mul(blindm, blind, m, dsa->q, ctx))
@@ -245,8 +245,8 @@ static DSA_SIG *dsa_do_sign(const unsigned char *dgst, int dlen, DSA *dsa)
         BN_free(r);
         BN_free(s);
     }
-    BN_CTX_free(ctx);
-    BN_clear_free(kinv);
+        BN_CTX_free(ctx);
+        BN_clear_free(kinv);
     return ret;
 }
 

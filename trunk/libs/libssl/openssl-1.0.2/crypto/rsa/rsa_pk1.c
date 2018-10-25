@@ -225,21 +225,21 @@ int RSA_padding_check_PKCS1_type_2(unsigned char *to, int tlen,
         goto err;
 
     if (flen != num) {
-        em = OPENSSL_malloc(num);
-        if (em == NULL) {
-            RSAerr(RSA_F_RSA_PADDING_CHECK_PKCS1_TYPE_2, ERR_R_MALLOC_FAILURE);
-            return -1;
-        }
-        /*
+    em = OPENSSL_malloc(num);
+    if (em == NULL) {
+        RSAerr(RSA_F_RSA_PADDING_CHECK_PKCS1_TYPE_2, ERR_R_MALLOC_FAILURE);
+        return -1;
+    }
+    /*
          * Caller is encouraged to pass zero-padded message created with
          * BN_bn2binpad, but if it doesn't, we do this zero-padding copy
          * to avoid leaking that information. The copy still leaks some
          * side-channel information, but it's impossible to have a fixed
          * memory access pattern since we can't read out of the bounds of
          * |from|.
-         */
+     */
         memset(em, 0, num);
-        memcpy(em + num - flen, from, flen);
+    memcpy(em + num - flen, from, flen);
         from = em;
     }
 

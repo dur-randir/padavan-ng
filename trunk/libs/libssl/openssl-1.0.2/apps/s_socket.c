@@ -416,7 +416,7 @@ static int do_accept(int acc_sock, int *sock)
         perror("accept");
 # endif
         return 0;
-    }
+        }
 
     *sock = ret;
     return 1;

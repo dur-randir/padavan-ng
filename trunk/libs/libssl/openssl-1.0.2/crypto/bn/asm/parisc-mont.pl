@@ -536,7 +536,7 @@ L\$copy
 	comiclr,=	0,$hi1,%r0
 	copy		$ti0,$hi0
 	addib,<>	8,$idx,L\$copy
-	std,ma		$hi0,8($rp)
+	std,ma		$hi0,8($rp)	
 ___
 
 if ($BN_SZ==4) {				# PA-RISC 1.1 code-path

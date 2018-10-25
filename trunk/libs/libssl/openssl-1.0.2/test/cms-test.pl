@@ -102,6 +102,13 @@ my $ossl8 = `$ossl_path version -v` =~ /0\.9\.8/;
 
 system ("$ossl_path no-cms > $null_path");
 if ($? == 0)
+        {
+        print "CMS disabled\n";
+        exit 0;
+        }
+
+system ("$ossl_path no-cms > $null_path");
+if ($? == 0)
 	{
 	print STDERR "CMS disabled.  skipping...\n";
 	exit 0;

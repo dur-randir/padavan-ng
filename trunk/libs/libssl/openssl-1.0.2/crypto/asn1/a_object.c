@@ -82,7 +82,7 @@ int i2d_ASN1_OBJECT(ASN1_OBJECT *a, unsigned char **pp)
             return 0;
         }
     } else {
-        p = *pp;
+    p = *pp;
     }
 
     ASN1_put_object(&p, 0, a->length, V_ASN1_OBJECT, V_ASN1_UNIVERSAL);

@@ -99,21 +99,21 @@ int PEM_def_callback(char *buf, int num, int rwflag, void *userdata)
     if (prompt == NULL)
         prompt = "Enter PEM pass phrase:";
 
-    /*
+        /*
      * rwflag == 0 means decryption
      * rwflag == 1 means encryption
      *
      * We assume that for encryption, we want a minimum length, while for
      * decryption, we cannot know any minimum length, so we assume zero.
-     */
+         */
     min_len = rwflag ? MIN_LENGTH : 0;
 
     i = EVP_read_pw_string_min(buf, min_len, num, prompt, rwflag);
-    if (i != 0) {
-        PEMerr(PEM_F_PEM_DEF_CALLBACK, PEM_R_PROBLEMS_GETTING_PASSWORD);
-        memset(buf, 0, (unsigned int)num);
+        if (i != 0) {
+            PEMerr(PEM_F_PEM_DEF_CALLBACK, PEM_R_PROBLEMS_GETTING_PASSWORD);
+            memset(buf, 0, (unsigned int)num);
         return -1;
-    }
+        }
     return strlen(buf);
 }
 

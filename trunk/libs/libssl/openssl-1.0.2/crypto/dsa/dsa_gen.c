@@ -148,7 +148,7 @@ int dsa_builtin_paramgen(DSA *ret, size_t bits, size_t qbits,
 
     if (evpmd == NULL) {
         if (qsize == SHA_DIGEST_LENGTH)
-            evpmd = EVP_sha1();
+        evpmd = EVP_sha1();
         else if (qsize == SHA224_DIGEST_LENGTH)
             evpmd = EVP_sha224();
         else

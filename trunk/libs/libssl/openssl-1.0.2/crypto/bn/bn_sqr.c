@@ -135,7 +135,7 @@ int BN_sqr(BIGNUM *r, const BIGNUM *a, BN_CTX *ctx)
     }
 
     rr->neg = 0;
-    rr->top = max;
+        rr->top = max;
     bn_correct_top(rr);
     if (r != rr && BN_copy(r, rr) == NULL)
         goto err;
