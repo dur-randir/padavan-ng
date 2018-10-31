@@ -1,4 +1,4 @@
-SRC_NAME=strongswan-5.6.3
+SRC_NAME=strongswan-5.7.1
 URL_PATH=https://download.strongswan.org/$(SRC_NAME).tar.bz2
 
 CFLAGS += -ffunction-sections -fdata-sections
@@ -36,6 +36,7 @@ configure:
 		--sysconfdir=/etc/storage/strongswan \
 		--disable-pki \
 		--disable-fips-prf \
+		--disable-botan \
 		--disable-gmp \
 		--disable-rc2 \
 		--disable-cmac \
