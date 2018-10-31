@@ -114,7 +114,7 @@ distclean: clean
 	@find $(SRC_NAME) -name config.cache | xargs rm -f
 
 romfs:
-ifeq ($(CONFIG_FIRMWARE_INCLUDE_SMBD),y)
+ifeq ($(CONFIG_FIRMWARE_INCLUDE_SMBD36),y)
 	$(ROMFSINST) $(SRC_NAME)/bin/samba_multicall /sbin/samba_multicall
 	$(ROMFSINST) -s samba_multicall /sbin/smbd
 	$(ROMFSINST) -s samba_multicall /sbin/nmbd

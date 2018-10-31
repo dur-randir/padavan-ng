@@ -452,7 +452,7 @@ if [ "$CONFIG_FIRMWARE_INCLUDE_CIFS" != "y" ] ; then
 	func_disable_kernel_param "CONFIG_CIFS"
 	func_disable_busybox_param "CONFIG_FEATURE_MOUNT_CIFS"
 fi
-if [ "$CONFIG_FIRMWARE_INCLUDE_SMBD" != "y" ] ; then
+if [ "$CONFIG_FIRMWARE_INCLUDE_SMBD" != "y" ] || [ "$CONFIG_FIRMWARE_INCLUDE_SMBD36" != "y" ]; then
 	func_disable_kernel_param "CONFIG_NETFILTER_FP_SMB"
 fi
 if [ "$CONFIG_FIRMWARE_INCLUDE_NFSD" != "y" -a "$CONFIG_FIRMWARE_INCLUDE_NFSC" != "y" -a "$CONFIG_FIRMWARE_INCLUDE_CIFS" != "y" ] ; then
