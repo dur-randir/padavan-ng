@@ -19,6 +19,15 @@
 
 #ifndef NO_4B_ADDRESS_SUPPORT
 #define ADDRESS_4B_MODE
+static int switch4b = 0;
+
+static void check_for_4b(u32 address)
+{
+	if (switch4b == 0 && address > 0x1000000) {
+		printf("spi address is: 0x%x - enable 4b address mode.\n", address);
+		switch4b = 1;
+	}
+}
 #endif
 
 
@@ -784,7 +793,8 @@ static int raspi_erase_sector(u32 offset)
 #ifdef COMMAND_MODE
 
 #ifdef ADDRESS_4B_MODE
-	if (spi_chip_info->addr4b)
+	check_for_4b(offset);
+	if (spi_chip_info->addr4b && switch4b)
 		flag |= SPIC_4B_ADDR;
 #endif
 	raspi_cmd(OPCODE_SE, offset, 0, 0, 0, 0, flag);
@@ -795,7 +805,7 @@ static int raspi_erase_sector(u32 offset)
 	buf[0] = OPCODE_SE;
 
 #ifdef ADDRESS_4B_MODE
-	if (spi_chip_info->addr4b) {
+	if (spi_chip_info->addr4b && switch4b) {
 		buf[1] = offset >> 24;
 		buf[2] = offset >> 16;
 		buf[3] = offset >> 8;
@@ -880,7 +890,8 @@ int raspi_erase(unsigned int offs, int len)
 	raspi_unprotect();
 
 #ifdef ADDRESS_4B_MODE
-	if (spi_chip_info->addr4b)
+	check_for_4b(offs + len);
+	if (spi_chip_info->addr4b && switch4b)
 		raspi_4byte_mode(1);
 #endif
 
@@ -897,7 +908,7 @@ int raspi_erase(unsigned int offs, int len)
 	}
 
 #ifdef ADDRESS_4B_MODE
-	if (spi_chip_info->addr4b)
+	if (spi_chip_info->addr4b && switch4b)
 		raspi_4byte_mode(0);
 #endif
 
@@ -929,7 +940,8 @@ int raspi_read(char *buf, unsigned int from, int len)
 	}
 
 #ifdef ADDRESS_4B_MODE
-	if (spi_chip_info->addr4b) {
+	check_for_4b(from + len);
+	if (spi_chip_info->addr4b && switch4b) {
 #ifdef COMMAND_MODE
 		cmd_flag |= SPIC_4B_ADDR;
 #endif
@@ -965,7 +977,7 @@ int raspi_read(char *buf, unsigned int from, int len)
 #ifndef READ_BY_PAGE
 
 #ifdef ADDRESS_4B_MODE
-	if (spi_chip_info->addr4b) {
+	if (spi_chip_info->addr4b && switch4b) {
 		cmd[1] = from >> 24;
 		cmd[2] = from >> 16;
 		cmd[3] = from >> 8;
@@ -986,7 +998,7 @@ int raspi_read(char *buf, unsigned int from, int len)
 #else // READ_BY_PAGE
 
 #ifdef ADDRESS_4B_MODE
-	if (spi_chip_info->addr4b) {
+	if (spi_chip_info->addr4b && switch4b) {
 		u32 page_size;
 		
 		rdlen = 0;
@@ -1025,7 +1037,7 @@ int raspi_read(char *buf, unsigned int from, int len)
 #endif // COMMAND_MODE
 
 #ifdef ADDRESS_4B_MODE
-	if (spi_chip_info->addr4b)
+	if (spi_chip_info->addr4b && switch4b)
 		raspi_4byte_mode(0);
 #endif
 
@@ -1059,7 +1071,8 @@ int raspi_write(char *buf, unsigned int to, int len)
 	raspi_unprotect();
 
 #ifdef ADDRESS_4B_MODE
-	if (spi_chip_info->addr4b) {
+	check_for_4b(to + len);
+	if (spi_chip_info->addr4b && switch4b) {
 #ifdef COMMAND_MODE
 		cmd_flag |= SPIC_4B_ADDR;
 #endif
@@ -1091,7 +1104,7 @@ int raspi_write(char *buf, unsigned int to, int len)
 		/* Set up the opcode in the write buffer. */
 		cmd[0] = OPCODE_PP;
 #ifdef ADDRESS_4B_MODE
-		if (spi_chip_info->addr4b) {
+		if (spi_chip_info->addr4b && switch4b) {
 			cmd[1] = to >> 24;
 			cmd[2] = to >> 16;
 			cmd[3] = to >> 8;
@@ -1134,7 +1147,7 @@ int raspi_write(char *buf, unsigned int to, int len)
 exit_mtd_write:
 
 #ifdef ADDRESS_4B_MODE
-	if (spi_chip_info->addr4b)
+	if (spi_chip_info->addr4b && switch4b)
 		raspi_4byte_mode(0);
 #endif
 
