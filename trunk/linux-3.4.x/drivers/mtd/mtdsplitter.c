@@ -301,8 +301,10 @@ static int create_mtd_partitions(struct mtd_info *m,
 	// check conditions
 	if (firmware_idx == -1 ||
 		storage_idx == -1 ||
-		nr_parts == 0)
+		nr_parts == 0) {
+		pr_err("Partition table error. Firmware or Storage partitions are absent.");
 		return 0;
+	}
 	// try split kernel and rootfs
 	if (parse_tplink(m, partition_table[firmware_idx].offset, partition_table[firmware_idx].size, &split_info) &&
 		parse_original(m, partition_table[firmware_idx].offset, partition_table[firmware_idx].size, &split_info)) {
