@@ -178,7 +178,7 @@ function show_clients(){
 			clientType.innerHTML = "<img title='"+ DEVICE_TYPE[clients[j][5]]+"' src='/bootstrap/img/wl_device/" + clients[j][5] +".gif'>";
 			clientName.innerHTML = "<div class='"+(j == 0 ? 'popover_bottom' : 'popover_top' ) + "' data-original-title='<font size=-1><#MAC_Address#>: " + fMAC + isWL + "</font>' data-content='"+("<#Computer_Name#>: " + clients[j][0])+"'>" + clients[j][0] + "</div>";
 			clientIP.innerHTML = (clients[j][6] == "1") ? "<a href=http://" + clients[j][1] + " target='blank'>" + clients[j][1] + "</a>" : clients[j][1];
-			clientMAC.innerHTML = "<a target='_blank' href='http://standards.ieee.org/cgi-bin/ouisearch?" + clients[j][2].substr(0,6) + "'>" + clients[j][2] + "</a>";
+			clientMAC.innerHTML = "<a target='_blank' href='http://api.macvendors.com/" + clients[j][2].substr(0,6) + "'>" + clients[j][2] + "</a>";
 			
 			if(list_type != "1" && sw_mode != "3"){
 				clientBlock.style.textAlign = "center";
@@ -200,7 +200,7 @@ function show_clients(){
 			xClientType.innerHTML = "<img title='" +DEVICE_TYPE[clients[j][5]]+"' src='/bootstrap/img/wl_device/" + clients[j][5] +".gif'>";
 			xClientName.innerHTML = "<div class='"+(j == 0 ? 'popover_bottom' : 'popover_top' ) + "' data-original-title='<font size=-1><#MAC_Address#>: " + fMAC + isWL + "</font>' data-content='"+("<#Computer_Name#>: " + clients[j][0])+"'>" + clients[j][0] + "</div>";
 			xClientIP.innerHTML = clients[j][1];
-			xClientMAC.innerHTML = "<a target='_blank' href='http://standards.ieee.org/cgi-bin/ouisearch?" + clients[j][2].substr(0,6) + "'>" + clients[j][2] + "</a>";
+			xClientMAC.innerHTML = "<a target='_blank' href='http://api.macvendors.com/" + clients[j][2].substr(0,6) + "'>" + clients[j][2] + "</a>";
 			
 			if(list_type != "1"){
 				xClientunBlock.style.textAlign = "center";
