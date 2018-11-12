@@ -677,13 +677,7 @@ again:
 				if (!ifa->ifa_addr ||
 					(ifa->ifa_addr->sa_family != sv->family) ||
 					(ifa->ifa_flags & IFF_LOOPBACK) ||
-					(!strcmp(ifa->ifa_name, "LeafNets")) ||
-					(!strncmp(ifa->ifa_name, "docker", 6)) ||
-					(!strncmp(ifa->ifa_name, "veth", 4)) ||
-					(!strncmp(ifa->ifa_name, "tun", 3)) ||
-					(!strncmp(ifa->ifa_name, "ppp", 3)) ||
-					(!strncmp(ifa->ifa_name, "wwan", 4)) ||
-					(!strncmp(ifa->ifa_name, "zt", 2)) ||
+					(strncmp(ifa->ifa_name, "br0", 3)) ||
 					(sv->mcast_addr &&
 					!(ifa->ifa_flags & IFF_MULTICAST)))
 					continue;
