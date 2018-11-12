@@ -15,6 +15,7 @@ configure:
 	./configure \
 		--prefix=$(STAGEDIR) \
 		--enable-static \
+		--enable-openssl-auto-load-config \
 		--disable-shared \
 		$(if $(CONFIG_IPV6),--enable-ipv6,--disable-ipv6) \
 		--disable-gopher \
@@ -57,6 +58,7 @@ configure:
 		--without-nghttp2 \
 		--without-nss \
 		--without-mbedtls \
+		--without-mesalink \
 		--without-polarssl \
 		--without-wolfssl \
 		--without-winidn \
