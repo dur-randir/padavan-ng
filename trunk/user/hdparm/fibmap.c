@@ -22,8 +22,6 @@
 
 #include "hdparm.h"
 
-static const unsigned int sector_bytes = 512; // FIXME someday
-
 struct file_extent {
 	__u64 byte_offset;
 	__u64 first_block;
@@ -152,7 +150,7 @@ struct fs_s {
 
 #define FIEMAP	_IOWR('f', 11, struct fm_s)
 
-static int walk_fiemap (int fd, unsigned int sectors_per_block, __u64 start_lba)
+static int walk_fiemap (int fd, unsigned int sectors_per_block, __u64 start_lba, unsigned int sector_bytes)
 {
 	unsigned int i, done = 0;
 	unsigned int blksize = sectors_per_block * sector_bytes;
@@ -222,7 +220,7 @@ int do_filemap (const char *file_name)
 	int fd, err;
 	struct stat st;
 	__u64 start_lba = 0;
-	unsigned int sectors_per_block, blksize;
+	unsigned int sectors_per_block, blksize, sector_bytes;
 
 	if ((fd = open(file_name, O_RDONLY)) == -1) {
 		err = errno;
@@ -243,7 +241,7 @@ int do_filemap (const char *file_name)
 	/*
 	 * Get the filesystem starting LBA:
 	 */
-	err = get_dev_t_geometry(st.st_dev, NULL, NULL, NULL, &start_lba, NULL);
+	err = get_dev_t_geometry(st.st_dev, NULL, NULL, NULL, &start_lba, NULL, &sector_bytes);
 	if (err) {
 		close(fd);
 		return err;
@@ -272,7 +270,7 @@ int do_filemap (const char *file_name)
 		return 0;
 	}
 
-	err = walk_fiemap(fd, sectors_per_block, start_lba);
+	err = walk_fiemap(fd, sectors_per_block, start_lba, sector_bytes);
 	if (err)
 		err = walk_fibmap(fd, &st, blksize, sectors_per_block, start_lba);
 	close (fd);

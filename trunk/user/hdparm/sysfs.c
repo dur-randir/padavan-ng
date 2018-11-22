@@ -217,7 +217,7 @@ static int sysfs_find_attr_file_path (const char *start_path, char **dest_path, 
 
 	strcpy(path, start_path);
 
-	while (depth < 20) {
+	while (depth++ < 20) {
 		strcat(path, "/..");
 
 		if (stat(path, &st) != 0)

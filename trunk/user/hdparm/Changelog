@@ -1,3 +1,13 @@
+hdparm-9.58:
+	- fix bug from 9.57 whereby -I for non-ATA might segfault.
+hdparm-9.57:
+	- added --set-sector-size flag to change logical sector size.
+	- fixed handling of non-512 byte logical sectors in several places.
+	- fixed possibility of infinite loop in sysfs_find_attr_file_path().
+	- respect the "quiet" flag in a few more places.
+	- skip "full device" checks for character devices (eg. /dev/sg*).
+	- don't issue READ_LOG_EXT commands unless the drive claims to support them.
+	- work around kernel/sysfs bug for "start" lba.
 hdparm-9.56:
 	- fixed byte order for --Istdout so that --Istdin can grok it
 	- added --Iraw for raw binary output of IDENTIFY data to a file

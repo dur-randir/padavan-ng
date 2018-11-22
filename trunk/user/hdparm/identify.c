@@ -678,7 +678,7 @@ static void print_devslp_info (int fd, __u16 *id)
 		int mdat = 0;
 
 		memset(buf, 0, 512);
-		if (fd != -1 && !get_id_log_page_data(fd, 8, buf) && (buf[0x37] & 0x80)) {
+		if (fd != -1 && !get_log_page_data(fd, 0x30, 8, buf) && (buf[0x37] & 0x80)) {
 			mdat = buf[0x30] & 0x1f;
 			deto = buf[0x31];
 			printf("Device Sleep:\n");
@@ -686,6 +686,28 @@ static void print_devslp_info (int fd, __u16 *id)
 			printf("\tMinimum DEVSLP Assertion Time (MDAT): %d ms (%s)\n", mdat?mdat:10, deto?"drive":"default");
 		}
 	}
+}
+
+static void
+print_logical_sector_sizes (int fd)
+{
+	__u8 d[512] = {0,};
+	int i, found = 0, rc;
+
+	rc = get_log_page_data(fd, 0x2f, 0, d);
+	if (rc)
+		return;
+	for (i = 0; i < 128; i += 16) {
+		unsigned int lss;
+		if ((d[i] & 0x80) == 0)  /* Is this descriptor valid? */
+			continue;  /* not valid */
+		if (!found++)
+			printf(" [ Supported:");
+		lss = d[i + 4] | (d[i + 5] << 8) | (d[i + 6] << 16) | (d[i + 7] << 24);  /* logical sector size */
+		printf(" %u", lss);
+	}
+	if (found)
+		printf(" ]");
 }
 
 /* our main() routine: */
@@ -974,20 +996,23 @@ void identify (int fd, __u16 *id_supplied)
 			if (val[106] & (1<<12))
 				lsize = (val[118] << 16) | val[117];
 			sector_bytes = 2 * lsize;
-			printf("\t%-31s %11u bytes\n","Logical  Sector size:", sector_bytes);
+			printf("\t%-31s %11u bytes","Logical  Sector size:", sector_bytes);
+			print_logical_sector_sizes(fd);
+			printf("\n");
 			printf("\t%-31s %11u bytes\n","Physical Sector size:", sector_bytes * pfactor);
 			if ((val[209] & 0xc000) == 0x4000) {
 				unsigned int offset = val[209] & 0x1fff;
 				printf("\t%-31s %11u bytes\n", "Logical Sector-0 offset:", offset * sector_bytes);
 			}
 		}
-		if (!bbbig) bbbig = (__u64)(ll>mm ? ll : mm); /* # 512 byte blocks */
+		if (!bbbig) bbbig = (__u64)((ll > mm) ? ll : mm); /* # 512 byte blocks */
 		if (!bbbig) bbbig = bb;
-		bbbig *= (sector_bytes / 512);
-		printf("\tdevice size with M = 1024*1024: %11llu MBytes\n", (unsigned long long)(bbbig>>11));
-		bbbig = (bbbig<<9)/1000000;
-		printf("\tdevice size with M = 1000*1000: %11llu MBytes ", (unsigned long long)bbbig);
-		if(bbbig > 1000) printf("(%llu GB)\n", (unsigned long long)(bbbig/1000));
+		bbbig *= sector_bytes;
+
+		printf("\tdevice size with M = 1024*1024: %11llu MBytes\n", bbbig / (1024ull * 1024ull));
+		bbbig /= 1000ull;
+		printf("\tdevice size with M = 1000*1000: %11llu MBytes ",  bbbig / 1000ull);
+		if (bbbig > 1000ull) printf("(%llu GB)\n", bbbig/1000000ull);
 		else printf("\n");
 	}
 

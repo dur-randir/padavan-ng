@@ -1,8 +1,8 @@
 /*
  * hdparm.c - Command line interface to get/set hard disk parameters.
- *          - by Mark Lord (C) 1994-2017 -- freely distributable.
+ *          - by Mark Lord (C) 1994-2018 -- freely distributable.
  */
-#define HDPARM_VERSION "v9.56"
+#define HDPARM_VERSION "v9.58"
 
 #define _LARGEFILE64_SOURCE /*for lseek64*/
 #define _BSD_SOURCE	/* for strtoll() */
@@ -148,6 +148,9 @@ static __u64 erase_sectors_addr = ~0ULL;
 static struct sector_range_s *trim_sector_ranges = NULL;
 static int   trim_sector_ranges_count = 0;
 static int   trim_from_stdin = 0;
+static int   do_set_sector_size = 0;
+static __u64 new_sector_size = 0;
+#define SET_SECTOR_SIZE "set-sector-size"
 
 static int   write_sector = 0;
 static __u64 write_sector_addr = ~0ULL;
@@ -998,11 +1001,13 @@ do_set_security (int fd)
 			fprintf(stderr, "BUG in do_set_security(), command1=0x%x\n", security_command);
 			exit(EINVAL);
 	}
-	printf(" Issuing %s command, password=\"%s\", user=%s",
-		description, security_password, (data[0] & 1) ? "master" : "user");
-	if (security_command == ATA_OP_SECURITY_SET_PASS)
-		printf(", mode=%s", data[1] ? "max" : "high");
-	printf("\n");
+	if (!quiet) {
+		printf(" Issuing %s command, password=\"%s\", user=%s",
+			description, security_password, (data[0] & 1) ? "master" : "user");
+		if (security_command == ATA_OP_SECURITY_SET_PASS)
+			printf(", mode=%s", data[1] ? "max" : "high");
+		printf("\n");
+	}
 
 	/*
 	 * The Linux kernel IDE driver (until at least 2.6.12) segfaults on the first
@@ -1094,7 +1099,7 @@ static void get_identify_data (int fd)
 	}
 }
 
-int get_id_log_page_data (int fd, __u8 pagenr, __u8 *buf)
+static int do_read_log (int fd, __u8 log_address, __u8 pagenr, void *buf)
 {
 	struct hdio_taskfile *r;
 	int err = 0;
@@ -1106,7 +1111,7 @@ int get_id_log_page_data (int fd, __u8 pagenr, __u8 *buf)
 		return err;
 	}
 
-	init_hdio_taskfile(r, ATA_OP_READ_LOG_EXT, RW_READ, LBA48_FORCE, 0x30 + (pagenr << 8), 1, 512);
+	init_hdio_taskfile(r, ATA_OP_READ_LOG_EXT, RW_READ, LBA48_FORCE, log_address + (pagenr << 8), 1, 512);
 	if (do_taskfile_cmd(fd, r, timeout_15secs)) {
 		err = errno;
 	} else {
@@ -1114,6 +1119,35 @@ int get_id_log_page_data (int fd, __u8 pagenr, __u8 *buf)
 	}
 	free(r);
 	return err;
+}
+
+
+int get_log_page_data (int fd, __u8 log_address, __u8 pagenr, __u8 *buf)
+{
+	static __u16 *page0 = NULL, page0_buf[512] = {0,};
+	int err;
+
+	get_identify_data(fd);
+	if (!id)
+		exit(EIO);
+	if ((id[84] && (1<<5)) == 0)
+		return -ENOENT;  /* READ_LOG_EXT not supported */
+	if (!page0) {
+		err = do_read_log(fd, 0, 0, page0_buf);
+		if (err) {
+			fprintf(stderr, "READ_LOG_EXT(0,0) failed: %s\n", strerror(err));
+			return -ENOENT;
+		}
+		page0 = page0_buf;
+	}
+	if (page0[log_address] <= pagenr)
+		return -ENOENT;
+	err = do_read_log(fd, log_address, pagenr, buf);
+	if (err) {
+		fprintf(stderr, "READ_LOG_EXT(0x%02x, %u) failed: %s\n", log_address, pagenr, strerror(err));
+		return -ENOENT;
+	}
+	return 0;
 }
 
 static void confirm_i_know_what_i_am_doing (const char *opt, const char *explanation)
@@ -1151,11 +1185,11 @@ static int flush_wcache (int fd)
 	return err;
 }
 
-static void dump_sectors (__u16 *w, unsigned int count, int raw)
+static void dump_sectors (__u16 *w, unsigned int count, int raw, unsigned int sector_bytes)
 {
 	unsigned int i;
 
-	for (i = 0; i < (count*256/8); ++i) {
+	for (i = 0; i < (count*(sector_bytes/2)/8); ++i) {
 		if (raw) {
 			printf("%04x %04x %04x %04x %04x %04x %04x %04x\n",
 				w[0], w[1], w[2], w[3], w[4], w[5], w[6], w[7]);
@@ -1173,10 +1207,13 @@ static void dump_sectors (__u16 *w, unsigned int count, int raw)
 
 static int abort_if_not_full_device (int fd, __u64 lba, const char *devname, const char *msg)
 {
+	struct stat stat;
 	__u64 start_lba;
 	int i, err, shortened = 0;
 	char *fdevname = strdup(devname);
 
+	if (0 == fstat(fd, &stat) && S_ISCHR(stat.st_mode))
+		return 0; /* skip geometry test for character (non-block) devices; eg. /dev/sg* */
 	err = get_dev_geometry(fd, NULL, NULL, NULL, &start_lba, NULL);
 	if (err)
 		exit(err);
@@ -1225,7 +1262,7 @@ static __u16 *get_dco_identify_data (int fd, int quietly)
 			unsigned char *b = (unsigned char *)&dco[i];
 			dco[i] = b[0] | (b[1] << 8);	/* le16_to_cpu */
 		}
-		//dump_sectors(dco, 1, 0);
+		//dump_sectors(dco, 1, 0, 512);
 		return dco;
 	}
 }
@@ -1257,7 +1294,7 @@ do_dco_setmax_cmd (int fd)
 		}
 		if (verbose) {
 			printf("Original DCO:\n");
-			dump_sectors(dco, 1, 0);
+			dump_sectors(dco, 1, 0, 512);
 		}
 		// set the new MAXLBA to the requested sectors - 1
 		*maxlba = set_max_addr - 1;
@@ -1265,7 +1302,7 @@ do_dco_setmax_cmd (int fd)
 		dco[255] = (dco[255] & 0xFF) | ((__u16) dco_verify_checksum(dco) << 8);
 		if (verbose) {
 			printf("New DCO:\n");
-			dump_sectors(dco, 1, 0);
+			dump_sectors(dco, 1, 0, 512);
 		}
 
 	} else {
@@ -1571,6 +1608,82 @@ get_trim_dev_limit (void)
 	return 1;  /* all other drives, including Intel SSDs */
 }
 
+int get_current_sector_size (int fd)
+{
+	unsigned int words = 256;
+
+	get_identify_data(fd);
+	if(id && (id[106] & 0xc000) == 0x4000) {
+		if (id[106] & (1<<12))
+			words = (id[118] << 16) | id[117];
+	}
+	return 2 * words;
+}
+
+static int
+get_set_sector_index (int fd, unsigned int wanted_sector_size, int *checkword)
+{
+	__u8 d[512] = {0,};
+	const int SECTOR_CONFIG = 0x2f;
+	int i, rc;
+
+	rc = get_log_page_data(fd, SECTOR_CONFIG, 0, d);
+	if (rc) {
+		fprintf(stderr, "READ_LOG_EXT(SECTOR_CONFIGURATION) failed: %s\n", strerror(rc));
+		exit(1);
+	}
+	for (i = 0; i < 128; i += 16) {
+		unsigned int lss;
+		if ((d[i] & 0x80) == 0)  /* Is this descriptor valid? */
+			continue;  /* not valid */
+		lss = d[i + 4] | (d[i + 5] << 8) | (d[i + 6] << 16) | (d[i + 7] << 24);  /* logical sector size */
+		if (lss == wanted_sector_size) {
+			*checkword = d[i + 2] | (d[i + 3] << 8);
+			return i / 16;  /* descriptor index */
+		}
+	}
+	fprintf(stderr, "ERROR: unsupported sector size: %d\n", wanted_sector_size);
+	exit (-1);
+}
+
+static int do_set_sector_size_cmd (int fd, const char *devname)
+{
+	int index, err = 0;
+	__u8 ata_op;
+	struct hdio_taskfile *r;
+	int checkword = 0;
+
+	abort_if_not_full_device(fd, 0, devname, NULL);
+	r = malloc(sizeof(struct hdio_taskfile) + 512);
+	if (!r) {
+		err = errno;
+		perror("malloc()");
+		return err;
+	}
+	ata_op = ATA_OP_SET_SECTOR_CONFIGURATION;
+	init_hdio_taskfile(r, ata_op, RW_WRITE, LBA48_FORCE, 0, 0, 0);
+
+	index = get_set_sector_index(fd, new_sector_size, &checkword);
+	r->hob.feat  = checkword >> 8;
+	r->lob.feat  = checkword;
+	r->hob.nsect = 0;
+	r->lob.nsect = index;
+	r->oflags.bits.hob.feat = 1;
+
+	printf("changing sector size configuration to %llu: ", new_sector_size);
+	fflush(stdout);
+
+	if (do_taskfile_cmd(fd, r, timeout_60secs)) {
+		err = errno;
+		perror("FAILED");
+	} else {
+		printf("succeeded\n");
+	}
+
+	free(r);
+	return err;
+}
+
 static int
 do_trim_from_stdin (int fd, const char *devname)
 {
@@ -1642,16 +1755,17 @@ static int do_write_sector (int fd, __u64 lba, const char *devname)
 	int err = 0;
 	__u8 ata_op;
 	struct hdio_taskfile *r;
+	int sector_bytes = get_current_sector_size(fd);
 
 	abort_if_not_full_device(fd, lba, devname, NULL);
-	r = malloc(sizeof(struct hdio_taskfile) + 512);
+	r = malloc(sizeof(struct hdio_taskfile) + sector_bytes);
 	if (!r) {
 		err = errno;
 		perror("malloc()");
 		return err;
 	}
 	ata_op = (lba >= lba28_limit) ? ATA_OP_WRITE_PIO_EXT : ATA_OP_WRITE_PIO;
-	init_hdio_taskfile(r, ata_op, RW_WRITE, LBA28_OK, lba, 1, 512);
+	init_hdio_taskfile(r, ata_op, RW_WRITE, LBA28_OK, lba, 1, sector_bytes);
 
 	printf("re-writing sector %llu: ", lba);
 	fflush(stdout);
@@ -1675,16 +1789,17 @@ static int do_read_sector (int fd, __u64 lba, const char *devname)
 	int err = 0;
 	__u8 ata_op;
 	struct hdio_taskfile *r;
+	int sector_bytes = get_current_sector_size(fd);
 
 	abort_if_not_full_device(fd, lba, devname, NULL);
-	r = malloc(sizeof(struct hdio_taskfile) + 512);
+	r = malloc(sizeof(struct hdio_taskfile) + sector_bytes);
 	if (!r) {
 		err = errno;
 		perror("malloc()");
 		return err;
 	}
 	ata_op = (lba >= lba28_limit) ? ATA_OP_READ_PIO_EXT : ATA_OP_READ_PIO;
-	init_hdio_taskfile(r, ata_op, RW_READ, LBA28_OK, lba, 1, 512);
+	init_hdio_taskfile(r, ata_op, RW_READ, LBA28_OK, lba, 1, sector_bytes);
 
 	printf("reading sector %llu: ", lba);
 	fflush(stdout);
@@ -1694,7 +1809,7 @@ static int do_read_sector (int fd, __u64 lba, const char *devname)
 		perror("FAILED");
 	} else {
 		printf("succeeded\n");
-		dump_sectors(r->data, 1, 0);
+		dump_sectors(r->data, 1, 0, sector_bytes);
 	}
 	free(r);
 	return err;
@@ -1857,6 +1972,7 @@ static void usage_help (int clue, int rc)
 	" --sanitize-overwrite  PATTERN  Overwrite the internal media with constant PATTERN\n"
 	" --sanitize-status           Show sanitize status information\n"
 	" --security-help             Display help for ATA security commands\n"
+	" --set-sector-size           Change logical sector size of drive\n"
 	" --trim-sector-ranges        Tell SSD firmware to discard unneeded data sectors: lba:count ..\n"
 	" --trim-sector-ranges-stdin  Same as above, but reads lba:count pairs from stdin\n"
 	" --verbose                   Display extra diagnostics from some commands\n"
@@ -1922,6 +2038,13 @@ void process_dev (char *devname)
 		perror(devname);
 		close(fd);
 		exit(err);
+	}
+
+	if (do_set_sector_size) {
+		if (num_flags_processed > 1 || argc)
+			usage_help(16,EINVAL);
+		confirm_please_destroy_my_drive("--" SET_SECTOR_SIZE, "This will likely destroy all data on the drive.");
+		exit(do_set_sector_size_cmd(fd, devname));
 	}
 
 	if (trim_from_stdin) {
@@ -2259,7 +2382,8 @@ void process_dev (char *devname)
 	if (do_dco_restore) {
 		__u8 args[4] = {ATA_OP_DCO,0,0xc0,0};
 		confirm_i_know_what_i_am_doing("--dco-restore", "You are trying to deliberately reset your drive configuration back to the factory defaults.\nThis may change the apparent capacity and feature set of the drive, making all data on it inaccessible.\nYou could lose *everything*.");
-		printf(" issuing DCO restore command\n");
+		if (!quiet)
+			printf(" issuing DCO restore command\n");
 		if (do_drive_cmd(fd, args, 0)) {
 			err = errno;
 			perror(" HDIO_DRIVE_CMD(dco_restore) failed");
@@ -2267,7 +2391,8 @@ void process_dev (char *devname)
 	}
 	if (do_dco_freeze) {
 		__u8 args[4] = {ATA_OP_DCO,0,0xc1,0};
-		printf(" issuing DCO freeze command\n");
+		if (!quiet)
+			printf(" issuing DCO freeze command\n");
 		if (do_drive_cmd(fd, args, 0)) {
 			err = errno;
 			perror(" HDIO_DRIVE_CMD(dco_freeze) failed");
@@ -2280,7 +2405,8 @@ void process_dev (char *devname)
 				confirm_i_know_what_i_am_doing("--dco-setmax", "You have requested reducing the apparent size of the drive.\nThis is a BAD idea, and can easily destroy all of the drive's contents.");
 
 			// set max sectors with DCO set command
-			printf("issuing DCO set command (sectors = %llu)\n", set_max_addr);
+			if (!quiet)
+				printf("issuing DCO set command (sectors = %llu)\n", set_max_addr);
 			do_dco_setmax_cmd(fd);
 
 			// invalidate current IDENTIFY data
@@ -2290,7 +2416,8 @@ void process_dev (char *devname)
 #endif
 	if (security_freeze) {
 		__u8 args[4] = {ATA_OP_SECURITY_FREEZE_LOCK,0,0,0};
-		printf(" issuing security freeze command\n");
+		if (!quiet)
+			printf(" issuing security freeze command\n");
 		if (do_drive_cmd(fd, args, 0)) {
 			err = errno;
 			perror(" HDIO_DRIVE_CMD(security_freeze) failed");
@@ -2298,7 +2425,7 @@ void process_dev (char *devname)
 	}
 	if (set_seagate) {
 		__u8 args[4] = {0xfb,0,0,0};
-		if (get_seagate)
+		if (!quiet && get_seagate)
 			printf(" disabling Seagate auto powersaving mode\n");
 		if (do_drive_cmd(fd, args, 0)) {
 			err = errno;
@@ -2306,7 +2433,7 @@ void process_dev (char *devname)
 		}
 	}
 	if (set_busstate) {
-		if (get_busstate)
+		if (!quiet && get_busstate)
 			printf(" setting bus state to %d (%s)\n", busstate, busstate_str(busstate));
 		if (ioctl(fd, HDIO_SET_BUSSTATE, busstate)) {
 			err = errno;
@@ -2315,7 +2442,7 @@ void process_dev (char *devname)
 	}
 #if !defined (HDPARM_MINI)
 	if (set_max_sectors) {
-		if (get_native_max_sectors)
+		if (!quiet && get_native_max_sectors)
 			printf(" setting max visible sectors to %llu (%s)\n", set_max_addr, set_max_permanent ? "permanent" : "temporary");
 		get_identify_data(fd);
 		if (id) {
@@ -2574,7 +2701,7 @@ void process_dev (char *devname)
 		get_identify_data(fd);
 		if (id) {
 			if (do_IDentity == 2) {
-				dump_sectors(id, 1, 1);
+				dump_sectors(id, 1, 1, 512);
 			} else if (do_IDentity == 3) {
 				/* Write raw binary IDENTIFY DEVICE data to the specified file */
 				int rfd = open(raw_identify_path, O_WRONLY|O_TRUNC|O_CREAT, 0644);
@@ -2706,7 +2833,7 @@ void process_dev (char *devname)
 				}
 			}
 		
-	}
+	}	
 #endif
 
 	if (do_ctimings)
@@ -2963,6 +3090,7 @@ static void get_ow_pattern (void)
 	}
 }
 
+static const char *sector_size_emsg = "sector size out of range";
 static const char *lba_emsg = "bad/missing sector value";
 static const char *count_emsg = "bad/missing sector count";
 static const __u64 lba_limit = (1ULL << 48) - 1;
@@ -3207,6 +3335,9 @@ get_longarg (void)
 		erase_sectors = 1;
 		get_u64_parm(0, 0, NULL, &erase_sectors_addr, 0, lba_limit, name, lba_emsg);
 #endif
+	} else if (0 == strcasecmp(name, SET_SECTOR_SIZE)) {
+		if (get_u64_parm(0, 0, NULL, &new_sector_size, 0x200, 0x1080, "--" SET_SECTOR_SIZE, sector_size_emsg))
+			do_set_sector_size = 1;
 	} else if (0 == strcasecmp(name, "trim-sector-ranges-stdin")) {
 		trim_from_stdin = 1;
 	} else if (0 == strcasecmp(name, "trim-sector-ranges")) {

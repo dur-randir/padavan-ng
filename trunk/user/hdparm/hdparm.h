@@ -19,7 +19,8 @@ int sysfs_set_attr (int fd, const char *attr, const char *fmt, void *val_p, int 
 int sysfs_get_attr_recursive (int fd, const char *attr, const char *fmt, void *val1, void *val2, int verbose);
 
 int get_dev_geometry (int fd, __u32 *cyls, __u32 *heads, __u32 *sects, __u64 *start_lba, __u64 *nsectors);
-int get_dev_t_geometry (dev_t dev, __u32 *cyls, __u32 *heads, __u32 *sects, __u64 *start_lba, __u64 *nsectors);
+int get_dev_t_geometry (dev_t dev, __u32 *cyls, __u32 *heads, __u32 *sects,
+				__u64 *start_lba, __u64 *nsectors, unsigned int *sector_bytes);
 int do_filemap(const char *file_name);
 int do_fallocate_syscall (const char *name, __u64 bytecount);
 int fwdownload (int fd, __u16 *id, const char *fwpath, int xfer_mode);
@@ -32,7 +33,8 @@ int  wdidle3_get_timeout (int fd, unsigned char *timeout);
 void wdidle3_print_timeout (unsigned char timeout);
 unsigned char wdidle3_msecs_to_timeout (unsigned int msecs);
 
-int get_id_log_page_data (int fd, __u8 pagenr, __u8 *buf);
+int get_log_page_data (int fd, __u8 log_address, __u8 pagenr, __u8 *buf);
+int get_current_sector_size (int fd);
 
 /* APT Functions */
 int apt_detect (int fd, int verbose);

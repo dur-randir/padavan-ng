@@ -1,8 +1,10 @@
 Begin4
 Title:		hdparm
-Version:	9.56
-Entered-date:	2018-03-25
+Version:	9.58
+Entered-date:	2018-10-26
 Description:	hdparm - get/set hard disk parameters for Linux SATA/IDE drives.
+		v9.58 fixed -I crash on non-ATA
+		v9.57 added --set-sector-size, general support for non-512 byte partitions
 		v9.56 fixed --Istdout, added --Iraw
 		v9.55 #include <sys/sysmacros.h>
 		v9.54 partial revert of JMicron changes.
@@ -130,7 +132,7 @@ Author:		mlord@pobox.com (Mark Lord)
 Maintained-by:	mlord@pobox.com (Mark Lord)
 Primary-site:	http://sourceforge.net/projects/hdparm/
 Alternate-site:	http://www.ibiblio.org/pub/Linux/system/hardware
-		137K hdparm-9.56.tar.gz
+		138K hdparm-9.58.tar.gz
 		7K hdparm.lsm
 Platforms:	Linux
 Copying-policy:	BSD License

@@ -146,6 +146,7 @@ int get_dev_geometry (int fd, __u32 *cyls, __u32 *heads, __u32 *sects,
 	static struct local_hd_geometry      g;
 	static struct local_hd_big_geometry bg;
 	int err = 0, try_getgeo_big_first = 1;
+	int sector_bytes = get_current_sector_size(fd);
 
 	if (nsectors) {
 		err = get_sector_count(fd, nsectors);
@@ -159,9 +160,12 @@ int get_dev_geometry (int fd, __u32 *cyls, __u32 *heads, __u32 *sects,
 		 * so it cannot be relied upon for start_lba with very large drives >= 2TB.
 		 */
 		__u64 result;
-		if (0 == sysfs_get_attr(fd, "start", "%llu", &result, NULL, 0)
-		 || 0 == get_raid1_start_lba(fd, &result))
-		{
+		if (0 == sysfs_get_attr(fd, "start", "%llu", &result, NULL, 0)) {
+			result /= (sector_bytes / 512);   /* sysfs entry is broken for non-512byte sectors */
+			*start_lba = result;
+			start_lba = NULL;
+			try_getgeo_big_first = 0;	/* if kernel has sysfs, it probably lacks GETGEO_BIG */
+		} else if (0 == get_raid1_start_lba(fd, &result)) {
 			*start_lba = result;
 			 start_lba = NULL;
 			try_getgeo_big_first = 0;	/* if kernel has sysfs, it probably lacks GETGEO_BIG */
@@ -247,7 +251,7 @@ static int find_dev_in_directory (dev_t dev, const char *dir, char *path, int ve
 }
 
 int get_dev_t_geometry (dev_t dev, __u32 *cyls, __u32 *heads, __u32 *sects,
-				__u64 *start_lba, __u64 *nsectors)
+				__u64 *start_lba, __u64 *nsectors, unsigned int *sector_bytes)
 {
 	char path[PATH_MAX];
 	int fd, err;
@@ -262,6 +266,7 @@ int get_dev_t_geometry (dev_t dev, __u32 *cyls, __u32 *heads, __u32 *sects,
 		perror(path);
 		return err;
 	}
+	*sector_bytes = get_current_sector_size(fd);
 
 	err = get_dev_geometry(fd, cyls, heads, sects, start_lba, nsectors);
 	close(fd);

@@ -195,7 +195,7 @@ unsigned char wdidle3_msecs_to_timeout (unsigned int secs)
 void wdidle3_print_timeout (unsigned char timeout)
 {
 	if (verbose)
-		printf("[raw=0x%02x] ", timeout);	//FIXME
+		printf("[raw=0x%02x] ", timeout);
 	if (timeout == 0)
 		printf("disabled");
 	else if (timeout < 0x50 || timeout == WDC_TIMEOUT_THRESHOLD)
