@@ -606,6 +606,7 @@ write_smb_conf_header(void)
 	fprintf(fp, "max protocol = SMB2\n");
 	fprintf(fp, "passdb backend = smbpasswd\n");
 	fprintf(fp, "security = USER\n");
+	fprintf(fp, "username level = 8\n");
 #endif
 	return fp;
 }
