@@ -96,7 +96,7 @@ do_ncurses_for_target() {
     do_ncurses_backend host="${CT_TARGET}" \
                        prefix="${prefix}" \
                        destdir="${CT_SYSROOT_DIR}" \
-                       cflags="${CT_TARGET_CFLAGS}" \
+                       cflags="${CT_ALL_TARGET_CFLAGS}" \
                        "${opts[@]}"
     CT_Popd
     CT_EndStep

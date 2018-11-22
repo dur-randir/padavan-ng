@@ -223,13 +223,14 @@ do_binutils_backend() {
         sed -r -e "s/@@DEFAULT_LD@@/${CT_BINUTILS_LINKER_DEFAULT}/" \
             "${CT_LIB_DIR}/scripts/build/binutils/binutils-ld.in"      \
             >"${prefix}/bin/${CT_TARGET}-ld"
-        chmod +x "${prefix}/bin/${CT_TARGET}-ld"
+        chmod a+x "${prefix}/bin/${CT_TARGET}-ld"
         cp -a "${prefix}/bin/${CT_TARGET}-ld"   \
               "${prefix}/${CT_TARGET}/bin/ld"
 
-        # If needed, force using ld.bfd during the toolchain build
-        if [ "${CT_BINUTILS_FORCE_LD_BFD}" = "y" ]; then
-            export CTNG_LD_IS=bfd
+        # If needed, force using ld.bfd during the toolchain build.
+        # Note that
+        if [ "${CT_BINUTILS_FORCE_LD_BFD_DEFAULT}" = "y" ]; then
+            CT_EnvModify export CTNG_LD_IS bfd
         fi
     fi
 }

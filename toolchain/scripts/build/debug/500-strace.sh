@@ -12,7 +12,7 @@ do_debug_strace_extract()
 
 do_debug_strace_build()
 {
-    local cflags="${CT_TARGET_CFLAGS}"
+    local cflags="${CT_ALL_TARGET_CFLAGS}"
 
     CT_DoStep INFO "Installing strace"
 
@@ -30,14 +30,15 @@ do_debug_strace_build()
     CT_DoExecLog CFG                                           \
     CC="${CT_TARGET}-${CT_CC}"                                 \
     CFLAGS="${cflags}"                                         \
-    LDFLAGS="${CT_TARGET_LDFLAGS}"                             \
+    LDFLAGS="${CT_ALL_TARGET_LDFLAGS}"                         \
     CPP="${CT_TARGET}-cpp"                                     \
     LD="${CT_TARGET}-ld"                                       \
     ${CONFIG_SHELL}                                            \
     "${CT_SRC_DIR}/strace/configure"                           \
         --build=${CT_BUILD}                                    \
         --host=${CT_TARGET}                                    \
-        --prefix=/usr
+        --prefix=/usr                                          \
+        --enable-mpers=check
 
     CT_DoLog EXTRA "Building strace"
     CT_DoExecLog ALL make

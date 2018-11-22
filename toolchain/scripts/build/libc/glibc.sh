@@ -23,10 +23,9 @@ do_libc_extract() {
         # we do not support concurrent use of the source directory
         # and next run, if using different glibc-ports source, will override
         # this symlink anyway.
-        CT_DoExecLog ALL ln -sf "${CT_GLIBC_PORTS_SRC_DIR}/${CT_GLIBC_PORTS_BASENAME}" \
-                "${CT_GLIBC_SRC_DIR}/${CT_GLIBC_BASENAME}/ports"
+        CT_DoExecLog ALL ln -sf "${CT_SRC_DIR}/${CT_GLIBC_PORTS_DIR_NAME}" \
+                "${CT_SRC_DIR}/${CT_GLIBC_DIR_NAME}/ports"
     fi
-    # TBD make the configure timestamp fix in all patched packages (e.g. part of CT_ExtractPatch)
 }
 
 # Build and install headers and start files
@@ -171,6 +170,7 @@ do_libc_backend_once() {
         *)  extra_config+=("--enable-add-ons=$(do_libc_add_ons_list ,)");;
     esac
 
+    [ "${CT_GLIBC_ENABLE_WERROR}" != "y" ] && extra_config+=("--disable-werror")
     [ -n "${CT_PKGVERSION}" ] && extra_config+=("--with-pkgversion=${CT_PKGVERSION}")
     [ -n "${CT_TOOLCHAIN_BUGURL}" ] && extra_config+=("--with-bugurl=${CT_TOOLCHAIN_BUGURL}")
 
@@ -196,7 +196,7 @@ do_libc_backend_once() {
     esac
 
     # In the order of increasing precedence. Flags common to compiler and linker.
-    glibc_cflags+=" ${CT_TARGET_CFLAGS}"
+    glibc_cflags+=" ${CT_ALL_TARGET_CFLAGS}"
     glibc_cflags+=" ${CT_GLIBC_EXTRA_CFLAGS}"
     glibc_cflags+=" ${multi_flags}"
 

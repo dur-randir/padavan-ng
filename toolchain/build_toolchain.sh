@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# get current directory
-CURDIR=`pwd`
-
 echo "================ START BUILDING TOOLCHAIN =============="
 
 if [ ! -f configure ]; then

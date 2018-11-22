@@ -1,0 +1,33 @@
+diff --git a/libsanitizer/sanitizer_common/sanitizer_platform.h b/libsanitizer/sanitizer_common/sanitizer_platform.h
+index 1eb4d0c61..82875872c 100644
+--- a/libsanitizer/sanitizer_common/sanitizer_platform.h
++++ b/libsanitizer/sanitizer_common/sanitizer_platform.h
+@@ -112,6 +112,15 @@
+ 
+ #if defined(__mips__)
+ # define SANITIZER_MIPS 1
++# if defined(_MIPS_SIM) && _MIPS_SIM == _ABIO32
++#  define ONE_OF_MIPS_32_N32_64(a, b, c) (a)
++# elif defined(_MIPS_SIM) && _MIPS_SIM == _ABIN32
++#  define ONE_OF_MIPS_32_N32_64(a, b, c) (b)
++# elif defined(_MIPS_SIM) && _MIPS_SIM == _ABI64
++#  define ONE_OF_MIPS_32_N32_64(a, b, c) (c)
++# else
++#  define ONE_OF_MIPS_32_N32_64(a, b, c) sanitizer_platform_unknown_sim
++# endif
+ # if defined(__mips64)
+ #  define SANITIZER_MIPS32 0
+ #  define SANITIZER_MIPS64 1
+diff --git a/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h
+index 5b7a304e9..152f5a4cd 100644
+--- a/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h
++++ b/libsanitizer/sanitizer_common/sanitizer_platform_limits_posix.h
+@@ -97,7 +97,7 @@ namespace __sanitizer {
+ #else
+   const unsigned struct_kernel_stat_sz =
+                  SANITIZER_ANDROID ? FIRST_32_SECOND_64(104, 128) :
+-                                     FIRST_32_SECOND_64(160, 216);
++                                     ONE_OF_MIPS_32_N32_64(144, 160, 216);
+ #endif
+   const unsigned struct_kernel_stat64_sz = 104;
+ #elif defined(__s390__) && !defined(__s390x__)

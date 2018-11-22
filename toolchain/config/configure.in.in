@@ -24,11 +24,11 @@ config CONFIGURE_has_libtool_2_4_or_newer
 config CONFIGURE_has_libtoolize_2_4_or_newer
     @KCONFIG_libtoolize_2_4_or_newer@
 
-config CONFIGURE_has_autoconf_2_63_or_newer
-    @KCONFIG_autoconf_2_63_or_newer@
+config CONFIGURE_has_autoconf_2_65_or_newer
+    @KCONFIG_autoconf_2_65_or_newer@
 
-config CONFIGURE_has_autoreconf_2_63_or_newer
-    @KCONFIG_autoreconf_2_63_or_newer@
+config CONFIGURE_has_autoreconf_2_65_or_newer
+    @KCONFIG_autoreconf_2_65_or_newer@
 
 config CONFIGURE_has_automake_1_15_or_newer
     @KCONFIG_automake_1_15_or_newer@
@@ -44,6 +44,18 @@ config CONFIGURE_has_svn
 
 config CONFIGURE_has_git
     @KCONFIG_git@
+
+config CONFIGURE_has_md5sum
+    @KCONFIG_md5sum@
+
+config CONFIGURE_has_sha1sum
+    @KCONFIG_sha1sum@
+
+config CONFIGURE_has_sha256sum
+    @KCONFIG_sha256sum@
+
+config CONFIGURE_has_sha512sum
+    @KCONFIG_sha512sum@
 
 config CONFIGURE_has_install_with_strip_program
     @KCONFIG_install_with_strip_program@

@@ -19,6 +19,7 @@ CT_UPDATE_SAMPLES := no
 # This part deals with the samples help entries
 
 help-config::
+	@echo  '  show-config        - show a brief overview of current configuration'
 	@echo  '  saveconfig         - Save current config as a preconfigured target'
 
 help-samples::
@@ -99,7 +100,7 @@ $(patsubst %,check-%,$(CT_SAMPLES)): check-%:
 		mv .defconfig "$${CT_NG_SAMPLE}";                                       \
 	    else                                                                        \
 		echo "$* needs update:";                                                \
-		diff -du0 "$${CT_NG_SAMPLE}" .defconfig |tail -n +4;                    \
+		diff -d -U 0 "$${CT_NG_SAMPLE}" .defconfig |tail -n +4;                    \
 	    fi;                                                                         \
 	 fi
 	@rm -f .config.sample* .defconfig
@@ -129,7 +130,7 @@ endef
 
 # How we do recall one sample
 PHONY += $(CT_SAMPLES)
-$(CT_SAMPLES):
+$(CT_SAMPLES): check-config
 	@$(CT_ECHO) "  CONF  $@"
 	$(SILENT)$(CONF) --defconfig=$(call sample_dir,$@)/crosstool.config $(KCONFIG_TOP)
 	@echo

@@ -1,0 +1,37 @@
+diff -ruNp gcc-8.2.0.orig/libgcc/Makefile.in gcc-8.2.0/libgcc/Makefile.in
+--- gcc-8.2.0.orig/libgcc/Makefile.in	2018-09-19 22:39:53.258167718 +0300
++++ gcc-8.2.0/libgcc/Makefile.in	2018-09-21 13:00:03.220460630 +0300
+@@ -923,11 +923,12 @@ $(libgcov-driver-objects): %$(objext): $
+ 
+ # Static libraries.
+ libgcc.a: $(libgcc-objects)
++libgcc_pic.a: $(libgcc-s-objects)
+ libgcov.a: $(libgcov-objects)
+ libunwind.a: $(libunwind-objects)
+ libgcc_eh.a: $(libgcc-eh-objects)
+ 
+-libgcc.a libgcov.a libunwind.a libgcc_eh.a:
++libgcc.a libgcov.a libunwind.a libgcc_eh.a libgcc_pic.a:
+ 	-rm -f $@
+ 
+ 	objects="$(objects)";					\
+@@ -948,7 +949,7 @@ all: libunwind.a
+ endif
+ 
+ ifeq ($(enable_shared),yes)
+-all: libgcc_eh.a libgcc_s$(SHLIB_EXT)
++all: libgcc_eh.a libgcc_pic.a libgcc_s$(SHLIB_EXT)
+ ifneq ($(LIBUNWIND),)
+ all: libunwind$(SHLIB_EXT)
+ libgcc_s$(SHLIB_EXT): libunwind$(SHLIB_EXT)
+@@ -1154,6 +1155,10 @@ install-shared:
+ 	chmod 644 $(DESTDIR)$(inst_libdir)/libgcc_eh.a
+ 	$(RANLIB) $(DESTDIR)$(inst_libdir)/libgcc_eh.a
+ 
++	$(INSTALL_DATA) libgcc_pic.a $(mapfile) $(DESTDIR)$(inst_libdir)/
++	chmod 644 $(DESTDIR)$(inst_libdir)/libgcc_pic.a
++	$(RANLIB) $(DESTDIR)$(inst_libdir)/libgcc_pic.a
++
+ 	$(subst @multilib_dir@,$(MULTIDIR),$(subst \
+ 		@shlib_base_name@,libgcc_s,$(subst \
+ 		@shlib_slibdir_qual@,$(MULTIOSSUBDIR),$(SHLIB_INSTALL))))

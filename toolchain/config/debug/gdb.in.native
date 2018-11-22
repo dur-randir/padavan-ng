@@ -46,4 +46,19 @@ config GDB_NATIVE_EXTRA_CONFIG_ARRAY
       if they are properly quoted (or escaped, but prefer quotes). Eg.:
           --with-foo="1st arg with 4 spaces" --with-bar=2nd-arg-without-space
 
+config GDB_NATIVE_EXTRA_CFLAGS
+    string "Extra C compiler flags for native gdb"
+    help
+      Extra flags passed to CFLAGS environment
+
+config GDB_NATIVE_EXTRA_CXXFLAGS
+    string "Extra C++ compiler flags for native gdb"
+    help
+      Extra flags passed to CXXFLAGS environment
+
+config GDB_NATIVE_EXTRA_LDFLAGS
+    string "Extra C/C++ linker flags for native gdb"
+    help
+      Extra flags passed to LDFLAGS environment
+
 endif # GDB_NATIVE

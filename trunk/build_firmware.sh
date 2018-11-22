@@ -72,8 +72,8 @@ if [ ! -f "$ROOTDIR/.config" ] ; then
 fi
 
 # remove this later
-if [ ! -f "$ROOTDIR/../toolchain/out/mipsel-linux-uclibc/sysroot/usr/include/iconv.h" ] ; then
-	echo "Toolchain doesn't contain libiconv in uClibc! uClibc config was updated! Please recompile toolchain."
+if [ ! -f "$ROOTDIR/../toolchain/out/mipsel-linux-uclibc/sysroot/lib/libuClibc-1.0.31.so" ] ; then
+	echo "Toolchain and uClibc are updated! Please recompile toolchain."
 	exit 1
 fi
 

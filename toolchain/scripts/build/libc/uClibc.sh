@@ -131,6 +131,7 @@ do_libc_backend_once() {
         fi
     done
     CT_DoLog DEBUG "Filtered multilib CFLAGS: ${extra_cflags}"
+    extra_cflags+=" ${CT_LIBC_UCLIBC_EXTRA_CFLAGS}"
     make_args+=( UCLIBC_EXTRA_CFLAGS="${extra_cflags}" )
 
     # uClibc does not have a way to select the installation subdirectory for headers,
@@ -312,6 +313,13 @@ manage_uClibc_config() {
         CT_KconfigEnableOption "UCLIBC_HAS_IPV6" "${dst}"
     else
         CT_KconfigDisableOption "UCLIBC_HAS_IPV6" "${dst}"
+    fi
+
+    # Iconv support
+    if [ "${CT_LIBC_UCLIBC_LIBICONV}" = "y" ]; then
+        CT_KconfigEnableOption "UCLIBC_HAS_LIBICONV" "${dst}"
+    else
+        CT_KconfigDisableOption "UCLIBC_HAS_LIBICONV" "${dst}"
     fi
 
     # Force on options needed for C++ if we'll be making a C++ compiler.
