@@ -8,30 +8,30 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aria2\n"
 "Report-Msgid-Bugs-To: https://aria2.github.io/\n"
-"POT-Creation-Date: 2017-11-08 21:44+0900\n"
-"PO-Revision-Date: 2017-08-18 01:41+0000\n"
-"Last-Translator: hzy980512 <hzy980512@126.com>\n"
+"POT-Creation-Date: 2018-05-15 21:34+0900\n"
+"PO-Revision-Date: 2018-04-15 10:36+0000\n"
+"Last-Translator: Tony Ren <aus.dem.Mars@gmail.com>\n"
 "Language-Team: Simplified Chinese <zh_CN@li.org>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-11-08 12:41+0000\n"
-"X-Generator: Launchpad (build 18493)\n"
+"X-Launchpad-Export-Date: 2018-05-15 12:12+0000\n"
+"X-Generator: Launchpad (build 18640)\n"
 "X-Poedit-Bookmarks: 82,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
-#: src/DownloadEngine.cc:247
+#: src/DownloadEngine.cc:255
 msgid ""
 "Shutdown sequence commencing... Press Ctrl-C again for emergency shutdown."
-msgstr "正在关闭程序... 再按 Ctrl-C 可紧急停止"
+msgstr "正在关闭程序...再次按 Ctrl-C 可强制关闭程序"
 
-#: src/DownloadEngine.cc:257
+#: src/DownloadEngine.cc:265
 msgid "Emergency shutdown sequence commencing..."
 msgstr "正在紧急停止..."
 
 #: src/MultiUrlRequestInfo.cc:171
 msgid "aria2 will resume download if the transfer is restarted."
-msgstr "传输重启之后，aria2 将继续下载。"
+msgstr "重新启动aria2，自动继续下载文件"
 
 #: src/MultiUrlRequestInfo.cc:172
 msgid ""
@@ -3499,7 +3499,7 @@ msgstr "文件 %s 已存在，但 %s 不存在。"
 #: src/message.h:270
 #, c-format
 msgid "Invalid payload size for %s, size=%lu. It should be %lu."
-msgstr ""
+msgstr "%s的有效负载大小无效，大小为%lu。大小应为%lu。"
 
 #: src/message.h:271
 #, c-format

@@ -7,23 +7,23 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: https://aria2.github.io/\n"
-"POT-Creation-Date: 2017-11-08 21:44+0900\n"
-"PO-Revision-Date: 2017-07-21 13:26+0000\n"
+"POT-Creation-Date: 2018-05-15 21:34+0900\n"
+"PO-Revision-Date: 2018-04-06 22:39+0000\n"
 "Last-Translator: Tobias Bannert <tobannert@gmail.com>\n"
 "Language-Team: deutsch <de@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-11-08 12:41+0000\n"
-"X-Generator: Launchpad (build 18493)\n"
+"X-Launchpad-Export-Date: 2018-05-15 12:12+0000\n"
+"X-Generator: Launchpad (build 18640)\n"
 
-#: src/DownloadEngine.cc:247
+#: src/DownloadEngine.cc:255
 msgid ""
 "Shutdown sequence commencing... Press Ctrl-C again for emergency shutdown."
 msgstr "Abschaltsequenz beginnt … Strg-C für Notabschaltung drücken."
 
-#: src/DownloadEngine.cc:257
+#: src/DownloadEngine.cc:265
 msgid "Emergency shutdown sequence commencing..."
 msgstr "Notabschaltungsequenz beginnt …"
 
@@ -72,7 +72,7 @@ msgstr "Statuserläuterung:"
 
 #: src/RequestGroupMan.cc:755
 msgid "(OK):download completed."
-msgstr "(OK):Herunterladen abgeschlossen."
+msgstr "(OK):Herunterladen vollständig."
 
 #: src/RequestGroupMan.cc:758
 msgid "(ERR):error occurred."
@@ -264,14 +264,13 @@ msgid ""
 "                              options.\n"
 "                              This affects all downloads."
 msgstr ""
-" --all-proxy=PROXY Benutzt einen Proxyserver für alle Protokolle.\n"
-"                              \"\" benutzen, um einen zuvor definierten "
-"Proxy\n"
-"                              zu überschreiben.\n"
-"                              Sie können auch diese Einstellung über \n"
+" --all-proxy=PROXY            Einen Vermittlungsserver für alle Protokolle\n"
+"                              verwenden. Um einen vorher festgelegten zu\n"
+"                              überschreiben bitte \"\" verwenden.\n"
+"                              Sie können diese Einstellung mit\n"
 "                              --http-proxy, --https-proxy und --ftp-proxy\n"
 "                              für ein bestimmtes Protokoll überschreiben.\n"
-"                              Es gilt für alle Downloads."
+"                              Das betrifft alle Übertragungen."
 
 #: src/usage_text.h:95
 msgid " --http-user=USER             Set HTTP user. This affects all URLs."
@@ -298,12 +297,13 @@ msgid ""
 "                              This may be useful when used together with\n"
 "                              the -P option."
 msgstr ""
-" --referer=REFERER Setzt einen HTTP-Referrer. Das beeinflusst\n"
-"                              alle HTTP/HTTPS-Downloads. Wenn \"*\"\n"
-"                              eingegeben wird, wird der Download-URI\n"
-"                              als Referrer genutzt. Das könnte nützlich\n"
-"                              sein, wenn es mit dem \"-P\"-Parameter\n"
-"                              genutzt wird."
+" --referer=REFERER            Legt einen HTTP-Referrer fest. Das "
+"beeinflusst\n"
+"                              alle HTTP-/HTTPS-Übertragungen. Wenn »*«\n"
+"                              angegeben wird, wird die Übertragungsadresse\n"
+"                              ebenfalls als Referrer verwendet. Das könnte\n"
+"                              nützlich sein, wenn es mit der Option »-P«\n"
+"                              verwendet wird."
 
 #: src/usage_text.h:107
 msgid " --ftp-user=USER              Set FTP user. This affects all URLs."
@@ -451,10 +451,10 @@ msgid ""
 "See\n"
 "                              also --auto-file-renaming option."
 msgstr ""
-" --allow-overwrite[=true|false] Startet den Download von vorne wenn\n"
-"                              die korrespondierende Kontrolldatei\n"
-"                              nicht existiert. Siehe auch\n"
-"                              --auto-file-renaming."
+" --allow-overwrite[=true|false] Startet die Übertragung von vorne, wenn die\n"
+"                              entsprechende Steuerdatei nicht vorhanden "
+"ist.\n"
+"                              Siehe auch --auto-file-renaming."
 
 #: src/usage_text.h:165
 msgid ""
@@ -466,6 +466,14 @@ msgid ""
 "                              proceed but some download progress will be "
 "lost."
 msgstr ""
+" --allow-piece-length-change[=true|false] Bei »false« bricht aria2 die "
+"Übertragung ab,\n"
+"                              wenn die Teilgröße anders als die in der "
+"Steuerdatei ist.\n"
+"                              Wenn »true« angegeben ist, können Sie "
+"fortfahren, aber\n"
+"                              einiger Übertragungsfortschritt wird verloren "
+"gehen."
 
 #: src/usage_text.h:170
 msgid ""
@@ -493,15 +501,15 @@ msgid ""
 "                              appended after the name, but before the file\n"
 "                              extension, if any."
 msgstr ""
-" --auto-file-renaming[=true|false] Benennt die Datei um, wenn die gleiche\n"
-"                              Datei schon existiert. Dieser Parameter "
-"funktioniert nur\n"
-"                              bei HTTP(S)/FTP-Downloads.\n"
+" --auto-file-renaming[=true|false] Benennt die Datei um, wenn die gleiche "
+"Datei\n"
+"                              schon vorhanden ist. Diese Option "
+"funktioniert\n"
+"                              nur bei HTTP(S)-/FTP-Übertragungen.\n"
 "                              Der neue Dateiname hat einen Punkt und eine "
-"Nummer\n"
-"                              (1..9999) zwischen den Namen und die "
-"Dateiendung,\n"
-"                              falls es eine gibt, eingefügt."
+"Zahl\n"
+"                              (1–9999) zwischen Namen und Dateiendung, falls "
+"vorhanden."
 
 #: src/usage_text.h:181
 msgid ""
@@ -518,6 +526,16 @@ msgid ""
 "                              as the second example above, -Z option is\n"
 "                              required."
 msgstr ""
+" -P, --parameterized-uri[=true|false] Aktiviert die parametrisierter\n"
+"                              Adressunterstützung. Sie können Teilensätze\n"
+"                              verwenden: http://{sv1,sv2,sv3}/foo.iso\n"
+"                              Außerdem können Sie numerische Sequenzen\n"
+"                              mit Schrittzählern verwenden:\n"
+"                              http://host/image[000-100:2].img\n"
+"                              Der Schrittzähler kann weggelassen werden.\n"
+"                              Wenn nicht alle Adressen auf die selbe Datei \n"
+"                              zeigen, wie im zweiten Beispiel oberhalb,\n"
+"                              wird die Option »-Z« benötigt."
 
 #: src/usage_text.h:192
 msgid ""
@@ -556,33 +574,33 @@ msgid ""
 "                              and a hash of entire file are provided, only\n"
 "                              piece hashes are used."
 msgstr ""
-" -V, --check-integrity[=true|false] Prüft die Dateiintegrität über "
+" -V, --check-integrity[=true|false] Prüft die Dateiunversehrtheit über "
 "Hashwerte\n"
 "                              der einzelnen Teile oder der ganzen Datei. "
-"Dieser Parameter\n"
-"                              hat nur eine Wirkung über BitTorrent, Metalink-"
-"Downloads\n"
-"                              mit Prüfsumme oder HTTP(S)/FTP-Downloads mit "
-"dem\n"
-"                              --checksum - Parameter. Wenn Hashwerte für "
-"einzelne Teile\n"
-"                              gegeben sind, kann dieser Parameter "
-"beschädigte Abschnitte\n"
-"                              einer Datei erkennen und sie erneut "
-"herunterladen. Wenn\n"
-"                              ein Hashwert für die gesamte Datei gegeben "
-"ist, wird der\n"
-"                              Hash-Vergleich erst durchgeführt, nachdem die "
-"Datei\n"
-"                              heruntergeladen wurde. Das wird über die "
-"Dateigröße\n"
-"                              bestimmt. Wenn der Vergleich fehlschlägt, wird "
+"Diese Option\n"
+"                              ist nur bei BitTorrent, Metalink-"
+"Übertragungen\n"
+"                              mit Prüfsumme oder HTTP(S)-/FTP-Übertragungen "
+"mit der\n"
+"                              Option »--checksum« wirksam. Wenn Hashes für "
+"Teile\n"
+"                              bereitgestellt werden, kann diese Option "
+"beschädigte\n"
+"                              Teile einer Datei erkennen und sie erneut "
+"herunterladen.\n"
+"                              Wenn ein Hash der gesamten Datei "
+"bereitgestellt wird,\n"
+"                              wird die Hash-Prüfung nur durchgeführt, wenn "
 "die Datei\n"
-"                              von vorne heruntergeladen. Wenn Hashwerte für "
-"die einzelnen\n"
-"                              Teile und die gesamte Datei gegeben wurden, "
-"werden nur\n"
-"                              die Teil-Hashes benutzt."
+"                              bereits heruntergeladen wurde. Das wird über "
+"die Dateigröße\n"
+"                              bestimmt. Wenn die Hash-Prüfung fehlschlägt, "
+"wird die Datei\n"
+"                              von vorne heruntergeladen. Wenn sowohl Teile-"
+"Hashes als auch\n"
+"                              ein Hash der gesamten Datei bereitgestellt "
+"werden,\n"
+"                              werden nur Teil-Hashes verwendet."
 
 #: src/usage_text.h:210
 msgid ""
@@ -618,7 +636,7 @@ msgid ""
 "                              checksum while downloading a file if chunk\n"
 "                              checksums are provided."
 msgstr ""
-" --realtime-chunk-checksum[=true|false]  Datenblock überprüfen, durch "
+" --realtime-chunk-checksum[=true|false]  Teilstück überprüfen, durch "
 "Berechnen\n"
 "                              der Prüfsumme beim Herunterladen einer Datei,\n"
 "                              wenn Prüfsummen vom Teilstück zur Verfügung "
@@ -2589,6 +2607,7 @@ msgstr ""
 #, c-format
 msgid "Removed control file for %s because it is requested by user."
 msgstr ""
+"Die Steuerdatei für %s wurde entfernt, da sie vom Benutzer angefordert wurde."
 
 #: src/SingleFileAllocationIterator.cc:75
 msgid ""
@@ -2609,7 +2628,7 @@ msgstr "Nicht anerkannte Adresse oder nicht unterstütztes Protokoll: %s"
 #: src/message.h:109
 #, c-format
 msgid "Tracker returned warning message: %s"
-msgstr "Vom Tracker übergebene Warnnachricht: %s"
+msgstr "Tracker gab eine Warnmeldung zurück: %s"
 
 #: src/message.h:110
 #, c-format
@@ -2696,7 +2715,7 @@ msgstr "Verwendeter Teilindex wird gelöscht=%d, fillRate(%%)=%d<=%d"
 
 #: src/message.h:126
 msgid "Download of selected files was complete."
-msgstr "Herunterladen der ausgewählten Dateien abgeschlossen."
+msgstr "Herunterladen der ausgewählten Dateien ist vollständig."
 
 #: src/message.h:127
 msgid "The download was complete."
@@ -2738,7 +2757,7 @@ msgstr "Teilstückprüfsumme ok. hash=%s"
 #: src/message.h:138
 #, c-format
 msgid "Failed to load cookies from %s"
-msgstr "Profildateien (Cookies) von %s konnten nicht geladen werden"
+msgstr "Laden der Profildateien (Cookies) von %s ist fehlgeschlagen"
 
 #: src/message.h:139
 #, c-format
@@ -2759,7 +2778,7 @@ msgstr "Bitte zumindest eine Adresse angeben."
 
 #: src/message.h:142
 msgid "daemon failed."
-msgstr "Dienst konnte nicht gestartet werden."
+msgstr "Dienst ist fehlgeschlagen."
 
 #: src/message.h:143
 #, c-format
@@ -2783,7 +2802,7 @@ msgstr "Zeichenkette in Wert umzuwandeln ist fehlgeschlagen: %s"
 
 #: src/message.h:147
 msgid "Resource not found"
-msgstr "Ressource nicht gefunden"
+msgstr "Quelle nicht gefunden"
 
 #: src/message.h:148
 #, c-format
@@ -2831,7 +2850,7 @@ msgstr "Der Tracker gab keine Daten zurück."
 
 #: src/message.h:156
 msgid "Windows socket library initialization failed"
-msgstr "Initialisierung der Windows-Socket-Bibliothek schlug fehl."
+msgstr "Initialisierung der Windows-Socket-Bibliothek ist fehlgeschlagen"
 
 #: src/message.h:157
 #, c-format
@@ -2856,7 +2875,7 @@ msgstr ""
 #: src/message.h:163
 #, c-format
 msgid "Failed to open ServerStat file %s for read."
-msgstr "Öffnen der ServerStat-Datei %s gescheitert."
+msgstr "Öffnen der ServerStat-Datei %s ist fehlgeschlagen."
 
 #: src/message.h:164
 #, c-format
@@ -2866,12 +2885,12 @@ msgstr "ServerStat-Datei %s erfolgreich geladen."
 #: src/message.h:165
 #, c-format
 msgid "Failed to read ServerStat from %s."
-msgstr "Lesen der ServerStat-Datei von %s gescheitert."
+msgstr "Lesen der ServerStat-Datei von %s ist fehlgeschlagen."
 
 #: src/message.h:168
 #, c-format
 msgid "Failed to open ServerStat file %s for write."
-msgstr "Öffnen der ServerStat-Datei %s zum Schreiben gescheitert."
+msgstr "Öffnen der ServerStat-Datei %s zum Schreiben ist fehlgeschlagen."
 
 #: src/message.h:169
 #, c-format
@@ -2926,7 +2945,7 @@ msgstr "Rechnername stimmt nicht überein."
 
 #: src/message.h:184
 msgid "No files to download."
-msgstr "Keine Dateien zum herunterladen."
+msgstr "Keine Dateien zum Herunterladen."
 
 #: src/message.h:186
 msgid ""
@@ -2972,7 +2991,8 @@ msgstr "Ist »%s« eine Datei?"
 #: src/message.h:203
 #, c-format
 msgid "Failed to find given interface %s, cause: %s"
-msgstr "Angegebene Schnittstelle %s konnte nicht gefunden werden. Ursache: %s"
+msgstr ""
+"Finden der angegebenen Schnittstelle %s ist fehlgeschlagen, Ursache: %s"
 
 #: src/message.h:205
 #, c-format
@@ -2983,8 +3003,8 @@ msgstr "Metadaten als %s gespeichert."
 #, c-format
 msgid "Saving metadata as %s failed. Maybe file already exists."
 msgstr ""
-"Speichern der Metadaten als %s misslungen. Möglicherweise existiert die "
-"Datei bereits."
+"Speichern der Metadaten als %s ist fehlgeschlagen. Möglicherweise ist die "
+"Datei bereits vorhanden."
 
 #: src/message.h:208
 #, c-format
@@ -3012,7 +3032,7 @@ msgstr "Zeitüberschreitung."
 
 #: src/message.h:216
 msgid "Invalid chunk size."
-msgstr "Ungültige Teilgröße."
+msgstr "Ungültige Teilstückgröße."
 
 #: src/message.h:217
 #, c-format
@@ -3055,7 +3075,7 @@ msgstr ""
 #: src/message.h:225
 #, c-format
 msgid "The response status is not successful. status=%d"
-msgstr "Antwortstatus ist nicht in Ordnung. Status=%d"
+msgstr "Antwortstatus ist nicht Erfolgreich. Status=%d"
 
 #: src/message.h:227
 #, c-format
@@ -3083,7 +3103,7 @@ msgstr "Unbekannter SSL-Fehler %d"
 #: src/message.h:232
 #, c-format
 msgid "SSL initialization failed: OpenSSL connect error %d"
-msgstr "SSL-Initialisierung schlug fehl: OpenSSL-Verbindungsfehler %d"
+msgstr "SSL-Initialisierung ist fehlgeschlagen: OpenSSL-Verbindungsfehler %d"
 
 #: src/message.h:234
 msgid "Authorization failed."
@@ -3118,7 +3138,7 @@ msgstr "Lesen der Datei %s ist fehlgeschlagen, Ursache: %s"
 
 #: src/message.h:242
 msgid "Failed to read data from disk."
-msgstr "Der Versuch Daten von der Festplatte zu lesen ist fehlgeschlagen."
+msgstr "Versuch Daten von der Festplatte zu lesen ist fehlgeschlagen."
 
 #: src/message.h:243
 #, c-format
@@ -3174,7 +3194,7 @@ msgstr "Lauschen auf Socket ist fehlgeschlagen, Ursache: %s"
 #: src/message.h:257
 #, c-format
 msgid "Failed to accept a peer connection, cause: %s"
-msgstr "Gegenstellenverbindung konnte nicht akzeptiert werden, Ursache: %s"
+msgstr "Akzeptiere der Gegenstellenverbindung ist fehlgeschlagen, Ursache: %s"
 
 #: src/message.h:258
 #, c-format
@@ -3185,7 +3205,7 @@ msgstr "Erhalt des Socketnamens ist fehlgeschlagen, Ursache: %s"
 #, c-format
 msgid "Failed to get the name of connected peer, cause: %s"
 msgstr ""
-"Name der verbundenen Gegenstelle konnte nicht ermittelt werden, Ursache: %s"
+"Erhalt des Namens der verbundenen Gegenstelle ist fehlgeschlagen, Ursache: %s"
 
 #: src/message.h:260
 #, c-format
@@ -3262,7 +3282,7 @@ msgstr "Tracker gab folgenden Fehlschlaggrund an: %s"
 
 #: src/message.h:277
 msgid "Flooding detected."
-msgstr "Flooding entdeckt."
+msgstr "Überschwemmung entdeckt."
 
 #: src/message.h:279
 #, c-format

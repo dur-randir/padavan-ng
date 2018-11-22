@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 #
 AC_PREREQ([2.67])
-AC_INIT([aria2],[1.33.1],[https://github.com/aria2/aria2/issues],[aria2],[https://aria2.github.io/])
+AC_INIT([aria2],[1.34.0],[https://github.com/aria2/aria2/issues],[aria2],[https://aria2.github.io/])
 
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
@@ -203,13 +203,11 @@ fi
 # Checks for libraries.
 
 # Check availability of cppunit
-#PKG_CHECK_MODULES([CPPUNIT], [cppunit >= 1.10.2],
-#                  [have_cppunit=yes], [have_cppunit=no])
-#if test "x$have_cppunit" != "xyes"; then
-#  AC_MSG_WARN([$CPPUNIT_PKG_ERRORS])
-#fi
-CPPUNIT_CFLAGS=""
-CPPUNIT_LIBS=""
+PKG_CHECK_MODULES([CPPUNIT], [cppunit >= 1.10.2],
+                  [have_cppunit=yes], [have_cppunit=no])
+if test "x$have_cppunit" != "xyes"; then
+  AC_MSG_WARN([$CPPUNIT_PKG_ERRORS])
+fi
 
 # Check availability of libz
 if test "x$with_libz" = "xyes"; then
