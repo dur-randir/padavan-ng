@@ -177,14 +177,15 @@ static int get_partno_from_device(char *partition, dev_t devno)
 	assert(partition);
 
 	if (devno) {
-		struct sysfs_cxt cxt;
+		struct path_cxt *pc;
 		int rc;
 
-		if (sysfs_init(&cxt, devno, NULL))
+		pc = ul_new_sysfs_path(devno, NULL, NULL);
+		if (!pc)
 			goto err;
 
-		rc = sysfs_read_int(&cxt, "partition", &partno);
-		sysfs_deinit(&cxt);
+		rc = ul_path_read_s32(pc, &partno, "partition");
+		ul_unref_path(pc);
 
 		if (rc == 0)
 			return partno;
@@ -765,6 +766,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -g, --noheadings     don't print headings for --show\n"), out);
 	fputs(_(" -n, --nr <n:m>       specify the range of partitions (e.g. --nr 2:4)\n"), out);
 	fputs(_(" -o, --output <list>  define which output columns to use\n"), out);
+	fputs(_("     --output-all     output all columns\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
 	fputs(_(" -S, --sector-size <num>  overwrite sector size\n"), out);
@@ -796,7 +798,8 @@ int main(int argc, char **argv)
 	unsigned int sector_size = 0;
 
 	enum {
-		OPT_LIST_TYPES = CHAR_MAX + 1
+		OPT_LIST_TYPES = CHAR_MAX + 1,
+		OPT_OUTPUT_ALL
 	};
 	static const struct option long_opts[] = {
 		{ "bytes",	no_argument,       NULL, 'b' },
@@ -811,6 +814,7 @@ int main(int argc, char **argv)
 		{ "list-types", no_argument,       NULL, OPT_LIST_TYPES },
 		{ "nr",		required_argument, NULL, 'n' },
 		{ "output",	required_argument, NULL, 'o' },
+		{ "output-all", no_argument,       NULL, OPT_OUTPUT_ALL },
 		{ "pairs",      no_argument,       NULL, 'P' },
 		{ "sector-size",required_argument, NULL, 'S' },
 		{ "help",	no_argument,       NULL, 'h' },
@@ -857,6 +861,10 @@ int main(int argc, char **argv)
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case OPT_OUTPUT_ALL:
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 'P':
 			scols_flags |= PARTX_EXPORT;

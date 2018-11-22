@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 
 #include "canonicalize.h"
+#include "pathnames.h"
 
 /*
  * Converts private "dm-N" names to "/dev/mapper/<name>"
@@ -23,29 +24,37 @@
  * Since 2.6.29 (patch 784aae735d9b0bba3f8b9faef4c8b30df3bf0128) kernel sysfs
  * provides the real DM device names in /sys/block/<ptname>/dm/name
  */
-char *canonicalize_dm_name(const char *ptname)
+char *__canonicalize_dm_name(const char *prefix, const char *ptname)
 {
 	FILE	*f;
 	size_t	sz;
-	char	path[256], name[256], *res = NULL;
+	char	path[256], name[sizeof(path) - sizeof(_PATH_DEV_MAPPER)], *res = NULL;
 
 	if (!ptname || !*ptname)
 		return NULL;
 
-	snprintf(path, sizeof(path), "/sys/block/%s/dm/name", ptname);
+	if (!prefix)
+		prefix = "";
+
+	snprintf(path, sizeof(path), "%s/sys/block/%s/dm/name", prefix, ptname);
 	if (!(f = fopen(path, "r" UL_CLOEXECSTR)))
 		return NULL;
 
 	/* read "<name>\n" from sysfs */
 	if (fgets(name, sizeof(name), f) && (sz = strlen(name)) > 1) {
 		name[sz - 1] = '\0';
-		snprintf(path, sizeof(path), "/dev/mapper/%s", name);
+		snprintf(path, sizeof(path), _PATH_DEV_MAPPER "/%s", name);
 
-		if (access(path, F_OK) == 0)
+		if (prefix || access(path, F_OK) == 0)
 			res = strdup(path);
 	}
 	fclose(f);
 	return res;
+}
+
+char *canonicalize_dm_name(const char *ptname)
+{
+	return __canonicalize_dm_name(NULL, ptname);
 }
 
 static int is_dm_devname(char *canonical, char **name)

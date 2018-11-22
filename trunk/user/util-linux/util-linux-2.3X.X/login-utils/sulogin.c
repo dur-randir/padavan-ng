@@ -520,8 +520,9 @@ static void doprompt(const char *crypted, struct console *con, int deny)
 		tty.c_oflag |= (ONLCR | OPOST);
 		tcsetattr(con->fd, TCSADRAIN, &tty);
 	}
-	if (con->file == (FILE*)0) {
-		if  ((con->file = fdopen(con->fd, "r+")) == (FILE*)0)
+	if (!con->file) {
+		con->file = fdopen(con->fd, "r+");
+		if (!con->file)
 			goto err;
 	}
 
@@ -643,7 +644,7 @@ static const char *getpasswd(struct console *con)
 				xusleep(250000);
 				continue;
 			}
-			ret = (char*)0;
+			ret = NULL;
 			switch (errno) {
 			case 0:
 			case EIO:
@@ -695,7 +696,7 @@ static const char *getpasswd(struct console *con)
 		default:
 			if ((size_t)(ptr - &pass[0]) >= (sizeof(pass) -1 )) {
 				 fprintf(stderr, "sulogin: input overrun at %s\n\r", con->tty);
-				 ret = (char*)0;
+				 ret = NULL;
 				 goto quit;
 			}
 			*ptr++ = ascval;
@@ -975,7 +976,7 @@ int main(int argc, char **argv)
 			while (1) {
 				const char *passwd = pwd->pw_passwd;
 				const char *answer;
-				int failed = 0, doshell = 0;
+				int doshell = 0;
 				int deny = !opt_e && locked_account_password(pwd->pw_passwd);
 
 				doprompt(passwd, con, deny);
@@ -998,15 +999,13 @@ int main(int argc, char **argv)
 				}
 
 				if (doshell) {
+					/* sushell() unmask signals */
 					sushell(pwd);
-					failed++;
-				}
 
-				mask_signal(SIGQUIT, SIG_IGN, &saved_sigquit);
-				mask_signal(SIGTSTP, SIG_IGN, &saved_sigtstp);
-				mask_signal(SIGINT,  SIG_IGN, &saved_sigint);
+					mask_signal(SIGQUIT, SIG_IGN, &saved_sigquit);
+					mask_signal(SIGTSTP, SIG_IGN, &saved_sigtstp);
+					mask_signal(SIGINT,  SIG_IGN, &saved_sigint);
 
-				if (failed) {
 					fprintf(stderr, _("cannot execute su shell\n\n"));
 					break;
 				}

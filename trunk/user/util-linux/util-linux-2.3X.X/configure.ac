@@ -29,7 +29,7 @@ PACKAGE_VERSION_RELEASE=$(echo $PACKAGE_VERSION | awk -F. '{
 
 dnl libblkid version
 LIBBLKID_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
-LIBBLKID_DATE="16-Jul-2018"
+LIBBLKID_DATE="06-Nov-2018"
 LIBBLKID_LT_MAJOR=1
 LIBBLKID_LT_MINOR=1
 LIBBLKID_LT_MICRO=0
@@ -70,6 +70,7 @@ AS_CASE([$exec_prefix:$prefix],
    AS_CASE([$bindir],  ['${exec_prefix}/bin'],  [bindir=/bin;   AC_MSG_NOTICE([  --bindir defaults to /bin])  ])
    AS_CASE([$sbindir], ['${exec_prefix}/sbin'], [sbindir=/sbin; AC_MSG_NOTICE([  --sbindir defaults to /sbin])])
    AS_CASE([$libdir],  ['${exec_prefix}/lib'],  [libdir=/lib;   AC_MSG_NOTICE([  --libdir defaults to /lib])  ])
+   AS_CASE([$libdir],  ['${exec_prefix}/lib64'],[libdir=/lib64; AC_MSG_NOTICE([  --libdir defaults to /lib64])  ])
   ]
 )
 
@@ -135,10 +136,15 @@ UL_WARN_ADD([-Wpointer-arith])
 UL_WARN_ADD([-Wstrict-prototypes])
 UL_WARN_ADD([-Wformat-security])
 UL_WARN_ADD([-Wimplicit-function-declaration])
+UL_WARN_ADD([-Wdiscarded-qualifiers])
 AC_SUBST([WARN_CFLAGS])
 
 UL_WARN_ADD([-Wno-clobbered], [BSD_WARN_CFLAGS])
 AC_SUBST([BSD_WARN_CFLAGS])
+
+UL_WARN_ADD([-Wno-cast-function-type], [PYTHON_WARN_CFLAGS])
+AC_SUBST([PYTHON_WARN_CFLAGS])
+
 UL_WARN_ADD([-Wno-unused-parameter], [NO_UNUSED_WARN_CFLAGS])
 AC_SUBST([NO_UNUSED_WARN_CFLAGS])
 
@@ -449,6 +455,9 @@ AC_CHECK_DECL([SO_PASSCRED],
                #include <sys/socket.h>])
 
 AC_CHECK_FUNCS([ \
+	clearenv \
+	__fpurge \
+	fpurge \
 	__fpending \
 	secure_getenv \
 	__secure_getenv \
@@ -511,6 +520,11 @@ AC_CHECK_FUNCS([getusershell], [have_getusershell=yes],[have_getusershell=no])
 
 AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
 
+have_setns_syscall="yes"
+UL_CHECK_SYSCALL([setns])
+AS_IF([test "x$ul_cv_syscall_setns" = xno], [
+   have_setns_syscall="no"
+])
 
 AC_CHECK_FUNCS([isnan], [],
 	[AC_CHECK_LIB([m], [isnan], [MATH_LIBS="-lm"])]
@@ -863,7 +877,7 @@ AS_IF([test "x$with_udev" = xno], [
 
 dnl wide-char ncurses
 AC_ARG_WITH([ncursesw],
-  AS_HELP_STRING([--with-ncursesw], [build with wide-char ncurses, enabled by default]),
+  AS_HELP_STRING([--without-ncursesw], [do not build with wide-char ncurses]),
   [], [with_ncursesw=auto]
 )
 have_ncursesw=no
@@ -893,7 +907,7 @@ AS_CASE([$with_ncursesw:$have_ncursesw],
 
 dnl non-wide ncurses
 AC_ARG_WITH([ncurses],
-  AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses, disabled by default]),
+  AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses]),
   [], [with_ncurses=auto]
 )
 have_ncurses=no
@@ -986,7 +1000,7 @@ AS_IF([test "x$have_tinfo" = xyes -o "x$have_tinfow" = xyes], [
 
 
 AC_ARG_WITH([readline],
-  AS_HELP_STRING([--with-readline], [compile with GNU Readline support]),
+  AS_HELP_STRING([--without-readline], [do not build with GNU Readline support]),
   [], [with_readline=auto]
 )
 
@@ -1075,7 +1089,12 @@ UL_REQUIRES_HAVE([libmount], [scanf_alloc_modifier], [scanf string alloc modifie
 AM_CONDITIONAL([BUILD_LIBMOUNT], [test "x$build_libmount" = xyes])
 AM_CONDITIONAL([BUILD_LIBMOUNT_TESTS], [test "x$build_libmount" = xyes -a "x$enable_static" = xyes])
 AS_IF([test "x$build_libmount" = xyes], [
-	AC_DEFINE(HAVE_LIBMOUNT, 1, [Define if libmount available.])
+  AC_DEFINE(HAVE_LIBMOUNT, 1, [Define if libmount available.])
+  AS_IF([test "x$have_setns_syscall" = "xyes"], [
+    AC_DEFINE([USE_LIBMOUNT_SUPPORT_NAMESPACES], [1], [Define to 1 if want to support namepaces.])
+  ],[
+    AC_MSG_WARN([libmount will be compiled without namespaces support])
+  ])
 ])
 
 AC_SUBST([LIBMOUNT_VERSION])
@@ -1093,7 +1112,6 @@ AC_ARG_ENABLE([libmount-support-mtab],
 AS_IF([test "x$enable_libmount_support_mtab" = xyes], [
   AC_DEFINE([USE_LIBMOUNT_SUPPORT_MTAB], [1], [Define to 1 if want to support mtab.])
 ])
-
 
 dnl
 dnl libsmartcols
@@ -1347,7 +1365,7 @@ AC_ARG_ENABLE([nsenter],
 )
 UL_BUILD_INIT([nsenter])
 UL_REQUIRES_LINUX([nsenter])
-UL_REQUIRES_SYSCALL_CHECK([nsenter], [UL_CHECK_SYSCALL([setns])], [setns])
+UL_REQUIRES_HAVE([nsenter], [setns_syscall], [setns syscall])
 AM_CONDITIONAL([BUILD_NSENTER], [test "x$build_nsenter" = xyes])
 AC_CHECK_FUNCS([setns])
 
@@ -1667,6 +1685,10 @@ AC_ARG_ENABLE([ipcs],
 )
 UL_BUILD_INIT([ipcs])
 AM_CONDITIONAL([BUILD_IPCS], [test "x$build_ipcs" = xyes])
+
+UL_BUILD_INIT([choom], [check])
+UL_REQUIRES_LINUX([choom])
+AM_CONDITIONAL([BUILD_CHOOM], [test "x$build_choom" = xyes])
 
 UL_BUILD_INIT([lsipc], [check])
 UL_REQUIRES_LINUX([lsipc])
@@ -2094,7 +2116,7 @@ AM_CONDITIONAL([BUILD_WRITE], [test "x$build_write" = xyes])
 
 
 AC_ARG_WITH([btrfs],
-  AS_HELP_STRING([--with-btrfs], [build with support for btrfs]),
+  AS_HELP_STRING([--without-btrfs], [do not build with btrfs support]),
   [], [with_btrfs=check]
 )
 have_btrfs=no
@@ -2113,7 +2135,7 @@ AM_CONDITIONAL([HAVE_BTRFS], [test "x$have_btrfs" = xyes])
 
 
 AC_ARG_WITH([systemd],
-  AS_HELP_STRING([--with-systemd], [build with support for systemd]),
+  AS_HELP_STRING([--without-systemd], [do not build with systemd support]),
   [], [with_systemd=check]
 )
 
@@ -2141,9 +2163,16 @@ AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])
 
 
 AC_ARG_WITH([systemdsystemunitdir],
-  AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd service files]),
-  [], [with_systemdsystemunitdir=`$PKG_CONFIG --variable=systemdsystemunitdir systemd`])
-
+  AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd unit files (requires systemd support)]),
+  [], [with_systemdsystemunitdir=check]
+)
+AS_IF([test "x$with_systemdsystemunitdir" = xcheck], [
+  AS_IF([test "x$have_systemd" = xyes], [
+    with_systemdsystemunitdir=`$PKG_CONFIG --variable=systemdsystemunitdir systemd`
+  ],[
+    with_systemdsystemunitdir=no
+  ])
+])
 AS_IF([test "x$with_systemdsystemunitdir" != "xno"], [
   AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
 ])
@@ -2399,6 +2428,7 @@ AC_MSG_RESULT([
 
 	Bash completions:  ${with_bashcompletiondir}
 	Systemd support:   ${have_systemd}
+	Systemd unitdir:   ${with_systemdsystemunitdir}
 	Btrfs support:     ${have_btrfs}
 	Wide-char support: ${build_widechar}
 

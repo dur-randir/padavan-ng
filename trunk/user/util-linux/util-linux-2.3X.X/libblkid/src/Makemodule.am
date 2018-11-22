@@ -34,6 +34,7 @@ libblkid_la_SOURCES = \
 	libblkid/src/partitions/mac.c \
 	libblkid/src/partitions/partitions.c \
 	libblkid/src/partitions/partitions.h \
+	libblkid/src/superblocks/bitlocker.c \
 	libblkid/src/superblocks/exfat.c \
 	libblkid/src/superblocks/ext.c \
 	libblkid/src/superblocks/hfs.c \

@@ -110,6 +110,7 @@ libblkid/src/probe.c
 libblkid/src/read.c
 libblkid/src/resolve.c
 libblkid/src/save.c
+libblkid/src/superblocks/bitlocker.c
 libblkid/src/superblocks/exfat.c
 libblkid/src/superblocks/ext.c
 libblkid/src/superblocks/hfs.c
@@ -195,6 +196,7 @@ libmount/src/test.c
 libmount/src/utils.c
 libmount/src/version.c
 lib/pager.c
+lib/parse-date.c
 lib/path.c
 lib/plymouth-ctrl.c
 lib/procutils.c
@@ -277,6 +279,9 @@ misc-utils/kill.c
 misc-utils/logger.c
 misc-utils/look.c
 misc-utils/lsblk.c
+misc-utils/lsblk.h
+misc-utils/lsblk-mnt.c
+misc-utils/lsblk-properties.c
 misc-utils/lslocks.c
 misc-utils/mcookie.c
 misc-utils/namei.c
@@ -294,6 +299,7 @@ sys-utils/blkdiscard.c
 sys-utils/blkzone.c
 sys-utils/chcpu.c
 sys-utils/chmem.c
+sys-utils/choom.c
 sys-utils/ctrlaltdel.c
 sys-utils/dmesg.c
 sys-utils/eject.c

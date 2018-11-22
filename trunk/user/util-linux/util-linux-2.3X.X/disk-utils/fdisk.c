@@ -100,7 +100,7 @@ int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	size_t sz;
 	int ret = 0;
 
-	DBG(ASK, ul_debug("asking for user replay %s", is_interactive ? "[interactive]" : ""));
+	DBG(ASK, ul_debug("asking for user reply %s", is_interactive ? "[interactive]" : ""));
 
 	sigemptyset(&act.sa_mask);
 	sigaction(SIGINT, &act, &oldact);
@@ -357,6 +357,8 @@ static int ask_offset(struct fdisk_context *cxt,
 		}
 		if (sig == '+')
 			num += base;
+		else if (sig == '-' && fdisk_ask_number_is_wrap_negative(ask))
+			num = high - num;
 		else if (sig == '-')
 			num = base - num;
 
@@ -657,7 +659,7 @@ int print_partition_info(struct fdisk_context *cxt)
 			goto clean_data;
 		if (!data || !*data)
 			continue;
-		fdisk_info(cxt, _("%15s: %s"), fdisk_field_get_name(fd), data);
+		fdisk_info(cxt, "%15s: %s", fdisk_field_get_name(fd), data);
 		free(data);
 	}
 

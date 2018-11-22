@@ -64,21 +64,23 @@ struct colinfo {
 	double whint;
 	int flags;
 	const char *help;
+
+	int json_type;	/* default is string */
 };
 
 static struct colinfo infos[] = {
-	[COL_AUTOCLR]     = { "AUTOCLEAR",    1, SCOLS_FL_RIGHT, N_("autoclear flag set")},
+	[COL_AUTOCLR]     = { "AUTOCLEAR",    1, SCOLS_FL_RIGHT, N_("autoclear flag set"), SCOLS_JSON_BOOLEAN},
 	[COL_BACK_FILE]   = { "BACK-FILE",  0.3, 0, N_("device backing file")},
-	[COL_BACK_INO]    = { "BACK-INO",     4, SCOLS_FL_RIGHT, N_("backing file inode number")},
+	[COL_BACK_INO]    = { "BACK-INO",     4, SCOLS_FL_RIGHT, N_("backing file inode number"), SCOLS_JSON_NUMBER},
 	[COL_BACK_MAJMIN] = { "BACK-MAJ:MIN", 6, 0, N_("backing file major:minor device number")},
 	[COL_NAME]        = { "NAME",      0.25, 0, N_("loop device name")},
-	[COL_OFFSET]      = { "OFFSET",       5, SCOLS_FL_RIGHT, N_("offset from the beginning")},
-	[COL_PARTSCAN]    = { "PARTSCAN",     1, SCOLS_FL_RIGHT, N_("partscan flag set")},
-	[COL_RO]          = { "RO",           1, SCOLS_FL_RIGHT, N_("read-only device")},
-	[COL_SIZELIMIT]   = { "SIZELIMIT",    5, SCOLS_FL_RIGHT, N_("size limit of the file in bytes")},
+	[COL_OFFSET]      = { "OFFSET",       5, SCOLS_FL_RIGHT, N_("offset from the beginning"), SCOLS_JSON_NUMBER},
+	[COL_PARTSCAN]    = { "PARTSCAN",     1, SCOLS_FL_RIGHT, N_("partscan flag set"), SCOLS_JSON_BOOLEAN},
+	[COL_RO]          = { "RO",           1, SCOLS_FL_RIGHT, N_("read-only device"), SCOLS_JSON_BOOLEAN},
+	[COL_SIZELIMIT]   = { "SIZELIMIT",    5, SCOLS_FL_RIGHT, N_("size limit of the file in bytes"), SCOLS_JSON_NUMBER},
 	[COL_MAJMIN]      = { "MAJ:MIN",      3, 0, N_("loop device major:minor number")},
-	[COL_DIO]         = { "DIO",          1, SCOLS_FL_RIGHT, N_("access backing file with direct-io")},
-	[COL_LOGSEC]      = { "LOG-SEC",      4, SCOLS_FL_RIGHT, N_("logical sector size in bytes")},
+	[COL_DIO]         = { "DIO",          1, SCOLS_FL_RIGHT, N_("access backing file with direct-io"), SCOLS_JSON_BOOLEAN},
+	[COL_LOGSEC]      = { "LOG-SEC",      4, SCOLS_FL_RIGHT, N_("logical sector size in bytes"), SCOLS_JSON_NUMBER},
 };
 
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
@@ -139,8 +141,7 @@ static int printf_loopdev(struct loopdev_cxt *lc)
 
 		if (loopcxt_get_sizelimit(lc, &x) == 0 && x)
 				printf(_(", sizelimit %ju"), x);
-		printf("\n");
-		return 0;
+		goto done;
 	}
 
 	printf("%s: [%04d]:%" PRIu64 " (%s)",
@@ -160,6 +161,9 @@ static int printf_loopdev(struct loopdev_cxt *lc)
 		if (e && *e)
 			printf(_(", encryption %s (type %u)"), e, type);
 	}
+
+done:
+	free(fname);
 	printf("\n");
 	return 0;
 }
@@ -328,9 +332,13 @@ static int show_table(struct loopdev_cxt *lc,
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *ci = get_column_info(i);
+		struct libscols_column *cl;
 
-		if (!scols_table_new_column(tb, ci->name, ci->whint, ci->flags))
+		cl = scols_table_new_column(tb, ci->name, ci->whint, ci->flags);
+		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
+		if (json)
+			scols_column_set_json_type(cl, ci->json_type);
 	}
 
 	/* only one loopdev requested (already assigned to loopdev_cxt) */
@@ -424,6 +432,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --list                    list info about all or specified (default)\n"), out);
 	fputs(_(" -n, --noheadings              don't print headings for --list output\n"), out);
 	fputs(_(" -O, --output <cols>           specify columns to output for --list\n"), out);
+	fputs(_("     --output-all              output all columns\n"), out);
 	fputs(_("     --raw                     use raw --list output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -584,7 +593,8 @@ int main(int argc, char **argv)
 		OPT_SIZELIMIT = CHAR_MAX + 1,
 		OPT_SHOW,
 		OPT_RAW,
-		OPT_DIO
+		OPT_DIO,
+		OPT_OUTPUT_ALL
 	};
 	static const struct option longopts[] = {
 		{ "all",          no_argument,       NULL, 'a'           },
@@ -601,6 +611,7 @@ int main(int argc, char **argv)
 		{ "noheadings",   no_argument,       NULL, 'n'           },
 		{ "offset",       required_argument, NULL, 'o'           },
 		{ "output",       required_argument, NULL, 'O'           },
+		{ "output-all",   no_argument,       NULL, OPT_OUTPUT_ALL },
 		{ "sizelimit",    required_argument, NULL, OPT_SIZELIMIT },
 		{ "partscan",     no_argument,       NULL, 'P'           },
 		{ "read-only",    no_argument,       NULL, 'r'           },
@@ -695,6 +706,10 @@ int main(int argc, char **argv)
 			outarg = optarg;
 			list = 1;
 			break;
+		case OPT_OUTPUT_ALL:
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
+				columns[ncolumns] = ncolumns;
+			break;
 		case 'P':
 			lo_flags |= LO_FLAGS_PARTSCAN;
 			break;
@@ -719,6 +734,9 @@ int main(int argc, char **argv)
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	ul_path_init_debug();
+	ul_sysfs_init_debug();
 
 	/* default is --list --all */
 	if (argc == 1) {
@@ -749,6 +767,9 @@ int main(int argc, char **argv)
 		 */
 		act = A_CREATE;
 		file = argv[optind++];
+
+		if (optind < argc)
+			errx(EXIT_FAILURE, _("unexpected arguments"));
 	}
 
 	if (list && !act && optind == argc)

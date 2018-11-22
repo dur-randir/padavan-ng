@@ -79,6 +79,7 @@ login:
 o
 clears all the environment variables except
 .B TERM
+and variables specified by \fB\-\-whitelist\-environment\fR
 .TP
 o
 initializes the environment variables
@@ -111,7 +112,7 @@ Create pseudo-terminal for the session. The independent terminal provides
 better security as user does not share terminal with the original
 session.  This allow to avoid TIOCSTI ioctl terminal injection and another
 security attacks against terminal file descriptors. The all session is also
-possible to move to background (e.g. "su --pty - usename -c
+possible to move to background (e.g. "su --pty - username -c
 application &"). If the pseudo-terminal is enabled then su command works
 as a proxy between the sessions (copy stdin and stdout).
 
@@ -153,6 +154,15 @@ Same as
 .B \-c
 but do not create a new session.  (Discouraged.)
 .TP
+.BR \-w , " \-\-whitelist\-environment" = \fIlist
+Don't reset environment variables specified in comma separated \fIlist\fR when clears
+environment for \fB\-\-login\fR. The whitelist is ignored for the environment variables
+.BR HOME ,
+.BR SHELL ,
+.BR USER ,
+.BR LOGNAME ", and"
+.BR PATH "."
+.TP
 .BR \-V , " \-\-version"
 Display version information and exit.
 .TP
@@ -161,12 +171,13 @@ Display help text and exit.
 .SH SIGNALS
 Upon receiving either
 .BR SIGINT ,
-.BR SIGQUIT
+.B SIGQUIT
 or
 .BR SIGTERM ,
-.BR su
-terminates its child and afterwards terminates itself with
-the received signal.
+.B su
+terminates its child and afterwards terminates itself with the received signal.
+The child is terminated by SIGTERM, after unsuccessful attempt and 2 seconds of
+delay the child is killed by SIGKILL.
 .SH CONFIG FILES
 .B su
 reads the
@@ -212,6 +223,9 @@ and \-\-login and \-\-preserve\-environment were not specified
 initializes
 .BR PATH .
 .RE
+.sp
+The environment variable PATH may be different on systems where /bin and /sbin
+are merged into /usr.
 .SH EXIT STATUS
 .B su
 normally returns the exit status of the command it executed.  If the

@@ -43,7 +43,7 @@
 #ifndef _PATH_MAILDIR
 # define _PATH_MAILDIR		"/var/spool/mail"
 #endif
-#define	_PATH_MOTDFILE		"/etc/motd"
+#define	_PATH_MOTDFILE		"/usr/share/misc/motd:/run/motd:/etc/motd"
 #ifndef _PATH_NOLOGIN
 # define _PATH_NOLOGIN		"/etc/nologin"
 #endif
@@ -130,6 +130,8 @@
    */
 # define _PATH_DEV		"/dev/"
 #endif
+
+#define _PATH_DEV_MAPPER	"/dev/mapper"
 
 #define _PATH_DEV_MEM		"/dev/mem"
 

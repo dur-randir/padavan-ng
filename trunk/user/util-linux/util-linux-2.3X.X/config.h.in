@@ -36,6 +36,9 @@
    the CoreFoundation framework. */
 #undef HAVE_CFPREFERENCESCOPYAPPVALUE
 
+/* Define to 1 if you have the `clearenv' function. */
+#undef HAVE_CLEARENV
+
 /* Define to 1 if you have the `clock_gettime' function. */
 #undef HAVE_CLOCK_GETTIME
 
@@ -103,6 +106,9 @@
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
+
+/* Define to 1 if you have the `fpurge' function. */
+#undef HAVE_FPURGE
 
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
 #undef HAVE_FSEEKO
@@ -655,6 +661,9 @@
 /* Define to 1 if you have the `__fpending' function. */
 #undef HAVE___FPENDING
 
+/* Define to 1 if you have the `__fpurge' function. */
+#undef HAVE___FPURGE
+
 /* Define if __progname is defined */
 #undef HAVE___PROGNAME
 
@@ -762,6 +771,9 @@
 
 /* Define to 1 if want to support mtab. */
 #undef USE_LIBMOUNT_SUPPORT_MTAB
+
+/* Define to 1 if want to support namepaces. */
+#undef USE_LIBMOUNT_SUPPORT_NAMESPACES
 
 /* Enable plymouth support feature for sulogin and aggety */
 #undef USE_PLYMOUTH_SUPPORT

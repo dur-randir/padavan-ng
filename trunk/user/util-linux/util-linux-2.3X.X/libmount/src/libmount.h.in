@@ -1,7 +1,10 @@
+/* SPDX-License-Identifier: LGPL-2.1-or-later */
 /*
- * mount.h - libmount API
+ * libmount.h - libmount API
  *
- * Copyright (C) 2008-2009 Karel Zak <kzak@redhat.com>
+ * This file is part of libmount from util-linux project.
+ *
+ * Copyright (C) 2008-2018 Karel Zak <kzak@redhat.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -128,6 +131,13 @@ struct libmnt_monitor;
  */
 struct libmnt_tabdiff;
 
+/**
+ * libmnt_ns:
+ *
+ * Describes mount namespace
+ */
+struct libmnt_ns;
+
 /*
  * Actions
  */
@@ -198,6 +208,12 @@ enum {
  * failed to lock mtab/utab or so.
  */
 #define MNT_ERR_LOCK         5008
+/**
+ * MNT_ERR_NAMESPACE:
+ *
+ * failed to switch namespace
+ */
+#define MNT_ERR_NAMESPACE    5009
 
 
 /*
@@ -815,6 +831,13 @@ extern int mnt_context_strerror(struct libmnt_context *cxt, char *buf,
 extern int mnt_context_get_excode(struct libmnt_context *cxt,
                         int rc, char *buf, size_t bufsz);
 
+extern int mnt_context_set_target_ns(struct libmnt_context *cxt, const char *path);
+extern struct libmnt_ns *mnt_context_get_target_ns(struct libmnt_context *cxt);
+extern struct libmnt_ns *mnt_context_get_origin_ns(struct libmnt_context *cxt);
+extern struct libmnt_ns *mnt_context_switch_ns(struct libmnt_context *cxt, struct libmnt_ns *ns);
+extern struct libmnt_ns *mnt_context_switch_origin_ns(struct libmnt_context *cxt);
+extern struct libmnt_ns *mnt_context_switch_target_ns(struct libmnt_context *cxt);
+
 
 /* context_mount.c */
 extern int mnt_context_mount(struct libmnt_context *cxt);
@@ -938,7 +961,8 @@ extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status
 
 
 /*
- * Magic mount flag number. Had to be or-ed to the flag values.
+ * Magic mount flag number. Had to be or-ed to the flag values.  Deprecated and
+ * no more used since libmount v2.33; required for Linux <= 2.4.
  */
 #ifndef MS_MGC_VAL
 #define MS_MGC_VAL 0xC0ED0000	/* magic flag number to indicate "new" flags */

@@ -118,6 +118,7 @@ _findmnt_module()
 				--notruncate
 				--options
 				--output
+				--output-all
 				--pairs
 				--raw
 				--types
@@ -128,6 +129,8 @@ _findmnt_module()
 				--mountpoint
 				--help
 				--tree
+				--real
+				--pseudo
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0

@@ -48,7 +48,6 @@
 #include "procutils.h"
 #include "strutils.h"
 #include "namespace.h"
-#include "path.h"
 #include "idcache.h"
 
 #include "debug.h"
@@ -92,18 +91,19 @@ struct colinfo {
 	double	   whint; /* width hint (N < 1 is in percent of termwidth) */
 	int	   flags; /* SCOLS_FL_* */
 	const char *help;
+	int        json_type;
 };
 
 /* columns descriptions */
 static const struct colinfo infos[] = {
-	[COL_NS]      = { "NS",     10, SCOLS_FL_RIGHT, N_("namespace identifier (inode number)") },
+	[COL_NS]      = { "NS",     10, SCOLS_FL_RIGHT, N_("namespace identifier (inode number)"), SCOLS_JSON_NUMBER },
 	[COL_TYPE]    = { "TYPE",    5, 0, N_("kind of namespace") },
 	[COL_PATH]    = { "PATH",    0, 0, N_("path to the namespace")},
-	[COL_NPROCS]  = { "NPROCS",  5, SCOLS_FL_RIGHT, N_("number of processes in the namespace") },
-	[COL_PID]     = { "PID",     5, SCOLS_FL_RIGHT, N_("lowest PID in the namespace") },
-	[COL_PPID]    = { "PPID",    5, SCOLS_FL_RIGHT, N_("PPID of the PID") },
+	[COL_NPROCS]  = { "NPROCS",  5, SCOLS_FL_RIGHT, N_("number of processes in the namespace"), SCOLS_JSON_NUMBER },
+	[COL_PID]     = { "PID",     5, SCOLS_FL_RIGHT, N_("lowest PID in the namespace"), SCOLS_JSON_NUMBER },
+	[COL_PPID]    = { "PPID",    5, SCOLS_FL_RIGHT, N_("PPID of the PID"), SCOLS_JSON_NUMBER },
 	[COL_COMMAND] = { "COMMAND", 0, SCOLS_FL_TRUNC, N_("command line of the PID")},
-	[COL_UID]     = { "UID",     0, SCOLS_FL_RIGHT, N_("UID of the PID")},
+	[COL_UID]     = { "UID",     0, SCOLS_FL_RIGHT, N_("UID of the PID"), SCOLS_JSON_NUMBER},
 	[COL_USER]    = { "USER",    0, 0, N_("username of the PID")},
 	[COL_NETNSID] = { "NETNSID", 0, SCOLS_FL_RIGHT, N_("namespace ID as used by network subsystem")},
 	[COL_NSFS]    = { "NSFS",    0, SCOLS_FL_WRAP, N_("nsfs mountpoint (usually used network subsystem)")}
@@ -806,6 +806,9 @@ static struct libscols_table *init_scols_table(struct lsns *ls)
 			warnx(_("failed to initialize output column"));
 			goto err;
 		}
+		if (ls->json)
+			scols_column_set_json_type(cl, col->json_type);
+
 		if (!ls->no_wrap && get_column_id(i) == COL_NSFS) {
 			scols_column_set_wrapfunc(cl,
 						  scols_wrapnl_chunksize,
@@ -902,6 +905,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --list             use list format output\n"), out);
 	fputs(_(" -n, --noheadings       don't print headings\n"), out);
 	fputs(_(" -o, --output <list>    define which output columns to use\n"), out);
+	fputs(_("     --output-all       output all columns\n"), out);
 	fputs(_(" -p, --task <pid>       print process namespaces\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
@@ -927,11 +931,15 @@ int main(int argc, char *argv[])
 	int c;
 	int r = 0;
 	char *outarg = NULL;
+	enum {
+		OPT_OUTPUT_ALL = CHAR_MAX + 1
+	};
 	static const struct option long_opts[] = {
 		{ "json",       no_argument,       NULL, 'J' },
 		{ "task",       required_argument, NULL, 'p' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "output",     required_argument, NULL, 'o' },
+		{ "output-all", no_argument,       NULL, OPT_OUTPUT_ALL },
 		{ "notruncate", no_argument,       NULL, 'u' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "noheadings", no_argument,       NULL, 'n' },
@@ -975,6 +983,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case OPT_OUTPUT_ALL:
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);

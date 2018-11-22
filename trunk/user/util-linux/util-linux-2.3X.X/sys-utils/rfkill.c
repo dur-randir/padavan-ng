@@ -37,7 +37,6 @@
 #include "timeutils.h"
 #include "widechar.h"
 #include "xalloc.h"
-#include "path.h"
 
 
 /*
@@ -274,9 +273,12 @@ failed:
 static const char *get_sys_attr(uint32_t idx, const char *attr)
 {
 	static char name[128];
-	FILE *f = path_fopen("r", 0, _PATH_SYS_RFKILL "/rfkill%u/%s", idx, attr);
+	char path[PATH_MAX];
+	FILE *f;
 	char *p;
 
+	snprintf(path, sizeof(path), _PATH_SYS_RFKILL "/rfkill%u/%s", idx, attr);
+	f = fopen(path, "r");
 	if (!f)
 		goto done;
 	if (!fgets(name, sizeof(name), f))
@@ -462,9 +464,16 @@ static void rfkill_list_init(struct control *ctrl)
 
 	for (i = 0; i < (size_t) ncolumns; i++) {
 		const struct colinfo *col = get_column_info(i);
+		struct libscols_column *cl;
 
-		if (!scols_table_new_column(ctrl->tb, col->name, col->whint, col->flags))
+		cl = scols_table_new_column(ctrl->tb, col->name, col->whint, col->flags);
+		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
+		if (ctrl->json) {
+			int id = get_column_id(i);
+			if (id == COL_ID)
+				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+		}
 	}
 }
 
@@ -572,6 +581,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -J, --json             use JSON output format\n"), stdout);
 	fputs(_(" -n, --noheadings       don't print headings\n"), stdout);
 	fputs(_(" -o, --output <list>    define which output columns to use\n"), stdout);
+	fputs(_("     --output-all       output all columns\n"), stdout);
 	fputs(_(" -r, --raw              use the raw output format\n"), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
@@ -602,12 +612,16 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	struct control ctrl = { 0 };
-	int c, act = ACT_LIST;
+	int c, act = ACT_LIST, list_all = 0;
 	char *outarg = NULL;
+	enum {
+		OPT_LIST_TYPES = CHAR_MAX + 1
+	};
 	static const struct option longopts[] = {
 		{ "json",	no_argument,	   NULL, 'J' },
 		{ "noheadings", no_argument,	   NULL, 'n' },
 		{ "output",	required_argument, NULL, 'o' },
+		{ "output-all",	no_argument,	   NULL, OPT_LIST_TYPES },
 		{ "raw",	no_argument,	   NULL, 'r' },
 		{ "version",	no_argument,	   NULL, 'V' },
 		{ "help",	no_argument,	   NULL, 'h' },
@@ -636,6 +650,9 @@ int main(int argc, char **argv)
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case OPT_LIST_TYPES:
+			list_all = 1;
 			break;
 		case 'r':
 			ctrl.raw = 1;
@@ -683,6 +700,8 @@ int main(int argc, char **argv)
 		columns[ncolumns++] = COL_ID;
 		columns[ncolumns++] = COL_TYPE;
 		columns[ncolumns++] = COL_DEVICE;
+		if (list_all)
+			columns[ncolumns++] = COL_DESC;
 		columns[ncolumns++] = COL_SOFT;
 		columns[ncolumns++] = COL_HARD;
 

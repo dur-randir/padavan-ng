@@ -193,7 +193,7 @@ the Hardware Clock while its Linux instance is not running.
 .TP
 .B \-\-set
 Set the Hardware Clock to the time given by the
-.BR \-\-date
+.B \-\-date
 option, and update the timestamps in
 .IR @ADJTIME_PATH@ .
 With the
@@ -279,6 +279,24 @@ capable of understanding many time and date formats, but the previous
 parameters should be observed.
 .RE
 .
+.TP
+.BI \%\-\-delay= seconds
+This option allows to overwrite internally used delay when set clock time. The
+default is 0.5 (500ms) for rtc_cmos, for another RTC types the delay is 0. If
+RTC type is impossible to determine (from sysfs) then it defaults also to 0.5
+to be backwardly compatible.
+.RS
+.PP
+The 500ms default is based on commonly used MC146818A-compatible (x86) hardware clock. This
+Hardware Clock can only be set to any integer time plus one half second.  The
+integer time is required because there is no interface to set or get a
+fractional second.  The additional half second delay is because the Hardware
+Clock updates to the following second precisely 500 ms after setting the new
+time. Unfortunately, this behavior is hardware specific and in same cases
+another delay is required.
+.RE
+.
+.TP
 .TP
 .BR \-D ", " \-\-debug
 .RB Use\  \-\-verbose .
@@ -394,7 +412,7 @@ at shutdown; with the old behaviour this would automatically
 (re)calculate the drift factor which caused several problems:
 .RS
 .IP \(bu 2
-When using ntpd with an \%'11\ minute\ mode' kernel the drift factor
+When using NTP with an \%'11\ minute\ mode' kernel the drift factor
 would be clobbered to near zero.
 .IP \(bu 2
 It would not allow the use of 'cold' drift correction.  With most
@@ -671,7 +689,6 @@ variable is unset. This value is output as the 'status' line of the
 .BR \%adjtimex\ --print " or " \%ntptime " commands."
 .PP
 It takes an outside influence, like the NTP daemon
-.BR ntpd (1),
 to put the kernel's clock discipline into a synchronized state, and
 therefore turn on \%'11\ minute\ mode'.
 It can be turned off by running anything that sets the System Clock the old
@@ -726,8 +743,7 @@ are supported by the hardware.
 .PP
 This discussion is based on the following conditions:
 .IP \(bu 2
-Nothing is running that alters the date-time clocks, such as
-.BR \%ntpd "(1) or a cron job."
+Nothing is running that alters the date-time clocks, such as NTP daemon or a cron job."
 .IP \(bu 2
 The system timezone is configured for the correct local time.  See below, under
 .BR "POSIX vs 'RIGHT'" .
@@ -746,8 +762,7 @@ During shutdown the following is called:
 .BR * " Systems without " adjtimex " may use " ntptime .
 .in
 .PP
-Whether maintaining precision time with
-.BR \%ntpd (1)
+Whether maintaining precision time with NTP daemon
 or not, it makes sense to configure the system to keep reasonably good
 date-time on its own.
 .PP
@@ -809,7 +824,7 @@ cold drift should yield better results.
 .PP
 .B Steps to calculate cold drift:
 .IP 1 2
-.RB "Ensure that " ntpd "(1) will not be launched at startup."
+.B "Ensure that NTP daemon will not be launched at startup."
 .IP 2 2
 .RI The " System Clock " "time must be correct at shutdown!"
 .IP 3 2

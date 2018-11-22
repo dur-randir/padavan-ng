@@ -42,13 +42,13 @@ The
 .B column
 utility formats its input into multiple columns.  The util support three modes:
 .TP
-.BR "columns are filled before rows"
+.B columns are filled before rows
 This is the default mode (required by backward compatibility).
 .TP
-.BR "rows are filled before columns"
+.B rows are filled before columns
 This mode is enabled by option \fB-x, \-\-fillrows\fP
 .TP
-.BR "table"
+.B table
 Determine the number of columns the input contains and create a table.  This
 mode is enabled by option \fB-t, \-\-table\fP and columns formatting is
 possible to modify by \fB\-\-table-*\fP options.  Use this mode if not sure.
@@ -105,7 +105,10 @@ hide all unnamed columns (see --table-columns).
 .IP "\fB\-O, \-\-table-order\fP \fIcolumns\fP"
 Specify columns order on output.
 .IP "\fB\-n, \-\-table-name\fP \fIname\fP"
-Specify the table name used for JSON output. The defaout is "table".
+Specify the table name used for JSON output. The default is "table".
+.IP "\fB\-L, \-\-table\-empty\-lines\fP"
+Insert empty line to the table for each empty line on input. The default
+is ignore empty lines at all.
 .IP "\fB\-r, \-\-tree\fP \fIcolumn\fP"
 Specify column to use tree-like output. Note that the circular dependencies and
 another anomalies in child and parent relation are silently ignored.

@@ -254,7 +254,7 @@ static void print_udev_format(const char *name, const char *value)
 		printf("ID_FS_%s=%s\n", name, enc);
 
 	} else if (!strcmp(name, "UUID") ||
-		 !strcmp(name, "LABEL") ||
+		 !strncmp(name, "LABEL", 5) ||
 		 !strcmp(name, "UUID_SUB")) {
 
 		blkid_safe_string(value, safe, sizeof(safe));
@@ -530,8 +530,8 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 			continue;
 		if (ctl->show[0] && !has_item(ctl, name))
 			continue;
-		len = strnlen((char *) data, len);
-		print_value(ctl, num++, devname, (char *) data, name, len);
+		len = strnlen(data, len);
+		print_value(ctl, num++, devname, data, name, len);
 	}
 
 	if (first)

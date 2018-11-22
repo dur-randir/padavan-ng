@@ -1210,12 +1210,12 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 
 			if (fdisk_use_cylinders(cxt)) {
-				fdisk_ask_set_query(ask, _("Last cylinder, +cylinders or +size{K,M,G,T,P}"));
+				fdisk_ask_set_query(ask, _("Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"));
 				fdisk_ask_number_set_unit(ask,
 					     cxt->sector_size *
 					     fdisk_get_units_per_sector(cxt));
 			} else {
-				fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
+				fdisk_ask_set_query(ask, _("Last sector, +/-sectors or +/-size{K,M,G,T,P}"));
 				fdisk_ask_number_set_unit(ask,cxt->sector_size);
 			}
 
@@ -1223,6 +1223,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			fdisk_ask_number_set_default(ask, fdisk_cround(cxt, limit));
 			fdisk_ask_number_set_high(ask, fdisk_cround(cxt, limit));
 			fdisk_ask_number_set_base(ask, fdisk_cround(cxt, start));	/* base for relative input */
+			fdisk_ask_number_set_wrap_negative(ask, 1); /* wrap negative around high */
 
 			rc = fdisk_do_ask(cxt, ask);
 			if (rc)
@@ -2153,8 +2154,8 @@ static void print_chain_of_logicals(struct fdisk_context *cxt)
 
 static int cmp_ebr_offsets(const void *a, const void *b)
 {
-	struct pte *ae = (struct pte *) a,
-		   *be = (struct pte *) b;
+	const struct pte *ae = (const struct pte *) a,
+			 *be = (const struct pte *) b;
 
 	if (ae->offset == 0 && be->offset == 0)
 		return 0;

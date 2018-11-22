@@ -15,7 +15,7 @@ _lscpu_module()
 				CONFIGURED ONLINE MAXMHZ MINMHZ"
 			for WORD in $OPTS_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					OPTS="$WORD $OPTS"
+					OPTS="$WORD ${OPTS:-""}"
 				fi
 			done
 			compopt -o nospace
@@ -37,6 +37,7 @@ _lscpu_module()
 				--sysroot
 				--hex
 				--physical
+				--output-all
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS_ALL[*]}" -- $cur) )

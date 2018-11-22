@@ -38,6 +38,8 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "pathnames.h"
+#include "signames.h"
+#include "env.h"
 
 #ifndef PR_SET_NO_NEW_PRIVS
 # define PR_SET_NO_NEW_PRIVS 38
@@ -54,6 +56,11 @@
 #endif
 
 #define SETPRIV_EXIT_PRIVERR 127	/* how we exit when we fail to set privs */
+
+/* The shell to set SHELL env.variable if none is given in the user's passwd entry.  */
+#define DEFAULT_SHELL "/bin/sh"
+
+static gid_t get_group(const char *s, const char *err);
 
 enum cap_type {
 	CAP_TYPE_EFFECTIVE   = CAPNG_EFFECTIVE,
@@ -82,6 +89,7 @@ struct privctx {
 		keep_groups:1,		/* keep groups */
 		clear_groups:1,		/* remove groups */
 		init_groups:1,		/* initialize groups */
+		reset_env:1,		/* reset environment */
 		have_securebits:1;	/* remove groups */
 
 	/* uids and gids */
@@ -102,6 +110,8 @@ struct privctx {
 
 	/* securebits */
 	int securebits;
+	/* parent death signal (<0 clear, 0 nothing, >0 signal) */
+	int pdeathsig;
 
 	/* LSMs */
 	const char *selinux_label;
@@ -124,19 +134,24 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --ambient-caps <caps,...>   set ambient capabilities\n"), out);
 	fputs(_(" --inh-caps <caps,...>       set inheritable capabilities\n"), out);
 	fputs(_(" --bounding-set <caps>       set capability bounding set\n"), out);
-	fputs(_(" --ruid <uid>                set real uid\n"), out);
-	fputs(_(" --euid <uid>                set effective uid\n"), out);
-	fputs(_(" --rgid <gid>                set real gid\n"), out);
-	fputs(_(" --egid <gid>                set effective gid\n"), out);
-	fputs(_(" --reuid <uid>               set real and effective uid\n"), out);
-	fputs(_(" --regid <gid>               set real and effective gid\n"), out);
+	fputs(_(" --ruid <uid|user>           set real uid\n"), out);
+	fputs(_(" --euid <uid|user>           set effective uid\n"), out);
+	fputs(_(" --rgid <gid|user>           set real gid\n"), out);
+	fputs(_(" --egid <gid|group>          set effective gid\n"), out);
+	fputs(_(" --reuid <uid|user>          set real and effective uid\n"), out);
+	fputs(_(" --regid <gid|group>         set real and effective gid\n"), out);
 	fputs(_(" --clear-groups              clear supplementary groups\n"), out);
 	fputs(_(" --keep-groups               keep supplementary groups\n"), out);
 	fputs(_(" --init-groups               initialize supplementary groups\n"), out);
-	fputs(_(" --groups <group,...>        set supplementary groups\n"), out);
+	fputs(_(" --groups <group,...>        set supplementary groups by UID or name\n"), out);
 	fputs(_(" --securebits <bits>         set securebits\n"), out);
+	fputs(_(" --reset-env                 reset environment variables\n"), out);
+	fputs(_(" --pdeathsig keep|clear|<signame>\n"
+	        "                             set or clear parent death signal\n"), out);
 	fputs(_(" --selinux-label <label>     set SELinux label\n"), out);
 	fputs(_(" --apparmor-profile <pr>     set AppArmor profile\n"), out);
+	fputs(_(" --reset-env                 clear all environment and initialize\n"
+		"                               HOME, SHELL, USER, LOGNAME and PATH\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(29));
@@ -329,6 +344,24 @@ static void dump_groups(void)
 	free(groups);
 }
 
+static void dump_pdeathsig(void)
+{
+	int pdeathsig;
+
+	if (prctl(PR_GET_PDEATHSIG, &pdeathsig) != 0) {
+		warn(_("get pdeathsig failed"));
+		return;
+	}
+
+	printf("Parent death signal: ");
+	if (pdeathsig && signum_to_signame(pdeathsig) != NULL)
+		printf("%s\n", signum_to_signame(pdeathsig));
+	else if (pdeathsig)
+		printf("%d\n", pdeathsig);
+	else
+		printf("[none]\n");
+}
+
 static void dump(int dumplevel)
 {
 	int x;
@@ -392,6 +425,7 @@ static void dump(int dumplevel)
 	printf("\n");
 
 	dump_securebits();
+	dump_pdeathsig();
 
 	if (access(_PATH_SYS_SELINUX, F_OK) == 0)
 		dump_label(_("SELinux label"));
@@ -432,10 +466,22 @@ static void parse_groups(struct privctx *opts, const char *str)
 
 	opts->groups = xcalloc(opts->num_groups, sizeof(gid_t));
 	while ((c = strsep(&groups, ",")))
-		opts->groups[i++] = (gid_t) strtol_or_err(c,
-						  _("Invalid supplementary group id"));
+		opts->groups[i++] = get_group(c, _("Invalid supplementary group id"));
 
 	free(groups);
+}
+
+static void parse_pdeathsig(struct privctx *opts, const char *str)
+{
+	if (!strcmp(str, "keep")) {
+		if (prctl(PR_GET_PDEATHSIG, &opts->pdeathsig) != 0)
+			errx(SETPRIV_EXIT_PRIVERR,
+				 _("failed to get parent death signal"));
+	} else if (!strcmp(str, "clear")) {
+		opts->pdeathsig = -1;
+	} else if ((opts->pdeathsig = signame_to_signum(str)) < 0) {
+		errx(EXIT_FAILURE, _("unknown signal: %s"), str);
+	}
 }
 
 static void do_setresuid(const struct privctx *opts)
@@ -643,6 +689,36 @@ static void do_apparmor_profile(const char *label)
 		    _("write failed: %s"), _PATH_PROC_ATTR_EXEC);
 }
 
+
+static void do_reset_environ(struct passwd *pw)
+{
+	char *term = getenv("TERM");
+
+	if (term)
+		term = xstrdup(term);
+#ifdef HAVE_CLEARENV
+	clearenv();
+#else
+	environ = NULL;
+#endif
+	if (term)
+		xsetenv("TERM", term, 1);
+
+	if (pw->pw_shell && *pw->pw_shell)
+		xsetenv("SHELL", pw->pw_shell, 1);
+	else
+		xsetenv("SHELL", DEFAULT_SHELL, 1);
+
+	xsetenv("HOME", pw->pw_dir, 1);
+	xsetenv("USER", pw->pw_name, 1);
+	xsetenv("LOGNAME", pw->pw_name, 1);
+
+	if (pw->pw_uid)
+		xsetenv("PATH", _PATH_DEFPATH, 1);
+	else
+		xsetenv("PATH", _PATH_DEFPATH_ROOT, 1);
+}
+
 static uid_t get_user(const char *s, const char *err)
 {
 	struct passwd *pw;
@@ -711,8 +787,10 @@ int main(int argc, char **argv)
 		LISTCAPS,
 		CAPBSET,
 		SECUREBITS,
+		PDEATHSIG,
 		SELINUX_LABEL,
-		APPARMOR_PROFILE
+		APPARMOR_PROFILE,
+		RESET_ENV
 	};
 
 	static const struct option longopts[] = {
@@ -734,9 +812,11 @@ int main(int argc, char **argv)
 		{ "groups",           required_argument, NULL, GROUPS           },
 		{ "bounding-set",     required_argument, NULL, CAPBSET          },
 		{ "securebits",       required_argument, NULL, SECUREBITS       },
+		{ "pdeathsig",        required_argument, NULL, PDEATHSIG,       },
 		{ "selinux-label",    required_argument, NULL, SELINUX_LABEL    },
 		{ "apparmor-profile", required_argument, NULL, APPARMOR_PROFILE },
 		{ "help",             no_argument,       NULL, 'h'              },
+		{ "reset-env",        no_argument,       NULL, RESET_ENV,       },
 		{ "version",          no_argument,       NULL, 'V'              },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -844,6 +924,12 @@ int main(int argc, char **argv)
 				     _("duplicate --groups option"));
 			parse_groups(&opts, optarg);
 			break;
+		case PDEATHSIG:
+			if (opts.pdeathsig)
+				errx(EXIT_FAILURE,
+				     _("duplicate --keep-pdeathsig option"));
+			parse_pdeathsig(&opts, optarg);
+			break;
 		case LISTCAPS:
 			list_caps = 1;
 			break;
@@ -882,6 +968,9 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE,
 				     _("duplicate --apparmor-profile option"));
 			opts.apparmor_profile = optarg;
+			break;
+		case RESET_ENV:
+			opts.reset_env = 1;
 			break;
 		case 'h':
 			usage();
@@ -927,6 +1016,16 @@ int main(int argc, char **argv)
 		     _("uid %ld not found, --init-groups requires an user that "
 		       "can be found on the system"),
 		     (long) opts.ruid);
+
+	if (opts.reset_env) {
+		if (opts.have_passwd)
+			/* pwd according to --ruid or --reuid */
+			pw = &opts.passwd;
+		else
+			/* pwd for the current user */
+			pw = getpwuid(getuid());
+		do_reset_environ(pw);
+	}
 
 	if (opts.nnp && prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == -1)
 		err(EXIT_FAILURE, _("disallow granting new privileges failed"));
@@ -988,6 +1087,10 @@ int main(int argc, char **argv)
 	if (opts.ambient_caps) {
 		do_caps(CAP_TYPE_AMBIENT, opts.ambient_caps);
 	}
+
+	/* Clear or set parent death signal */
+	if (opts.pdeathsig && prctl(PR_SET_PDEATHSIG, opts.pdeathsig < 0 ? 0 : opts.pdeathsig) != 0)
+		err(SETPRIV_EXIT_PRIVERR, _("set parent death signal failed"));
 
 	execvp(argv[optind], argv + optind);
 	errexec(argv[optind]);

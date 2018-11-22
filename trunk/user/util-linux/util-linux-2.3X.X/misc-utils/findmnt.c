@@ -947,6 +947,12 @@ static int match_func(struct libmnt_fs *fs,
 			return rc;
 	}
 
+	if ((flags & FL_REAL) && mnt_fs_is_pseudofs(fs))
+	    return rc;
+
+	if ((flags & FL_PSEUDO) && !mnt_fs_is_pseudofs(fs))
+	    return rc;
+
 	return !rc;
 }
 
@@ -1227,9 +1233,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --noheadings       don't print column headings\n"), out);
 	fputs(_(" -O, --options <list>   limit the set of filesystems by mount options\n"), out);
 	fputs(_(" -o, --output <list>    the output columns to be shown\n"), out);
+	fputs(_("     --output-all       output all available columns\n"), out);
 	fputs(_(" -P, --pairs            use key=\"value\" output format\n"), out);
+	fputs(_("     --pseudo           print only pseudo-filesystems\n"), out);
 	fputs(_(" -R, --submounts        print all submounts for the matching filesystems\n"), out);
 	fputs(_(" -r, --raw              use raw output format\n"), out);
+	fputs(_("     --real             print only real filesystems\n"), out);
 	fputs(_(" -S, --source <string>  the device to mount (by name, maj:min, \n"
 	        "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"), out);
 	fputs(_(" -T, --target <path>    the path to the filesystem to use\n"), out);
@@ -1238,7 +1247,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --types <list>     limit the set of filesystems by FS types\n"), out);
 	fputs(_(" -U, --uniq             ignore filesystems with duplicate target\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
-	fputs(_(" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"), out);	
+	fputs(_(" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"), out);
 
 	fputc('\n', out);
 	fputs(_(" -x, --verify           verify mount table content (default is fstab)\n"), out);
@@ -1271,8 +1280,11 @@ int main(int argc, char *argv[])
 	struct libscols_table *table = NULL;
 
 	enum {
-                FINDMNT_OPT_VERBOSE = CHAR_MAX + 1,
-		FINDMNT_OPT_TREE
+		FINDMNT_OPT_VERBOSE = CHAR_MAX + 1,
+		FINDMNT_OPT_TREE,
+		FINDMNT_OPT_OUTPUT_ALL,
+		FINDMNT_OPT_PSEUDO,
+		FINDMNT_OPT_REAL
 	};
 
 	static const struct option longopts[] = {
@@ -1296,6 +1308,7 @@ int main(int argc, char *argv[])
 		{ "notruncate",	    no_argument,       NULL, 'u'		 },
 		{ "options",	    required_argument, NULL, 'O'		 },
 		{ "output",	    required_argument, NULL, 'o'		 },
+		{ "output-all",	    no_argument,       NULL, FINDMNT_OPT_OUTPUT_ALL },
 		{ "poll",	    optional_argument, NULL, 'p'		 },
 		{ "pairs",	    no_argument,       NULL, 'P'		 },
 		{ "raw",	    no_argument,       NULL, 'r'		 },
@@ -1313,11 +1326,13 @@ int main(int argc, char *argv[])
 		{ "version",	    no_argument,       NULL, 'V'		 },
 		{ "verbose",	    no_argument,       NULL, FINDMNT_OPT_VERBOSE },
 		{ "tree",	    no_argument,       NULL, FINDMNT_OPT_TREE	 },
+		{ "real",	    no_argument,       NULL, FINDMNT_OPT_REAL	 },
+		{ "pseudo",	    no_argument,       NULL, FINDMNT_OPT_PSEUDO	 },
 		{ NULL, 0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
-		{ 'C', 'c'},                    /* [no]canonicalize */
+		{ 'C', 'c'},			/* [no]canonicalize */
 		{ 'C', 'e' },			/* nocanonicalize, evaluate */
 		{ 'J', 'P', 'r','x' },		/* json,pairs,raw,verify */
 		{ 'M', 'T' },			/* mountpoint, target */
@@ -1325,6 +1340,7 @@ int main(int argc, char *argv[])
 		{ 'P','l','r','x' },		/* pairs,list,raw,verify */
 		{ 'p','x' },			/* poll,verify */
 		{ 'm','p','s' },		/* mtab,poll,fstab */
+		{ FINDMNT_OPT_PSEUDO, FINDMNT_OPT_REAL },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -1395,6 +1411,13 @@ int main(int argc, char *argv[])
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case FINDMNT_OPT_OUTPUT_ALL:
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++) {
+				if (is_tabdiff_column(ncolumns))
+					continue;
+				columns[ncolumns] = ncolumns;
+			}
 			break;
 		case 'O':
 			set_match(COL_OPTIONS, optarg);
@@ -1478,6 +1501,12 @@ int main(int argc, char *argv[])
 			break;
 		case FINDMNT_OPT_TREE:
 			force_tree = 1;
+			break;
+		case FINDMNT_OPT_PSEUDO:
+			flags |= FL_PSEUDO;
+			break;
+		case FINDMNT_OPT_REAL:
+			flags |= FL_REAL;
 			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
@@ -1606,6 +1635,7 @@ int main(int argc, char *argv[])
 		scols_table_set_name(table, "filesystems");
 
 	for (i = 0; i < ncolumns; i++) {
+		struct libscols_column *cl;
 		int fl = get_column_flags(i);
 		int id = get_column_id(i);
 
@@ -1617,10 +1647,31 @@ int main(int argc, char *argv[])
 			       "is not enabled"), get_column_name(i));
 			goto leave;
 		}
-		if (!scols_table_new_column(table, get_column_name(i),
-					get_column_whint(i), fl)) {
+		cl = scols_table_new_column(table, get_column_name(i),
+					get_column_whint(i), fl);
+		if (!cl)	{
 			warn(_("failed to allocate output column"));
 			goto leave;
+		}
+
+		if (flags & FL_JSON) {
+			switch (id) {
+			case COL_SIZE:
+			case COL_AVAIL:
+			case COL_USED:
+				if (!(flags & FL_BYTES))
+					break;
+				/* fallthrough */
+			case COL_ID:
+			case COL_FREQ:
+			case COL_PASSNO:
+			case COL_TID:
+				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+				break;
+			default:
+				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+				break;
+			}
 		}
 	}
 

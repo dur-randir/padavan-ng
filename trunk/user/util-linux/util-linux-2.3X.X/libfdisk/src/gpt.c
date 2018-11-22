@@ -945,7 +945,7 @@ static ssize_t read_lba(struct fdisk_context *cxt, uint64_t lba,
 static unsigned char *gpt_read_entries(struct fdisk_context *cxt,
 					 struct gpt_header *header)
 {
-	size_t sz;
+	size_t sz = 0;
 	ssize_t ssz;
 
 	unsigned char *ret = NULL;
@@ -1971,7 +1971,7 @@ static int gpt_write_partitions(struct fdisk_context *cxt,
 				struct gpt_header *header, unsigned char *ents)
 {
 	off_t offset = (off_t) le64_to_cpu(header->partition_entry_lba) * cxt->sector_size;
-	size_t towrite;
+	size_t towrite = 0;
 	ssize_t ssz;
 	int rc;
 
@@ -2444,13 +2444,14 @@ static int gpt_add_partition(
 			if (!ask)
 				return -ENOMEM;
 
-			fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
+			fdisk_ask_set_query(ask, _("Last sector, +/-sectors or +/-size{K,M,G,T,P}"));
 			fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 			fdisk_ask_number_set_low(ask,     user_f);	/* minimal */
 			fdisk_ask_number_set_default(ask, dflt_l);	/* default */
 			fdisk_ask_number_set_high(ask,    dflt_l);	/* maximal */
 			fdisk_ask_number_set_base(ask,    user_f);	/* base for relative input */
 			fdisk_ask_number_set_unit(ask,    cxt->sector_size);
+			fdisk_ask_number_set_wrap_negative(ask, 1);	/* wrap negative around high */
 
 			rc = fdisk_do_ask(cxt, ask);
 			if (rc)
@@ -3000,8 +3001,8 @@ static int gpt_toggle_partition_flag(
 
 static int gpt_entry_cmp_start(const void *a, const void *b)
 {
-	struct gpt_entry *ae = (struct gpt_entry *) a,
-			 *be = (struct gpt_entry *) b;
+	const struct gpt_entry  *ae = (const struct gpt_entry *) a,
+				*be = (const struct gpt_entry *) b;
 	int au = gpt_entry_is_used(ae),
 	    bu = gpt_entry_is_used(be);
 

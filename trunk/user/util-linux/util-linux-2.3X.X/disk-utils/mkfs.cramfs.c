@@ -359,7 +359,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 			entry->size = parse_directory(root_entry, path, &entry->child, fslen_ub);
 		} else if (S_ISREG(st.st_mode)) {
 			entry->path = xstrdup(path);
-			if (entry->size && entry->size >= (1 << CRAMFS_SIZE_WIDTH)) {
+			if (entry->size >= (1 << CRAMFS_SIZE_WIDTH)) {
 				warn_size = 1;
 				entry->size = (1 << CRAMFS_SIZE_WIDTH) - 1;
 			}
@@ -418,9 +418,9 @@ static unsigned int write_superblock(struct entry *root, char *base, int size)
 
 	memset(super->name, 0x00, sizeof(super->name));
 	if (opt_name)
-		strncpy((char *)super->name, opt_name, sizeof(super->name));
+		str2memcpy((char *)super->name, opt_name, sizeof(super->name));
 	else
-		strncpy((char *)super->name, "Compressed", sizeof(super->name));
+		str2memcpy((char *)super->name, "Compressed", sizeof(super->name));
 
 	super->root.mode = root->mode;
 	super->root.uid = root->uid;

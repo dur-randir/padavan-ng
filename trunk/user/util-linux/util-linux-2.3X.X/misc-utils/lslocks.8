@@ -20,6 +20,9 @@ since Linux 3.15, see \fBfcntl\fR(2) for more details.
 
 .SH OPTIONS
 .TP
+.BR \-b , " \-\-bytes"
+Print the SIZE column in bytes rather than in a human-readable format.
+.TP
 .BR \-i , " \-\-noinaccessible"
 Ignore lock files which are inaccessible for the current user.
 .TP
@@ -36,6 +39,9 @@ to get a list of all supported columns.
 
 The default list of columns may be extended if \fIlist\fP is
 specified in the format \fI+list\fP (e.g. \fBlslocks -o +BLOCKER\fP).
+.TP
+.B \-\-output\-all
+Output all available columns.
 .TP
 .BR \-p , " \-\-pid " \fIpid\fP
 Display only the locks held by the process with this \fIpid\fR.

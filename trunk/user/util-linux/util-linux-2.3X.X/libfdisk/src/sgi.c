@@ -510,8 +510,8 @@ static int compare_start(struct fdisk_context *cxt,
 	 * Sort according to start sectors and prefer the largest partition:
 	 * entry zero is the entire-disk entry.
 	 */
-	unsigned int i = *(int *) x;
-	unsigned int j = *(int *) y;
+	const unsigned int i = *(const int *) x;
+	const unsigned int j = *(const int *) y;
 	unsigned int a = sgi_get_start_sector(cxt, i);
 	unsigned int b = sgi_get_start_sector(cxt, j);
 	unsigned int c = sgi_get_num_sectors(cxt, i);
@@ -925,6 +925,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		fdisk_ask_number_set_default(ask, fdisk_scround(cxt, last) - 1);/* default */
 		fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, last) - 1);/* maximal */
 		fdisk_ask_number_set_base(ask,    fdisk_scround(cxt, first));
+		fdisk_ask_number_set_wrap_negative(ask, 1); /* wrap negative around high */
 
 		if (fdisk_use_cylinders(cxt))
 			fdisk_ask_number_set_unit(ask,

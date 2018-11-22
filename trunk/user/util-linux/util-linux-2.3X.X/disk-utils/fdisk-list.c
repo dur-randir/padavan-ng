@@ -63,6 +63,9 @@ void list_disk_geometry(struct fdisk_context *cxt)
 	color_disable();
 	free(strsz);
 
+	if (fdisk_get_devmodel(cxt))
+		fdisk_info(cxt, _("Disk model: %s"), fdisk_get_devmodel(cxt));
+
 	if (lb && (fdisk_label_require_geometry(lb) || fdisk_use_cylinders(cxt)))
 		fdisk_info(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
 			       fdisk_get_geom_heads(cxt),
@@ -330,7 +333,7 @@ char *next_proc_partition(FILE **f)
 		if (sscanf(line, " %*d %*d %*d %128[^\n ]", buf) != 1)
 			continue;
 
-		devno = sysfs_devname_to_devno(buf, NULL);
+		devno = sysfs_devname_to_devno(buf);
 		if (devno <= 0)
 			continue;
 

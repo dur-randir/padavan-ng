@@ -395,7 +395,7 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 	 *	uucp and ftp have special-type entries
 	 */
 	utline[0] = 0;
-	strncat(utline, p->ut_line, sizeof(p->ut_line));
+	strncat(utline, p->ut_line, sizeof(utline) - 1);
 	if (strncmp(utline, "ftp", 3) == 0 && isdigit(utline[3]))
 		utline[3] = 0;
 	if (strncmp(utline, "uucp", 4) == 0 && isdigit(utline[4]))
@@ -508,15 +508,8 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 	r = -1;
 	if (ctl->usedns || ctl->useip)
 		r = dns_lookup(domain, sizeof(domain), ctl->useip, (int32_t*)p->ut_addr_v6);
-	if (r < 0) {
-		size_t sz = sizeof(p->ut_host);
-
-		if (sz > sizeof(domain))
-			sz = sizeof(domain);
-
-		xstrncpy(domain, p->ut_host, sz);
-	}
-
+	if (r < 0)
+		mem2strcpy(domain, p->ut_host, sizeof(p->ut_host), sizeof(domain));
 
 	if (ctl->showhost) {
 		if (!ctl->altlist) {

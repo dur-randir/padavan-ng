@@ -56,7 +56,7 @@ offending process could even be
 .B umount
 itself - it opens libc, and libc in its turn may open for example locale
 files.  A lazy unmount avoids this problem, but it may introduce another
-issues. See \fB\-\-lazy\fR description bellow.
+issues. See \fB\-\-lazy\fR description below.
 .SH OPTIONS
 .TP
 .BR \-a , " \-\-all"
@@ -128,6 +128,21 @@ an unreachable network share where a normal umount will hang due to a downed
 server or a network partition. Remounts of the share will not be possible.
 
 .TP
+.BR \-N , " \-\-namespace " \fIns
+Perform umount in namespace specified by \fIns\fR.
+\fIns\fR is either PID of process running in that namespace
+or special file representing that namespace.
+.sp
+.BR umount (8)
+switches to the namespace when it reads /etc/fstab, writes /etc/mtab (or writes to /run/mount) and calls
+.BR umount (2)
+system call, otherwise it runs in the original namespace. It means that the target namespace does not have
+to contain any libraries or another requirements necessary to execute
+.BR umount (2)
+command.
+.sp
+See \fBnamespaces\fR(7) for more information.
+.TP
 .BR \-n , " \-\-no\-mtab"
 Unmount without writing in
 .IR /etc/mtab .
@@ -139,6 +154,9 @@ More than one option may be specified in a comma-separated list.
 Each option can be prefixed with
 .B no
 to indicate that no action should be taken for this option.
+.TP
+.BR \-q , " \-\-quiet"
+Suppress "not mounted" error messages.
 .TP
 .BR \-R , " \-\-recursive"
 Recursively unmount each specified directory.  Recursion for each directory will
@@ -158,7 +176,6 @@ More than one type may be specified in a comma-separated list.  The list
 of filesystem types can be prefixed with
 .B no
 to indicate that no action should be taken for all of the mentioned types.
-.BR
 Note that
 .B umount
 reads information about mounted filesystems from kernel (/proc/mounts) and
@@ -191,6 +208,8 @@ The syntax of external unmount helpers is:
 .BI umount. suffix
 .RI { directory | device }
 .RB [ \-flnrv ]
+.RB [ \-N
+.IR namespace ]
 .RB [ \-t
 .IR type . subtype ]
 .RE

@@ -97,11 +97,11 @@ refers to the root of the filesystem on
 If only the directory or the device is given, for example:
 .RS
 .sp
-.BI "mount /dir"
+.B mount /dir
 .sp
 .RE
 then \fBmount\fR looks for a mountpoint (and if not found then for a device) in the
-.IR /etc/fstab
+.I /etc/fstab
 file.  It's possible to use the
 .B \-\-target
 or
@@ -109,7 +109,7 @@ or
 options to avoid ambivalent interpretation of the given argument.  For example:
 .RS
 .sp
-.BI "mount \-\-target /mountpoint"
+.B mount \-\-target /mountpoint
 .sp
 .RE
 
@@ -238,11 +238,15 @@ and
 .B umount
 traditionally maintained a list of currently mounted filesystems in the file
 .IR /etc/mtab .
-This real mtab file is still supported, but on current Linux systems it is
-better to make it a symlink to
+The support for regular classic
+.I /etc/mtab
+is completely disabled in compile time by default, because on current Linux
+systems it is better to make it a symlink to
 .I /proc/mounts
-instead, because a regular mtab file maintained in userspace cannot reliably
+instead. The regular mtab file maintained in userspace cannot reliably
 work with namespaces, containers and other advanced Linux features.
+If the regular mtab support is enabled than it's possible to
+use the file as well as the symlink.
 .sp
 If no arguments are given to
 .BR mount ,
@@ -259,6 +263,8 @@ you have to use the \fB\-o\fR option:
 and then the mount options from the command line will be appended to
 the list of options from
 .IR /etc/fstab .
+This default behaviour is possible to change by command line
+option \fB\-\-options\-mode\fR.
 The usual behavior is that the last option wins if there are conflicting
 ones.
 .sp
@@ -277,6 +283,11 @@ are specified.  For example, to mount device
 .B "mount /dev/foo /dir"
 .sp
 .RE
+This default behaviour is possible to change by command line option
+\fB\-\-options\-source\-force\fR to always read configuration from fstab. For
+non-root users
+.B mount
+always read fstab configuration.
 
 .SS Non-superuser mounts
 Normally, only the superuser can mount filesystems.
@@ -372,8 +383,11 @@ a second place by using:
 .I olddir newdir
 .RE
 
-Note that the filesystem mount options will remain the same as those
-on the original mount point.
+Note that the filesystem mount options maintained by kernel will remain the same as those
+on the original mount point.  The userspace mount options (e.g. _netdev) will not be copied
+by
+.BR mount (8)
+and it's necessary explicitly specify the options on mount command line.
 
 .BR mount (8)
 since v2.27 allows to change the mount options by passing the
@@ -410,8 +424,9 @@ will be writable, but the
 will be read-only.
 
 It's also possible to change nosuid, nodev, noexec, noatime, nodiratime and
-relatime VFS entry flags by "remount,bind" operation. It's impossible to change
-mount options recursively (for example with \fB-o rbind,ro\fR).
+relatime VFS entry flags by "remount,bind" operation.  The another (for example
+filesystem specific flags) are silently ignored.  It's impossible to change mount
+options recursively (for example with \fB-o rbind,ro\fR).
 
 .BR mount (8)
 since v2.31 ignores the \fBbind\fR flag from
@@ -519,7 +534,7 @@ For example:
 
 .RS
 .nf
-.BI "mount \-\-make\-private \-\-make\-unbindable /dev/sda1 /foo"
+.B mount \-\-make\-private \-\-make\-unbindable /dev/sda1 /foo
 .fi
 .RE
 
@@ -527,9 +542,9 @@ is the same as:
 
 .RS
 .nf
-.BI "mount /dev/sda1 /foo"
-.BI "mount \-\-make\-private /foo"
-.BI "mount \-\-make\-unbindable /foo"
+.B mount /dev/sda1 /foox
+.B mount \-\-make\-private /foo
+.B mount \-\-make\-unbindable /foo
 .fi
 .RE
 
@@ -566,7 +581,7 @@ already mounted filesystems is cached during \fBmount \-\-all\fR. It means
 that all duplicated fstab entries will be mounted.
 .sp
 Note that it is a bad practice to use \fBmount \-a\fR for
-.IR fstab
+.I fstab
 checking. The recommended solution is \fBfindmnt \-\-verify\fR.
 .TP
 .BR \-B , " \-\-bind"
@@ -636,6 +651,21 @@ This is necessary for example when
 .I /etc
 is on a read-only filesystem.
 .TP
+.BR \-N , " \-\-namespace " \fIns
+Perform mount in namespace specified by \fIns\fR.
+\fIns\fR is either PID of process running in that namespace
+or special file representing that namespace.
+.sp
+.BR mount (8)
+switches to the namespace when it reads /etc/fstab, writes /etc/mtab (or writes to /run/mount) and calls
+.BR mount (2)
+system call, otherwise it runs in the original namespace. It means that the target namespace does not have
+to contain any libraries or another requirements necessary to execute
+.BR mount (2)
+command.
+.sp
+See \fBnamespaces\fR(7) for more information.
+.TP
 .BR \-O , " \-\-test\-opts " \fIopts
 Limit the set of filesystems to which the
 .B \-a
@@ -694,6 +724,29 @@ and
 .B FILESYSTEM-SPECIFIC MOUNT OPTIONS
 sections.
 .RE
+
+.TP
+.BR "\-\-options\-mode " \fImode
+Controls how to combine options from fstab/mtab with options from command line.
+\fImode\fR can be one of
+.BR ignore ", " append ", " prepend " or " replace .
+For example \fBappend\fR means that options from fstab are appended to options from command line.
+Default value is \fBprepend\fR -- it means command line options are evaluated after fstab options.
+Note that the last option wins if there are conflicting ones.
+
+.TP
+.BR "\-\-options\-source " \fIsource
+Source of default options.
+\fIsource\fR is comma separated list of
+.BR fstab ", " mtab " and " disable .
+\fBdisable\fR disables
+.BR fstab " and " mtab
+and disables \fB\-\-options\-source\-force\fR.
+Default value is \fBfstab,mtab\fR.
+
+.TP
+.B \-\-options\-source\-force
+Use options from fstab/mtab even if both \fIdevice\fR and \fIdir\fR are specified.
 
 .TP
 .BR \-R , " \-\-rbind"
@@ -880,7 +933,7 @@ output for extN filesystems).
 The following options apply to any filesystem that is being
 mounted (but not every filesystem actually honors them \(en e.g.\&, the
 .B sync
-option today has an effect only for ext2, ext3, fat, vfat and ufs):
+option today has an effect only for ext2, ext3, ext4, fat, vfat and ufs):
 
 .TP
 .B async
@@ -916,7 +969,8 @@ The
 .B context=
 option is useful when mounting filesystems that do not support
 extended attributes, such as a floppy or hard disk formatted with VFAT, or
-systems that are not normally running under SELinux, such as an ext3 formatted
+systems that are not normally running under SELinux, such as an ext3 or ext4 formatted
+
 disk from a non-SELinux workstation.  You can also use
 .B context=
 on filesystems you do not trust, such as a floppy.  It also helps in compatibility with
@@ -1349,7 +1403,7 @@ independent of indices created in other instances of devpts.
 
 All mounts of devpts without this
 .B newinstance
-option share the same set of pty indices (i.e legacy mode).
+option share the same set of pty indices (i.e. legacy mode).
 Each mount of devpts with the
 .B newinstance
 option has a private set of pty indices.
@@ -1452,7 +1506,7 @@ normal check is too inflexible.  With this option you can relax it.
 .RE
 .TP
 .BI check= value
-Three different levels of pickyness can be chosen:
+Three different levels of pickiness can be chosen:
 .RS
 .TP
 .BR r [ elaxed ]
@@ -1547,7 +1601,7 @@ To maintain backward compatibility, '-o nfs' is also accepted,
 defaulting to
 .BR stale_rw .
 .TP
-.BI tz=UTC
+.B tz=UTC
 This option disables the conversion of timestamps
 between local time (as used by Windows on FAT) and UTC
 (which Linux uses internally).  This is particularly
@@ -1663,7 +1717,7 @@ filesystem.)
 
 Normal
 .I iso9660
-filenames appear in a 8.3 format (i.e., DOS-like restrictions on filename
+filenames appear in an 8.3 format (i.e., DOS-like restrictions on filename
 length), and in addition all characters are in upper case.  Also there is
 no field for file ownership, protection, number of links, provision for
 block/character devices, etc.
@@ -2314,7 +2368,7 @@ not specified or the filesystem is known for libblkid, for example:
 .sp
 .B "mount /tmp/disk.img /mnt"
 .sp
-.B "mount \-t ext3 /tmp/disk.img /mnt"
+.B "mount \-t ext4 /tmp/disk.img /mnt"
 .sp
 .RE
 This type of mount knows about three options, namely
@@ -2381,13 +2435,15 @@ The syntax of external mount helpers is:
 .BI /sbin/mount. suffix
 .I spec dir
 .RB [ \-sfnv ]
+.RB [ \-N
+.IR namespace ]
 .RB [ \-o
 .IR options ]
 .RB [ \-t
 .IR type \fB. subtype ]
 .in
 .sp
-where the \fIsuffix\fR is the filesystem type and the \fB\-sfnvo\fR options have
+where the \fIsuffix\fR is the filesystem type and the \fB\-sfnvoN\fR options have
 the same meaning as the normal mount options.  The \fB\-t\fR option is used for
 filesystems with subtypes support (for example
 .BR "/sbin/mount.fuse \-t fuse.sshfs" ).
@@ -2413,18 +2469,22 @@ to the mount.<suffix> helpers.  All other options are used in a
 comma-separated list as argument to the \fB\-o\fR option.
 
 .SH FILES
+See also "\fBThe files /etc/fstab, /etc/mtab and /proc/mounts\fR" section above.
 .TP 18n
 .I /etc/fstab
 filesystem table
 .TP
+.I /run/mount
+libmount private runtime directory
+.TP
 .I /etc/mtab
-table of mounted filesystems
+table of mounted filesystems or symlink to /proc/mounts
 .TP
 .I /etc/mtab\s+3~\s0
-lock file
+lock file (unused on systems with mtab symlink)
 .TP
 .I /etc/mtab.tmp
-temporary file
+temporary file (unused on systems with mtab symlink)
 .TP
 .I /etc/filesystems
 a list of filesystem types to try
@@ -2462,7 +2522,7 @@ It is possible for a corrupted filesystem to cause a crash.
 .PP
 Some Linux filesystems don't support
 .BR "\-o sync " nor " \-o dirsync"
-(the ext2, ext3, fat and vfat filesystems
+(the ext2, ext3, ext4, fat and vfat filesystems
 .I do
 support synchronous updates (a la BSD) when mounted with the
 .B sync

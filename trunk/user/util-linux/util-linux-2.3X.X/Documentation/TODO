@@ -1,66 +1,31 @@
 
  Note that items with (!) have high priority.
 
-libsmartcols
-------------
-   - (!) add libscols_column->json_type and scols_column_set_jsontype()
-     to generate proper JSON output. Now the library uses quotes (= all is
-     string) for everything. See for example SIZE in "lsblk --json --bytes"
-     output.
-
-column
-------
-   - add option to NOT ignore empty lines
-     https://github.com/karelzak/util-linux/issues/593
+cal
+---
+   - add option to print calendar in vertical way
+     https://github.com/karelzak/util-linux/issues/604
+   - support another --reforms, see for example freebsd version
+     https://github.com/freebsd/freebsd/blob/master/usr.bin/ncal/ncal.c#L72
 
 script
 ------
-   - (!) add terminal type ($TERM), columns and lines to the header line, something like:
+   - introduce a new timing file format to record information about multiple
+     streams (stdout, stdin) and events (signals)
 
-		Script started on 2018-03-05 13:02:08+0100 [term="xterm-256color", lines=53, columns=190]
+   - add support for stdin loggin -- separated log file with raw input and timing
+     records in the timing file
 
-     see https://github.com/karelzak/util-linux/issues/583
+   - for example timing file format:
+              
+             <type> <timestamp> [<offset> | <signal> ...]
 
-   - think about optional "event" records in timing file to save information
-     about non-data changes like signals (SIGWINCH, SIGSTOP, SIGCONT, etc.)
-     in format:
+	     O 0.001296 256
+	     S 0.001297 SIGWINCH: columns=50, lines=20
+	     I 0.000010 10
 
-             <time> 0 <name>[: var=data, ...]
+     O - output, S - signal, I - input
 
-     for example:
-
-	     0.001296 256
-	     0.001297   0 SIGWINCH: columns=50, lines=20
-	     0.000010 275
-
-lsblk
------
-   The problem is NVMe-multipath driver where in /sys/.../slaves/ are nodes
-   that should be probably hidden for userspace. Note that kernel developers
-   promised to fix this issue in kernel *** so hold off from that for now***
-   [Mar 1, 2018].
-
-   Anyway, possible userspace solution is:
-
-   - verify that slave/holder nodes points to the real block devices
-     (/sys/dev/block/<maj:min> for the node exists), otherwise silently ignore
-     the slave/holder node -- see set_cxt().
-
-   - the same verification we necessary for nodes in /sys/block/<name>. It means
-     verify result from sysfs_devname_to_devno() in set_cxt().
-
-
-
-cleanup lib/path.c: [Karel Zak for v2.33]
-------------------
-   - always return rc from all functions
-   - introduce control struct and use openat() from top-level path 
-     (e.g. top-level is /proc, etc)
-   - use lib/path.c as low-level API for lib/sysfs.c
-   - now we duplicate code in functions like {path,sysfs}_read_u32, etc. 
-   - it would be also nice to have a way how to redirect sysfs.c functions 
-     to /sys snapshots (e.g. lsblk regression tests)
-	
 
 lscpu
 -----
@@ -69,10 +34,20 @@ lscpu
 
 lsblk
 -----
+  - re-write the way how lsblk internally holds info about devices. Now we
+    compose only output (by libsmartcols). It would be better to have in memory
+    complete tree of the devices and generate the output from this tree. It will
+    make code more readable and allow to generate output in more ways -- for
+    example for RAIDs (https://github.com/karelzak/util-linux/issues/616)
+
   - currently it does not show mountpoint for all devices in btrfs RAID. It's because
     /proc/#/mountinfo contains reference to the one device only. Maybe we can add some
     btrfs specific code to provide a better output for FS based stacks. Not sure.
     https://bugzilla.redhat.com/show_bug.cgi?id=1084453
+
+  - think about free/used space columns; the problem is that such info is about FS
+    and it may be confusing for end-users when FS to DEV mapping is not 1:1 (RAIDs, btrfs, 
+    ...)
 
 nsenter(1)
 ----------
@@ -117,24 +92,19 @@ libmount (mount/umount)
    set and allow to use it for simple tasks where no another operation is
    necessary.
 
- - allow to execute mount(2) in another namespace, something like:
-	mount --namespace=/proc/$n/ns/mnt  /dev/sda2 /bar
-   see https://bugzilla.redhat.com/show_bug.cgi?id=1199554 for more details.
-
- - add options to control fstab/mtab mount options usage, something like:
-
-   --options-mode={ignore,append,prepend,replace}      MNT_OMODE_{IGNORE, ...}
-   --options-source={fstab,mtab,disable}               MNT_OMODE_{FSTAB,MTAB,NOTAB}
-   --options-source-force                              MNT_OMODE_FORCE
-
-   (all this already supported by libmount)
-
-
 partx
 -----
 
  - support mapping by device-mapper if argv[0] is "kpartx" or --dm option is used.
      
+
+getopt
+------
+  It would be great if getopt could optionally ignore unknown options.
+  Currently, it outputs -- for every option it doesn't recognize but leaving the
+  option as it is could beneficial wrapper scripts which could then pass the
+  options they don't recognize as they are to the command they are wrapping.
+  https://github.com/karelzak/util-linux/issues/701
 
 docs
 ----
@@ -143,13 +113,6 @@ docs
 
  - (!) add API documentation to libuuid
 
-exit codes
-----------
-
-  - we need coreutils-like exit codes for failed exec(). See:
-    https://www.spinics.net/lists/util-linux-ng/msg12776.html
-    and original attempt:
-    https://github.com/karelzak/util-linux/pull/311
 
 login-utils:
 -----------
@@ -168,10 +131,9 @@ login-utils:
 libblkid
 --------
 
- - (!) don't use internally blkid_loff_t, rather use off_t, size_t, ssize_t,
-       stdint.h types and so on...
-
- - add FSSIZE value  -- filesystem size (klibc requirement)
+ - (!) add support for BitLocker Drive Encryption 
+   https://github.com/karelzak/util-linux/issues/617
+   https://github.com/libyal/libbde/blob/master/documentation/BitLocker%20Drive%20Encryption%20(BDE)%20format.asciidoc
 
  - (!) add support for dasd PT (used for example on s390)
 
@@ -180,6 +142,7 @@ libfdisk
 
  - add support for Apple Partition Map (see libblkid/src/partitions/mac.c)
    http://en.wikipedia.org/wiki/Apple_Partition_Map
+
 
 misc
 ----

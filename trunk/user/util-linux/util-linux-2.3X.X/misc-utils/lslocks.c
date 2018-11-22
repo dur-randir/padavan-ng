@@ -94,6 +94,7 @@ static int no_headings;
 static int no_inaccessible;
 static int raw;
 static int json;
+static int bytes;
 
 struct lock {
 	struct list_head locks;
@@ -107,7 +108,7 @@ struct lock {
 	off_t end;
 	unsigned int mandatory :1,
 		     blocked   :1;
-	char *size;
+	uint64_t size;
 	int id;
 };
 
@@ -117,7 +118,6 @@ static void rem_lock(struct lock *lock)
 		return;
 
 	free(lock->path);
-	free(lock->size);
 	free(lock->mode);
 	free(lock->cmdname);
 	free(lock->type);
@@ -318,10 +318,9 @@ static int get_local_locks(struct list_head *locks)
 		if (!l->path) {
 			/* probably no permission to peek into l->pid's path */
 			l->path = get_fallback_filename(dev);
-			l->size = xstrdup("");
+			l->size = 0;
 		} else
-			/* avoid leaking */
-			l->size = size_to_human_string(SIZE_SUFFIX_1LETTER, sz);
+			l->size = sz;
 
 		list_add(&l->locks, locks);
 	}
@@ -407,7 +406,12 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 			xasprintf(&str, "%s", l->type);
 			break;
 		case COL_SIZE:
-			xasprintf(&str, "%s", l->size);
+			if (!l->size)
+				break;
+			if (bytes)
+				xasprintf(&str, "%ju", l->size);
+			else
+				str = size_to_human_string(SIZE_SUFFIX_1LETTER, l->size);
 			break;
 		case COL_MODE:
 			xasprintf(&str, "%s%s", l->mode, l->blocked ? "*" : "");
@@ -459,10 +463,36 @@ static int show_locks(struct list_head *locks)
 		scols_table_set_name(table, "locks");
 
 	for (i = 0; i < ncolumns; i++) {
+		struct libscols_column *cl;
 		struct colinfo *col = get_column_info(i);
 
-		if (!scols_table_new_column(table, col->name, col->whint, col->flags))
+		cl = scols_table_new_column(table, col->name, col->whint, col->flags);
+		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
+
+		if (json) {
+			int id = get_column_id(i);
+
+			switch (id) {
+			case COL_SIZE:
+				if (!bytes)
+					break;
+				/* fallthrough */
+			case COL_PID:
+			case COL_START:
+			case COL_END:
+			case COL_BLOCKER:
+				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+				break;
+			case COL_M:
+				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
+				break;
+			default:
+				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+				break;
+			}
+		}
+
 	}
 
 	/* prepare data for output */
@@ -501,10 +531,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("List local system locks.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -b, --bytes            print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -J, --json             use JSON output format\n"), out);
 	fputs(_(" -i, --noinaccessible   ignore locks without read permissions\n"), out);
 	fputs(_(" -n, --noheadings       don't print headings\n"), out);
 	fputs(_(" -o, --output <list>    define which output columns to use\n"), out);
+	fputs(_("     --output-all       output all columns\n"), out);
 	fputs(_(" -p, --pid <pid>        display only locks held by this process\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
@@ -527,11 +559,16 @@ int main(int argc, char *argv[])
 	int c, rc = 0;
 	struct list_head locks;
 	char *outarg = NULL;
+	enum {
+		OPT_OUTPUT_ALL = CHAR_MAX + 1
+	};
 	static const struct option long_opts[] = {
+		{ "bytes",      no_argument,       NULL, 'b' },
 		{ "json",       no_argument,       NULL, 'J' },
 		{ "pid",	required_argument, NULL, 'p' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "output",     required_argument, NULL, 'o' },
+		{ "output-all",	no_argument,       NULL, OPT_OUTPUT_ALL },
 		{ "notruncate", no_argument,       NULL, 'u' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "noheadings", no_argument,       NULL, 'n' },
@@ -551,11 +588,14 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
-				"iJp:o:nruhV", long_opts, NULL)) != -1) {
+				"biJp:o:nruhV", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
 		switch(c) {
+		case 'b':
+			bytes = 1;
+			break;
 		case 'i':
 			no_inaccessible = 1;
 			break;
@@ -567,6 +607,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case OPT_OUTPUT_ALL:
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);

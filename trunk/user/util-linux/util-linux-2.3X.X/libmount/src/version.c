@@ -1,10 +1,13 @@
+/* SPDX-License-Identifier: LGPL-2.1-or-later */
 /*
- * version.c - Return the version of the libmount library
+ * This file is part of libmount from util-linux project.
  *
- * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
- * [Based on libblkid/version.c by Theodore Ts'o]
+ * Copyright (C) 2008-2018 Karel Zak <kzak@redhat.com>
  *
- * See COPYING.libmount for the License of this software.
+ * libmount is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
  */
 
 /**
@@ -30,6 +33,9 @@ static const char *lib_features[] = {
 #endif
 #ifdef USE_LIBMOUNT_SUPPORT_MTAB
 	"mtab",
+#endif
+#ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
+	"namespaces",
 #endif
 #if !defined(NDEBUG)
 	"assert",	/* libc assert.h stuff */

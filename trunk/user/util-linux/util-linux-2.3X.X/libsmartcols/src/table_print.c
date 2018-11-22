@@ -466,11 +466,27 @@ static int print_data(struct libscols_table *tb,
 
 	case SCOLS_FMT_JSON:
 		fputs_quoted_json_lower(scols_cell_get_data(&cl->header), tb->out);
-		fputs(": ", tb->out);
-		if (!*data)
-			fputs("null", tb->out);
-		else
-			fputs_quoted_json(data, tb->out);
+		fputs(":", tb->out);
+		switch (cl->json_type) {
+			case SCOLS_JSON_STRING:
+				if (!*data)
+					fputs("null", tb->out);
+				else
+					fputs_quoted_json(data, tb->out);
+				break;
+			case SCOLS_JSON_NUMBER:
+				if (!*data)
+					fputs("null", tb->out);
+				else
+					fputs(data, tb->out);
+				break;
+			case SCOLS_JSON_BOOLEAN:
+				fputs(!*data ? "false" :
+				      *data == '0' ? "false" :
+				      *data == 'N' || *data == 'n' ? "false" : "true",
+				      tb->out);
+				break;
+		}
 		if (!is_last)
 			fputs(", ", tb->out);
 		return 0;
@@ -1051,8 +1067,8 @@ static int count_column_width(struct libscols_table *tb,
 {
 	struct libscols_line *ln;
 	struct libscols_iter itr;
-	int count = 0, rc = 0, no_header = 0;
-	size_t sum = 0;
+	int extreme_count = 0, rc = 0, no_header = 0;
+	size_t extreme_sum = 0;
 
 	assert(tb);
 	assert(cl);
@@ -1096,11 +1112,11 @@ static int count_column_width(struct libscols_table *tb,
 			len = 0;
 		cl->width_max = max(len, cl->width_max);
 
-		if (cl->is_extreme && len > cl->width_avg * 2)
+		if (cl->is_extreme && cl->width_avg && len > cl->width_avg * 2)
 			continue;
 		else if (scols_column_is_noextremes(cl)) {
-			sum += len;
-			count++;
+			extreme_sum += len;
+			extreme_count++;
 		}
 		cl->width = max(len, cl->width);
 		if (scols_column_is_tree(cl)) {
@@ -1109,9 +1125,9 @@ static int count_column_width(struct libscols_table *tb,
 		}
 	}
 
-	if (count && cl->width_avg == 0) {
-		cl->width_avg = sum / count;
-		if (cl->width_max > cl->width_avg * 2)
+	if (extreme_count && cl->width_avg == 0) {
+		cl->width_avg = extreme_sum / extreme_count;
+		if (cl->width_avg && cl->width_max > cl->width_avg * 2)
 			cl->is_extreme = 1;
 	}
 

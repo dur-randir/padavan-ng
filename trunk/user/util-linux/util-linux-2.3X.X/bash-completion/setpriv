@@ -21,13 +21,13 @@ _setpriv_module()
 			;;
 		'--ruid'|'--euid'|'--reuid')
 			local UIDS
-			UIDS=$(getent passwd | awk -F: '{print $3}')
+			UIDS=$(getent passwd | awk -F: '{print $1}')
 			COMPREPLY=( $(compgen -W "$UIDS" -- $cur) )
 			return 0
 			;;
 		'--rgid'|'--egid'|'--regid')
 			local GIDS
-			GIDS=$(getent group | awk -F: '{print $3}')
+			GIDS=$(getent group | awk -F: '{print $1}')
 			COMPREPLY=( $(compgen -W "$GIDS" -- $cur) )
 			return 0
 			;;
@@ -38,7 +38,7 @@ _setpriv_module()
 			GIDS_ALL=$(getent group | awk -F: '{print $3}')
 			for WORD in $GIDS_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
-					GIDS="$WORD $GIDS"
+					GIDS="$WORD ${GIDS:-""}"
 				fi
 			done
 			compopt -o nospace
@@ -46,10 +46,35 @@ _setpriv_module()
 			return 0
 			;;
 		'--securebits')
-			local SBITS
-			SBITS="noroot noroot_locked no_setuid_fixup no_setuid_fixup_locked keep_caps_locked
-			-noroot -noroot_locked -no_setuid_fixup -no_setuid_fixup_locked -keep_caps_locked"
-			COMPREPLY=( $(compgen -W "$SBITS" -- $cur) )
+			local prefix realcur SBITS_ALL SBITS WORD
+			realcur="${cur##*,}"
+			prefix="${cur%$realcur}"
+			SBITS_ALL="
+				{+,-}keep_caps_locked
+				{+,-}noroot
+				{+,-}noroot_locked
+				{+,-}no_setuid_fixup
+				{+,-}no_setuid_fixup_locked
+			"
+			for WORD in $SBITS_ALL; do
+				if ! [[ $prefix == *"$WORD"* ]]; then
+					SBITS="$WORD ${SBITS:-""}"
+				fi
+			done
+			compopt -o nospace
+			COMPREPLY=( $(compgen -P "$prefix" -W "$SBITS" -S ',' -- $realcur) )
+			return 0
+			;;
+		'--pdeathsig')
+			local i signals
+			for i in $(kill -l); do
+				case $i in
+					SIG*)
+						signals+="$i "
+					;;
+				esac
+			done
+			COMPREPLY=( $(compgen -W "keep clear $signals" -- $cur) )
 			return 0
 			;;
 		'--selinux-label')
@@ -83,6 +108,8 @@ _setpriv_module()
 				--keep-groupskeep
 				--groups
 				--securebits
+				--pdeathsig
+				--reset-env
 				--selinux-label
 				--apparmor-profile
 				--help

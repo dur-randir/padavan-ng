@@ -121,6 +121,7 @@ static loff_t cvtnum(char *s)
 static void xfallocate(int fd, int mode, off_t offset, off_t length)
 {
 	int error;
+
 #ifdef HAVE_FALLOCATE
 	error = fallocate(fd, mode, offset, length);
 #else
@@ -351,7 +352,7 @@ int main(int argc, char **argv)
 			posix = 1;
 			break;
 #else
-			errx(EXIT_FAILURE, _("posix_fallocate support is not compiled"))
+			errx(EXIT_FAILURE, _("posix_fallocate support is not compiled"));
 #endif
 		case 'v':
 			verbose++;

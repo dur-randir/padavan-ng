@@ -1,12 +1,16 @@
+/* SPDX-License-Identifier: LGPL-2.1-or-later */
 /*
  * mountP.h - private library header file
  *
- * Copyright (C) 2008-2012 Karel Zak <kzak@redhat.com>
+ * This file is part of libmount from util-linux project.
  *
- * This file may be redistributed under the terms of the
- * GNU Lesser General Public License.
+ * Copyright (C) 2008-2018 Karel Zak <kzak@redhat.com>
+ *
+ * libmount is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
  */
-
 #ifndef _LIBMOUNT_PRIVATE_H
 #define _LIBMOUNT_PRIVATE_H
 
@@ -268,6 +272,11 @@ struct libmnt_addmount {
 	struct list_head	mounts;
 };
 
+struct libmnt_ns {
+	int fd;				/* file descriptor of namespace, -1 when inactive */
+	struct libmnt_cache *cache;	/* paths cache associated with NS */
+};
+
 /*
  * Mount context -- high-level API
  */
@@ -329,6 +338,10 @@ struct libmnt_context
 
 	int	syscall_status;	/* 1: not called yet, 0: success, <0: -errno */
 
+	struct libmnt_ns	ns_orig;	/* original namespace */
+	struct libmnt_ns	ns_tgt;		/* target namespace */
+	struct libmnt_ns	*ns_cur;	/* pointer to current namespace */
+
 	unsigned int	enabled_textdomain : 1;		/* bindtextdomain() called */
 };
 
@@ -360,6 +373,9 @@ struct libmnt_context
 
 /* default flags */
 #define MNT_FL_DEFAULT		0
+
+/* Flags usable with MS_BIND|MS_REMOUNT */
+#define MNT_BIND_SETTABLE	(MS_NOSUID|MS_NODEV|MS_NOEXEC|MS_NOATIME|MS_NODIRATIME|MS_RELATIME|MS_RDONLY)
 
 /* lock.c */
 extern int mnt_lock_use_simplelock(struct libmnt_lock *ml, int enable);

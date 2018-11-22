@@ -121,7 +121,7 @@ instead of to the system log socket.  Unless
 is specified, \fBlogger\fR will first try to use UDP,
 but if this fails a TCP connection is attempted.
 .TP
-.BR \-\-no\-act
+.B \-\-no\-act
 Causes everything to be done except for writing the log message to the system
 log, and removing the connection or the journal.  This option can be used
 together with \fB\-\-stderr\fR for testing purposes.
@@ -224,7 +224,7 @@ produces:
 .fi
 .IP
 .TP
-.BR \-\-size " \fIsize
+.BR \-S , " -\-size " \fIsize
 Sets the maximum permitted message size to \fIsize\fR.  The default
 is 1KiB characters, which is the limit traditionally used and specified
 in RFC 3164.  With RFC 5424, this limit has become flexible.  A good assumption
@@ -293,15 +293,18 @@ utility exits 0 on success, and >0 if an error occurs.
 .SH FACILITIES AND LEVELS
 Valid facility names are:
 .IP
+.nr WI \n(.lu-\n(.iu-\w'\fBauthpriv\fR'u-3n
 .TS
 tab(:);
-left l l.
+l lw(\n(WIu).
 \fBauth
 \fBauthpriv\fR:for security information of a sensitive nature
 \fBcron
 \fBdaemon
 \fBftp
-\fBkern\fR:cannot be generated from userspace process, automatically converted to \fBuser
+\fBkern\fR:T{
+cannot be generated from userspace process, automatically converted to \fBuser
+T}
 \fBlpr
 \fBmail
 \fBnews
@@ -318,7 +321,7 @@ Valid level names are:
 .IP
 .TS
 tab(:);
-left l l.
+l l.
 \fBemerg
 \fBalert
 \fBcrit

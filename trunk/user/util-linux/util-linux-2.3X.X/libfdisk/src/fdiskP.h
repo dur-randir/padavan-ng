@@ -337,7 +337,8 @@ struct fdisk_ask {
 			uint64_t	unit;		/* unit for offsets */
 			const char	*range;		/* by library generated list */
 			unsigned int	relative :1,
-					inchars  :1;
+					inchars  :1,
+					wrap_negative	:1;
 		} num;
 		/* FDISK_ASKTYPE_{WARN,WARNX,..} */
 		struct ask_print {
@@ -364,6 +365,7 @@ struct fdisk_ask {
 struct fdisk_context {
 	int dev_fd;         /* device descriptor */
 	char *dev_path;     /* device path */
+	char *dev_model;    /* on linux /sys/block/<name>/device/model or NULL */
 	struct stat dev_st; /* stat(2) result */
 
 	int refcount;
@@ -386,6 +388,7 @@ struct fdisk_context {
 		     protect_bootbits : 1,	/* don't zeroize first sector */
 		     pt_collision : 1,		/* another PT detected by libblkid */
 		     no_disalogs : 1,		/* disable dialog-driven partititoning */
+		     dev_model_probed : 1,	/* tried to read from sys */
 		     listonly : 1;		/* list partition, nothing else */
 
 	char *collision;			/* name of already existing FS/PT */
@@ -491,6 +494,7 @@ int fdisk_ask_number_set_high(struct fdisk_ask *ask, uint64_t high);
 int fdisk_ask_number_set_base(struct fdisk_ask *ask, uint64_t base);
 int fdisk_ask_number_set_unit(struct fdisk_ask *ask, uint64_t unit);
 int fdisk_ask_number_is_relative(struct fdisk_ask *ask);
+int fdisk_ask_number_set_wrap_negative(struct fdisk_ask *ask, int wrap_negative);
 int fdisk_ask_menu_set_default(struct fdisk_ask *ask, int dfl);
 int fdisk_ask_menu_add_item(struct fdisk_ask *ask, int key,
 			const char *name, const char *desc);
