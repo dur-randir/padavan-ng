@@ -76,7 +76,6 @@ configure:
 	)
 
 clean:
-	$(MAKE) -C $(SRC_NAME) clean
 	$(MAKE) -C $(SRC_NAME) distclean
 	rm -rf $(SRC_NAME)/include/*
 	rm -f config_done
