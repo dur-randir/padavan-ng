@@ -38,7 +38,7 @@ OPENSSL_CIPHERS += no-ec
 endif
 
 all: config_test
-	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME) depend
+	$(MAKE) -C $(SRC_NAME) depend
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
 
 config_test:
@@ -82,6 +82,9 @@ clean:
 
 install:
 	$(MAKE) -C $(SRC_NAME) install DESTDIR="$(STAGEDIR)"
+	# restore Makefile after depend command
+	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME) dclean
+	# remove unneeded
 	rm -f $(DESTDIR)/lib/libssl.a
 	rm -f $(DESTDIR)/lib/libcrypto.a
 	# fix pkgconfig
