@@ -835,8 +835,6 @@ init_router(void)
 
 	nvram_convert_misc_values();
 
-	init_gpio_leds_buttons();
-
 	if (nvram_need_commit)
 		nvram_commit();
 
@@ -873,6 +871,7 @@ init_router(void)
 
 	init_loopback();
 	init_bridge(is_ap_mode);
+	init_gpio_leds_buttons();
 #if defined (USE_IPV6)
 	init_ipv6();
 #endif

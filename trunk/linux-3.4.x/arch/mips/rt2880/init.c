@@ -620,6 +620,7 @@ static void prom_init_sysclk(void)
 	if ((reg>>17) & 0x1) {
 		ram_type = "DDR2";
 	}
+	surfboard_sysclk = mips_cpu_feq/3;
 #elif defined (CONFIG_RT5350_ASIC)
 	switch (clk_sel) {
 	case 0:
