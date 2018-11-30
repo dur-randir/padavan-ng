@@ -9,14 +9,17 @@ func_create_config()
 	cat > "$tor_config" <<EOF
 ## See https://www.torproject.org/docs/tor-manual.html,
 ## for more options you can use in this file.
-
+#VirtualAddrNetworkIPv4 172.16.0.0/12
+#AutomapHostsOnResolve 1
 SocksPort 127.0.0.1:9050
 SocksPort ${ip_address}:9050
-DataDirectory /tmp/tor
+#TransPort ${ip_address}:9040 IsolateClientAddr IsolateClientProtocol IsolateDestAddr IsolateDestPort
+#DNSPort 127.0.0.1:9053
 User admin
 Log notice syslog
-#ExcludeExitNodes {ru},{by},{ua}
-#ExitNodes {fr},{be},{cz},{nl}
+#ExitPolicy reject *:*
+#ExitPolicy reject6 *:*
+#ExcludeExitNodes {RU}, {UA}, {BY}, {KZ}, {MD}, {AZ}, {AM}, {GE}, {LY}, {LT}, {TM}, {UZ}, {EE}
 #StrictNodes 1
 EOF
 	chmod 644 "$tor_config"
@@ -34,7 +37,7 @@ func_start()
 		mount | grep -q /usr/share/tor || mount --bind /opt/share/tor /usr/share/tor
 	fi
 	/usr/bin/logger -t tor Start TOR
-	/usr/sbin/tor --runasdaemon 1 --pidfile /var/run/tor.pid
+	/usr/sbin/tor --RunAsDaemon 1 --PidFile /var/run/tor.pid --DataDirectory /tmp/tor
 }
 
 func_stop()
