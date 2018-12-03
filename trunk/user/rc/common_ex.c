@@ -145,6 +145,9 @@ get_eeprom_params(void)
 	memset(buffer, 0xff, ETHER_ADDR_LEN);
 #if defined (VENDOR_TPLINK)
 	i_ret = flash_mtd_read("Romfile", 0xf100, buffer, ETHER_ADDR_LEN);
+	// Try Factory partition
+	if (i_ret < 0)
+		i_ret = flash_mtd_read(MTD_PART_NAME_FACTORY, 0xf100, buffer, ETHER_ADDR_LEN);
 	if (i_ret >=0 && !(buffer[0] & 0x01)) {
 		ether_etoa(buffer, macaddr_lan);
 		ether_etoa(buffer, macaddr_rt);
