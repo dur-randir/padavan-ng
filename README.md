@@ -16,3 +16,6 @@ Contributors of this project are not responsible for what happens next.
 ### Contribution guidelines ###
 
 * To be completed
+
+P.S.
+Original project author is Padavan. Old repository here: [rt-n56u project](https://bitbucket.org/padavan/rt-n56u)
