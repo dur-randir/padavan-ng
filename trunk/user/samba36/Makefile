@@ -67,7 +67,6 @@ configure:
 		--disable-static \
 		--disable-swat \
 		--disable-shared-libs \
-		--with-libiconv="$(STAGEDIR)/lib" \
 		--with-codepagedir=/usr/share/samba \
 		--with-configdir=/etc \
 		--with-included-iniparser \
