@@ -28,7 +28,7 @@ struct half_words {
 
 void add_nonmandatory_header(struct buffer *buf, _u16 length, _u16 type) {
 	struct avp_hdr *avp = (struct avp_hdr *) (buf->start + buf->len);
-	avp->length = htons (length);
+ 	avp->length = htons (length);
 	avp->vendorid = htons (VENDOR_ID);
 	avp->attr = htons (type);
 }

@@ -43,8 +43,10 @@ typedef unsigned long long _u64;
 #define CONTROL_PIPE "/var/run/xl2tpd-control"
 #define CONTROL_PIPE_MESSAGE_SIZE 1024
 
+#define UNUSED(x) (void)(x)
+
 #define BINARY "xl2tpd"
-#define SERVER_VERSION "xl2tpd-1.3.12"
+#define SERVER_VERSION "xl2tpd-1.3.13"
 #define VENDOR_NAME "xelerance.com"
 #ifndef PPPD
 #define PPPD		"/usr/sbin/pppd"
@@ -68,7 +70,7 @@ struct control_hdr
 #define CLBIT(ver) (ver & 0x4000)       /* Length bit present.  Must be 1
                                            for control messages */
 
-#define CZBITS(ver) (ver &0x37F8)       /* Reserved bits:  We must drop 
+#define CZBITS(ver) (ver &0x37F8)       /* Reserved bits:  We must drop
                                            anything with these there */
 
 #define CFBIT(ver) (ver & 0x0800)       /* Presence of Ns and Nr fields
@@ -97,7 +99,7 @@ struct payload_hdr
                                    so we can "decompress" the
                                    payloads and simplify coding */
 
-#define DEFAULT_MAX_RETRIES  5   /* Recommended value from spec */
+#define DEFAULT_MAX_RETRIES 5   /* Recommended value from spec */
 
 #define DEFAULT_RWS_SIZE	8    /* Default max outstanding control packets in queue */
 #define DEFAULT_TX_BPS		100000000        /* For outgoing calls, report this speed */
@@ -164,7 +166,7 @@ struct tunnel
     struct call *self;
     struct lns *lns;            /* LNS that owns us */
     struct lac *lac;            /* LAC that owns us */
-    struct in_pktinfo my_addr;	/* Address of my endpoint */
+    struct in_pktinfo my_addr;  /* Address of my endpoint */
     struct rtentry rt;		/* Route added to destination */
     char hostname[MAXSTRLEN];   /* Remote hostname */
     char vendor[MAXSTRLEN];     /* Vendor of remote product */
@@ -222,7 +224,7 @@ extern int switch_io;           /* jz */
 extern int control_fd;
 #ifdef USE_KERNEL
 extern int kernel_support;
-extern int connect_pppol2tp(struct tunnel *t);
+extern int connect_pppol2tp (struct tunnel *t);
 #endif
 extern int start_pppd (struct call *c, struct ppp_opts *);
 extern void magic_lac_dial (void *);

@@ -371,7 +371,7 @@ void call_close (struct call *c)
              c->ourcid, IPADDY (c->container->peer.sin_addr));
     }
     /*
-       * Note that we're in the process of closing now
+     * Note that we're in the process of closing now
      */
     c->closing = -1;
 }
@@ -479,7 +479,7 @@ void destroy_call (struct call *c)
 struct call *new_call (struct tunnel *parent)
 {
     unsigned char entropy_buf[2] = "\0";
-    struct call *tmp = calloc (1, sizeof (struct call));
+    struct call *tmp = calloc (1,sizeof (struct call));
 
     if (!tmp)
         return NULL;
@@ -487,7 +487,7 @@ struct call *new_call (struct tunnel *parent)
     if (parent->self)
     {
 #ifndef TESTING
-        get_entropy(entropy_buf, 2);
+            get_entropy(entropy_buf, 2);
         {
             unsigned short *temp;
             temp = (unsigned short *)entropy_buf;
@@ -520,6 +520,8 @@ struct call *new_call (struct tunnel *parent)
 
 struct call *get_tunnel (int tunnel, unsigned int addr, int port)
 {
+    UNUSED(addr);
+    UNUSED(port);
     struct tunnel *st;
     if (tunnel)
     {
@@ -569,7 +571,7 @@ struct call *get_call (int tunnel, int call,  struct in_addr addr, int port,
                     }
                     if (gconfig.debug_tunnel)
 			l2tp_log (LOG_DEBUG, "%s: can't find call %d in tunnel %d (ref=%d/%d)\n",
-				__FUNCTION__, call, tunnel, refme, refhim);
+			      __FUNCTION__, call, tunnel, refme, refhim);
                     return NULL;
                 }
                 else

@@ -218,6 +218,7 @@ int set_int (char *word, char *value, int *ptr)
 
 int set_string (char *word, char *value, char *ptr, int len)
 {
+    UNUSED(word);
 #ifdef DEBUG_FILE
     l2tp_log (LOG_DEBUG, "set_%s: %s  flag to '%s'\n", word, word, value);
 #endif /* ; */
@@ -951,7 +952,7 @@ struct iprange *set_range (char *word, char *value, struct iprange *in)
 				}
 			}
 			/* Copy the last field + null terminator */
-			if (ip_hi + sizeof(ip_hi)-e > strlen(d)) {
+			if ((size_t)(ip_hi + sizeof(ip_hi)-e) > strlen(d)) {
 				strcpy(e, d);
 				d = ip_hi;
 			}
@@ -1026,7 +1027,7 @@ int set_localiprange (char *word, char *value, int context, void *item)
 
     if (lns->localaddr) {
         snprintf (filerr, sizeof (filerr), "'local ip range' and 'local ip' are mutually exclusive\n");
-        return -1;
+	return -1;
     }
 
     lns->localrange = set_range (word, value, lns->localrange);
@@ -1079,6 +1080,7 @@ int set_exclusive (char *word, char *value, int context, void *item)
 
 int set_ip (char *word, char *value, unsigned int *addr)
 {
+    UNUSED(word);
     struct hostent *hp;
     hp = gethostbyname (value);
     if (!hp)
@@ -1265,6 +1267,7 @@ int set_rand_dev ()
 
 int set_rand_egd (char *value)
 {
+    UNUSED(value);
     l2tp_log(LOG_WARNING, "%s: not yet implemented!\n", __FUNCTION__);
     rand_source = RAND_EGD;
     return -1;
@@ -1272,6 +1275,7 @@ int set_rand_egd (char *value)
 
 int set_rand_source (char *word, char *value, int context, void *item)
 {
+    UNUSED(item);
     time_t seconds;
     /*
      * We're going to go ahead and seed the rand() function with srand()
@@ -1329,7 +1333,7 @@ int parse_config (FILE * f)
     /* Read in the configuration file handed to us */
     /* FIXME: I should check for incompatible options */
     int context = 0;
-    char buf[1024];
+    char buf[1024]; 
     char *s, *d, *t;
     int linenum = 0;
     int def = 0;
@@ -1534,7 +1538,7 @@ int parse_config (FILE * f)
                 l2tp_log (LOG_CRIT, "parse_config: line %d: Unknown field '%s'\n",
                      linenum, s);
                 return -1;
-            }
+            }            
         }
     }
     return 0;

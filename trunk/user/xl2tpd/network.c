@@ -47,7 +47,7 @@ int init_network (void)
 
     /* create server socket only has lns */
     server.sin_family = AF_INET;
-    server.sin_addr.s_addr = gconfig.listenaddr; 
+    server.sin_addr.s_addr = gconfig.listenaddr;
     server.sin_port = htons (gconfig.port);
 
     if ((server_socket = socket (PF_INET, SOCK_DGRAM, 0)) < 0)
@@ -87,19 +87,19 @@ int init_network (void)
     }
     else
     {
-    arg=1;
-        if(setsockopt(server_socket, IPPROTO_IP, gconfig.sarefnum, &arg, sizeof(arg)) != 0) {
+        arg=1;
+        if(setsockopt(server_socket, IPPROTO_IP, gconfig.sarefnum,  &arg, sizeof(arg)) != 0) {
 #ifdef DEBUG_MORE
-        l2tp_log(LOG_CRIT, "setsockopt recvref[%d]: %s\n", gconfig.sarefnum, strerror(errno));
+            l2tp_log(LOG_CRIT, "setsockopt recvref[%d]: %s\n", gconfig.sarefnum, strerror(errno));
 #endif
-        gconfig.ipsecsaref=0;
-    }
+            gconfig.ipsecsaref=0;
+        }
         else
         {
-    arg=1;
-    if(setsockopt(server_socket, IPPROTO_IP, IP_PKTINFO, (char*)&arg, sizeof(arg)) != 0) {
-	    l2tp_log(LOG_CRIT, "setsockopt IP_PKTINFO: %s\n", strerror(errno));
-    }
+            arg=1;
+            if(setsockopt(server_socket, IPPROTO_IP, IP_PKTINFO, (char*)&arg, sizeof(arg)) != 0) {
+                l2tp_log(LOG_CRIT, "setsockopt IP_PKTINFO: %s\n", strerror(errno));
+            }
         }
     }
 #else
@@ -142,7 +142,7 @@ int init_network (void)
 static inline void extract (void *buf, int *tunnel, int *call)
 {
     /*
-     * Extract the tunnel and call #'s, and fix the order of the 
+     * Extract the tunnel and call #'s, and fix the order of the
      * version
      */
 
@@ -190,14 +190,15 @@ static inline void fix_hdr (void *buf)
 
 void dethrottle (void *call)
 {
+    UNUSED(call);
 /*	struct call *c = (struct call *)call; */
 /*	if (c->throttle) {
 #ifdef DEBUG_FLOW
-		log(LOG_DEBUG, "%s: dethrottling call %d, and setting R-bit\n",__FUNCTION__,c->ourcid); 
+		log(LOG_DEBUG, "%s: dethrottling call %d, and setting R-bit\n",__FUNCTION__,c->ourcid);
 #endif 		c->rbit = RBIT;
 		c->throttle = 0;
 	} else {
-		log(LOG_DEBUG, "%s:  call %d already dethrottled?\n",__FUNCTION__,c->ourcid); 	
+		log(LOG_DEBUG, "%s:  call %d already dethrottled?\n",__FUNCTION__,c->ourcid);
 	} */
 }
 
@@ -223,7 +224,7 @@ void control_xmit (void *b)
     if (t)
     {
 #ifdef DEBUG_CONTROL_XMIT
-        l2tp_log (LOG_DEBUG,
+	    l2tp_log (LOG_DEBUG,
                     "trying to send control packet %d to %d\n", ns, t->ourtid);
 #endif
         if (ns < t->cLr)
@@ -236,7 +237,6 @@ void control_xmit (void *b)
             return;
         }
     }
-
     buf->retries++;
     if (buf->retries > gconfig.max_retries)
     {
@@ -332,7 +332,7 @@ void udp_xmit (struct buffer *buf, struct tunnel *t)
 	}
 	refp = (unsigned int *)CMSG_DATA(cmsg);
 	*refp = t->refhim;
-	
+
 	finallen = cmsg->cmsg_len;
     }
 
@@ -344,14 +344,14 @@ void udp_xmit (struct buffer *buf, struct tunnel *t)
 	else {
 		cmsg = CMSG_NXTHDR(&msgh, cmsg);
 	}
-	
+
 	cmsg->cmsg_level = IPPROTO_IP;
 	cmsg->cmsg_type = IP_PKTINFO;
 	cmsg->cmsg_len = CMSG_LEN(sizeof(struct in_pktinfo));
 
 	pktinfo = (struct in_pktinfo*) CMSG_DATA(cmsg);
 	*pktinfo = t->my_addr;
-	
+
 	finallen += cmsg->cmsg_len;
     }
 
@@ -549,9 +549,9 @@ void network_thread ()
 
 	    memset(&from, 0, sizeof(from));
 	    memset(&to,   0, sizeof(to));
-	    
+
 	    fromlen = sizeof(from);
-	    
+
 	    memset(&msgh, 0, sizeof(struct msghdr));
 	    iov.iov_base = buf->start;
 	    iov.iov_len  = buf->len;
@@ -562,7 +562,7 @@ void network_thread ()
 	    msgh.msg_iov  = &iov;
 	    msgh.msg_iovlen = 1;
 	    msgh.msg_flags = 0;
-	    
+
 	    /* Receive one packet. */
 	    recvsize = recvmsg(*currentfd, &msgh, 0);
 
@@ -587,7 +587,7 @@ void network_thread ()
                     l2tp_log (LOG_WARNING, "%s: received too small a packet\n",
                          __FUNCTION__);
                 }
-                if (st) st=st->next;
+		if (st) st=st->next;
 		continue;
             }
 
@@ -609,7 +609,7 @@ void network_thread ()
 			else if (gconfig.ipsecsaref && cmsg->cmsg_level == IPPROTO_IP
 			&& cmsg->cmsg_type == gconfig.sarefnum) {
 				unsigned int *refp;
-				
+
 				refp = (unsigned int *)CMSG_DATA(cmsg);
 				refme =refp[0];
 				refhim=refp[1];
@@ -637,57 +637,57 @@ void network_thread ()
 	    {
 		do_packet_dump (buf);
 	    }
-			if (!(c = get_call (tunnel, call, from.sin_addr,
-			       from.sin_port, refme, refhim)))
-	    {
-				if ((c = get_tunnel (tunnel, from.sin_addr.s_addr, from.sin_port)))
-		{
-		    /*
-		     * It is theoretically possible that we could be sent
-		     * a control message (say a StopCCN) on a call that we
-		     * have already closed or some such nonsense.  To
-		     * prevent this from closing the tunnel, if we get a
-		     * call on a valid tunnel, but not with a valid CID,
-		     * we'll just send a ZLB to ACK receiving the packet.
-		     */
-		    if (gconfig.debug_tunnel)
-			l2tp_log (LOG_DEBUG,
-				  "%s: no such call %d on tunnel %d. Sending special ZLB\n",
+        if (!(c = get_call (tunnel, call, from.sin_addr,
+                from.sin_port, refme, refhim)))
+        {
+            if ((c = get_tunnel (tunnel, from.sin_addr.s_addr, from.sin_port)))
+            {
+                /*
+                * It is theoretically possible that we could be sent
+                * a control message (say a StopCCN) on a call that we
+                * have already closed or some such nonsense.  To
+                * prevent this from closing the tunnel, if we get a
+                * call on a valid tunnel, but not with a valid CID,
+                * we'll just send a ZLB to ACK receiving the packet.
+                */
+                if (gconfig.debug_tunnel)
+                l2tp_log (LOG_DEBUG,
+                    "%s: no such call %d on tunnel %d.  Sending special ZLB\n",
 				  __FUNCTION__, call, tunnel);
 		    if (handle_special (buf, c, call) == 0)
 			/* get a new buffer */
-			buf = new_buf (MAX_RECV_SIZE);
-		}
+                    buf = new_buf (MAX_RECV_SIZE);
+                }
 #ifdef DEBUG_MORE
 		else{
-		    l2tp_log (LOG_DEBUG,
-			      "%s: unable to find call or tunnel to handle packet.  call = %d, tunnel = %d Dumping.\n",
-			      __FUNCTION__, call, tunnel);
-		    }
+                l2tp_log (LOG_DEBUG,
+                    "%s: unable to find call or tunnel to handle packet.  call = %d, tunnel = %d Dumping.\n",
+                    __FUNCTION__, call, tunnel);
+        }
 #endif
 	    }
-	    else
-	    {
-		if (c->container) {
-			c->container->my_addr = to;
-		}
+        else
+        {
+            if (c->container) {
+                c->container->my_addr = to;
+            }
 
-		buf->peer = from;
-		/* Handle the packet */
-		c->container->chal_us.vector = NULL;
-		if (handle_packet (buf, c->container, c))
-		{
-		    if (gconfig.debug_tunnel)
-			l2tp_log (LOG_DEBUG, "%s: bad packet\n", __FUNCTION__);
-		}
-		if (c->cnu)
-		{
-		    /* Send Zero Byte Packet */
-		    control_zlb (buf, c->container, c);
-		    c->cnu = 0;
-		}
-		}
-	}
+            buf->peer = from;
+            /* Handle the packet */
+            c->container->chal_us.vector = NULL;
+            if (handle_packet (buf, c->container, c))
+            {
+                if (gconfig.debug_tunnel)
+                l2tp_log (LOG_DEBUG, "%s: bad packet\n", __FUNCTION__);
+            }
+            if (c->cnu)
+            {
+                /* Send Zero Byte Packet */
+                control_zlb (buf, c->container, c);
+                c->cnu = 0;
+            }
+        }
+    }
 	if (st) st=st->next;
 	}
 
@@ -723,12 +723,11 @@ void network_thread ()
                         sc->tx_bytes += sc->ppp_buf->len;
                         sc->tx_pkts++;
 
-                        unsigned char* tosval,typeval;
-                        tosval = *get_inner_tos_byte(sc->ppp_buf);
-                        typeval = *get_inner_ppp_type(sc->ppp_buf);
+                        unsigned char* tosval = get_inner_tos_byte(sc->ppp_buf);
+                        unsigned char* typeval = get_inner_ppp_type(sc->ppp_buf);
 
-                        int tosval_dec = (int)tosval;
-                        int typeval_dec = (int)typeval;
+                        int tosval_dec = (int)*tosval;
+                        int typeval_dec = (int)*typeval;
 
                         if (typeval_dec != 33 )
                         	tosval_dec=atoi(gconfig.controltos);

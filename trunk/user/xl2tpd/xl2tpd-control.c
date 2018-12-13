@@ -49,11 +49,11 @@ int command_disconnect (FILE*, char* tunnel, int optc, char *optv[]);
 int command_remove (FILE*, char* tunnel, int optc, char *optv[]);
 
 struct command_t commands[] = {
-    {"add", &command_add},
-    {"connect", &command_connect},
-    {"disconnect", &command_disconnect},
-    {"remove", &command_remove},
-    {NULL, NULL}
+    {"add", &command_add, ""},
+    {"connect", &command_connect, ""},
+    {"disconnect", &command_disconnect, ""},
+    {"remove", &command_remove, ""},
+    {NULL, NULL, 0, NULL}
 };
 
 void usage()
@@ -93,7 +93,7 @@ int main (int argc, char *argv[])
 {
     char* control_filename = NULL;
     char* tunnel_name = NULL;
-    struct command_t* command = NULL;
+    struct command_t* command = NULL;    
     int i; /* argv iterator */
 
     if (argv[1] && !strncmp (argv[1], "--help", 6))
@@ -145,21 +145,21 @@ int main (int argc, char *argv[])
     }
     
     /* get tunnel name */
-    if (i >= argc)
-    {
-        print_error (ERROR_LEVEL, "error: tunnel name not specified\n");
-        usage();
-        return -1;
-    }
-    tunnel_name = argv[i++];    
-    /* check tunnel name for whitespaces */
-    if (strstr (tunnel_name, " "))
-    {
-        print_error (ERROR_LEVEL,
-            "error: tunnel name shouldn't include spaces\n");
-        usage();        
-        return -1;
-    }
+        if (i >= argc)
+        {
+            print_error (ERROR_LEVEL, "error: tunnel name not specified\n");
+            usage();
+            return -1;
+        }
+        tunnel_name = argv[i++];    
+        /* check tunnel name for whitespaces */
+        if (strstr (tunnel_name, " "))
+        {
+            print_error (ERROR_LEVEL,
+                "error: tunnel name shouldn't include spaces\n");
+            usage();        
+            return -1;
+        }
     
     char buf[CONTROL_PIPE_MESSAGE_SIZE] = "";
     FILE* mesf = fmemopen (buf, CONTROL_PIPE_MESSAGE_SIZE, "w");
@@ -235,7 +235,7 @@ int main (int argc, char *argv[])
         }
         return -1;
     }
-    
+
     /* pass command to control pipe */
     if (write (control_fd, buf, ftell (mesf)) < 0)
     {
@@ -287,14 +287,14 @@ int read_result(int result_fd, char* buf, ssize_t size)
             print_error (ERROR_LEVEL,
                 "error: can't read command result: %s\n", strerror (errno));
             break;
-        }
+       }
     } while (readed == 0);
     buf[readed] = '\0';
-    
+
     /* scan result code */
     int command_result_code = -3;
     sscanf (buf, "%i", &command_result_code);
-    
+
     return command_result_code;
 }
 
@@ -353,6 +353,8 @@ int command_connect
 int command_disconnect
 (FILE* mesf, char* tunnel, int optc, char *optv[])
 {
+    UNUSED(optc);
+    UNUSED(optv);
     fprintf (mesf, "d %s", tunnel);
     return 0;
 }
@@ -360,7 +362,8 @@ int command_disconnect
 int command_remove
 (FILE* mesf, char* tunnel, int optc, char *optv[])
 {
+    UNUSED(optc);
+    UNUSED(optv);
     fprintf (mesf, "r %s", tunnel);
     return 0;
 }
-
