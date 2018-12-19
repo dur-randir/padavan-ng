@@ -17,6 +17,7 @@ include $(ARCH_CONFIG)
 INSTALLDIR = $(ROOTDIR)/romfs
 
 FS_EXT_ENABLED=n
+FS_HFS_ENABLED=n
 FS_FAT_ENABLED=n
 FS_NTFS_ENABLED=n
 STORAGE_ENABLED=n
@@ -54,6 +55,9 @@ FS_EXT_ENABLED=y
 endif
 ifeq ($(CONFIG_FIRMWARE_ENABLE_EXT4),y)
 FS_EXT_ENABLED=y
+endif
+ifeq ($(CONFIG_FIRMWARE_ENABLE_HFS),y)
+FS_HFS_ENABLED=y
 endif
 ifeq ($(CONFIG_FIRMWARE_ENABLE_FAT),y)
 FS_FAT_ENABLED=y
@@ -149,6 +153,7 @@ endif
 dir_y						+= util-linux
 dir_y						+= optware
 dir_$(FS_EXT_ENABLED)				+= e2fsprogs
+dir_$(FS_HFS_ENABLED)				+= hfsprogs
 dir_$(FS_FAT_ENABLED)				+= dosfstools
 dir_$(FS_NTFS_ENABLED)				+= ntfs-3g
 dir_$(CONFIG_FIRMWARE_INCLUDE_PARTED)		+= parted

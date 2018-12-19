@@ -319,6 +319,16 @@ if [ "$CONFIG_FIRMWARE_ENABLE_UFSD" != "y" ] || [ $paragon_hfsplus -eq 0 ] ; the
 	func_disable_kernel_param "CONFIG_MAC_PARTITION"
 	func_disable_busybox_param "CONFIG_FEATURE_VOLUMEID_HFS"
 fi
+############################# HFS #####################################
+if [ "$CONFIG_FIRMWARE_ENABLE_HFS" != "y" ] ; then
+	func_disable_kernel_param "CONFIG_MAC_PARTITION"
+	func_disable_kernel_param "CONFIG_HFSPLUS_FS"
+	func_disable_busybox_param "CONFIG_FEATURE_VOLUMEID_HFS"
+else
+	func_enable_kernel_param "CONFIG_MAC_PARTITION"
+	func_enable_kernel_param_as_m "CONFIG_HFSPLUS_FS"
+	func_enable_busybox_param "CONFIG_FEATURE_VOLUMEID_HFS"
+fi
 ############################# FAT #####################################
 if [ "$CONFIG_FIRMWARE_ENABLE_FAT" != "y" ] ; then
 	func_disable_kernel_param "CONFIG_FAT_FS"

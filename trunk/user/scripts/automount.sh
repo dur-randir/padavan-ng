@@ -100,10 +100,13 @@ elif [ "$ID_FS_TYPE" == "ntfs" ] ; then
 		fi
 	fi
 elif [ "$ID_FS_TYPE" == "hfsplus" -o "$ID_FS_TYPE" == "hfs" ] ; then
+	if [ "$achk_enable" != "0" ] && [ -x /sbin/fsck.hfsplus ] ; then
+		/sbin/fsck.hfsplus -d -p -y "$dev_full" > "/tmp/fsck_hfs_result_$1" 2>&1
+	fi
 	kernel_hfsplus=`modprobe -l | grep hfsplus`
 	if [ -n "$kernel_hfsplus" ] ; then
 		func_load_module hfsplus
-		mount -t $ID_FS_TYPE -o noatime,umask=0,nls=utf8 "$dev_full" "$dev_mount"
+		mount -t $ID_FS_TYPE -o noatime,umask=0,nls=utf8,force "$dev_full" "$dev_mount"
 	else
 		func_load_module ufsd
 		mount -t ufsd -o noatime,nls=utf8,force "$dev_full" "$dev_mount"
