@@ -19,6 +19,21 @@ config ARCH_SUFFIX
       
       If you are not sure about what this is, leave it blank.
 
+config OMIT_TARGET_ARCH
+    bool
+    help
+      Do not include architecture into the target tuple.
+
+config OMIT_TARGET_VENDOR
+    bool "Omit vendor part of the target tuple"
+    help
+      Do not include vendor into the target tuple.
+
+config TARGET_SKIP_CONFIG_SUB
+    bool
+    help
+      Skip canonicalization of the target tuple.
+
 #--------------------------------------
 comment "Generic target options"
 
@@ -93,6 +108,10 @@ config ARCH_USE_MMU
       have one (eg. ARM Cortex-A8).
 
 #--------------------------------------
+config ARCH_SUPPORTS_FLAT_FORMAT
+    bool
+
+#--------------------------------------
 config ARCH_SUPPORTS_EITHER_ENDIAN
     bool
     help
@@ -138,10 +157,12 @@ config ARCH_LE
 config ARCH_BE_LE
     bool
     prompt "Both, default big endian"
+    depends on ARCH_SUPPORTS_BOTH_ENDIAN
 
 config ARCH_LE_BE
     bool
     prompt "Both, default little endian"
+    depends on ARCH_SUPPORTS_BOTH_ENDIAN
 
 endchoice
 
@@ -264,7 +285,9 @@ config ARCH_ARCH
       target CPU.
       
       Leave blank if you don't know, or if your target architecture does not
-      offer this option.
+      offer this option. Must be specified for 32-bit x86 that uses some
+      C library (glibc, uClibc-ng, ...) - the default, "i386" is not supported
+      by these libraries.
 
 config ARCH_ABI
     string

@@ -23,7 +23,7 @@ CT_LoadConfig() {
     . "${CT_LIB_DIR}/scripts/build/kernel/${CT_KERNEL}.sh"
     . "${CT_LIB_DIR}/scripts/build/companion_libs.sh"
     . "${CT_LIB_DIR}/scripts/build/binutils/${CT_BINUTILS}.sh"
-    . "${CT_LIB_DIR}/scripts/build/libc/${CT_LIBC}.sh"
+    . "${CT_LIB_DIR}/scripts/build/libc.sh"
     . "${CT_LIB_DIR}/scripts/build/cc/${CT_CC}.sh"
     . "${CT_LIB_DIR}/scripts/build/debug.sh"
     . "${CT_LIB_DIR}/scripts/build/test_suite.sh"
@@ -582,7 +582,8 @@ CT_Popd() {
 
 # Create a dir and pushd into it
 # Usage: CT_mkdir_pushd <dir/to/create>
-CT_mkdir_pushd() {
+CT_mkdir_pushd()
+{
     local dir="${1}"
 
     mkdir -p "${dir}"
@@ -592,7 +593,8 @@ CT_mkdir_pushd() {
 # Creates a temporary directory
 # $1: variable to assign to
 # Usage: CT_MktempDir foo
-CT_MktempDir() {
+CT_MktempDir()
+{
     # Some mktemp do not allow more than 6 Xs
     eval "$1"=$(mktemp -q -d "${CT_BUILD_DIR}/tmp.XXXXXX")
     CT_TestOrAbort "Could not make temporary directory" -n "${!1}" -a -d "${!1}"
@@ -602,26 +604,29 @@ CT_MktempDir() {
 
 # Removes one or more directories, even if it is read-only, or its parent is
 # Usage: CT_DoForceRmdir dir [...]
-CT_DoForceRmdir() {
+CT_DoForceRmdir()
+{
     local dir
-    local mode
+    local cnt
+
     for dir in "${@}"; do
-        [ -d "${dir}" ] || continue
-        case "${CT_CONFIGURE_has_stat_flavor_GNU},${CT_CONFIGURE_has_stat_flavor_BSD}" in
-            y,*)
-                mode="$(stat -c '%a' "$(dirname "${dir}")")"
-                ;;
-            *,y)
-                mode="$(stat -f '%Lp' "$(dirname "${dir}")")"
-                ;;
-            *)
-                CT_Abort "Unknown stat format options"
-                ;;
-        esac
-        CT_DoExecLog ALL chmod u+w "$(dirname "${dir}")"
-        CT_DoExecLog ALL chmod -R u+w "${dir}"
-        CT_DoExecLog ALL rm -rf "${dir}"
-        CT_DoExecLog ALL chmod ${mode} "$(dirname "${dir}")"
+        [ -e "${dir}" ] || continue
+        CT_TestOrAbort "Cannot remove '${dir}': not a directory" -d "${dir}"
+        CT_DoExecLog ALL chmod -R u+w "${dir}" || :;
+        if CT_DoExecLog ALL rm -rf "${dir}"; then
+            continue
+        fi
+        # If we succeeded in removing the whole directory, good. If not,
+        # but only the top level directory remains - it is fine, too, because
+        # this function is used to remove the directories that are going to be
+        # re-created. Hence, verify we at least succeeded in verifying the
+        # contents of this directory.
+        if [ -d "${dir}" ]; then
+            cnt=$(ls -a "${dir}" | { grep -v '^\.\{1,2\}$' || :; } | wc -l)
+            if [ "${cnt}" != "0" ]; then
+                CT_Abort "Failed to remove '${dir}'"
+            fi
+        fi
     done
 }
 
@@ -630,7 +635,8 @@ CT_DoForceRmdir() {
 # $1: path to add
 # $2: add as 'first' or 'last' path, 'first' is assumed if $2 is empty
 # Usage CT_SetLibPath /some/where/lib [first|last]
-CT_SetLibPath() {
+CT_SetLibPath()
+{
     local path="$1"
     local pos="$2"
 
@@ -1037,20 +1043,6 @@ CT_EnvModify() {
     echo "${e}${1}=\"${2}\"" >> "${CT_BUILD_DIR}/env.modify.sh"
 }
 
-# Computes the target tuple from the configuration and the supplied
-# vendor string
-CT_BuildOneTargetTuple() {
-    local vendor="${1}"
-    local target
-
-    target="${CT_TARGET_ARCH}"
-    target="${target}${vendor:+-${vendor}}"
-    target="${target}${CT_TARGET_KERNEL:+-${CT_TARGET_KERNEL}}"
-    target="${target}${CT_TARGET_SYS:+-${CT_TARGET_SYS}}"
-
-    echo "${target}"
-}
-
 # Compute the target tuple from what is provided by the user
 # Usage: CT_DoBuildTargetTuple
 # In fact this function takes the environment variables to build the target
@@ -1102,19 +1094,19 @@ CT_DoBuildTargetTuple() {
     # Build the default architecture tuple part
     CT_TARGET_ARCH="${CT_ARCH}${CT_ARCH_SUFFIX}"
 
-    # Set defaults for the system part of the tuple. Can be overriden
-    # by architecture-specific values.
+    # Set defaults for the system part of the tuple; only C libraries that
+    # support multiple architectures. Can be overriden by architecture-specific
+    # values.
     case "${CT_LIBC}" in
-        *glibc) CT_TARGET_SYS=gnu;;
-        uClibc) CT_TARGET_SYS=uclibc;;
-        musl)   CT_TARGET_SYS=musl;;
-        bionic)   CT_TARGET_SYS=android;;
-        avr-libc)
-            # avr-libc only seems to work with the non-canonical "avr" target.
-            CT_TARGET_SKIP_CONFIG_SUB=y
-            CT_TARGET_SYS= # CT_TARGET_SYS must be empty too
-        ;;
-        *)      CT_TARGET_SYS=elf;;
+        glibc)       CT_TARGET_SYS=gnu;;
+        uClibc)      CT_TARGET_SYS=uclibc;;
+        musl)        CT_TARGET_SYS=musl;;
+        bionic)      CT_TARGET_SYS=android;;
+        none|newlib) CT_TARGET_SYS=elf;;
+        *)
+            # Keep empty for the libraries like mingw or avr-libc
+            CT_TARGET_SYS=
+            ;;
     esac
 
     # Set the default values for ARCH, ABI, CPU, TUNE, FPU and FLOAT
@@ -1153,10 +1145,18 @@ CT_DoBuildTargetTuple() {
     CT_DoKernelTupleValues
 
     # Finish the target tuple construction
-    CT_TARGET="${CT_TARGET_ARCH}"
-    CT_TARGET="${CT_TARGET}${CT_TARGET_VENDOR:+-${CT_TARGET_VENDOR}}"
-    CT_TARGET="${CT_TARGET}${CT_TARGET_KERNEL:+-${CT_TARGET_KERNEL}}"
-    CT_TARGET="${CT_TARGET}${CT_TARGET_SYS:+-${CT_TARGET_SYS}}"
+    if [ -z "${CT_OMIT_TARGET_ARCH}" ]; then
+        CT_TARGET="${CT_TARGET_ARCH}"
+    fi
+    if [ -z "${CT_OMIT_TARGET_VENDOR}" -a -n "${CT_TARGET_VENDOR}" ]; then
+        CT_TARGET="${CT_TARGET:+${CT_TARGET}-}${CT_TARGET_VENDOR}"
+    fi
+    if [ -n "${CT_TARGET_KERNEL}" ]; then
+        CT_TARGET="${CT_TARGET:+${CT_TARGET}-}${CT_TARGET_KERNEL}"
+    fi
+    if [ -n "${CT_TARGET_SYS}" ]; then
+        CT_TARGET="${CT_TARGET:+${CT_TARGET}-}${CT_TARGET_SYS}"
+    fi
 
     # Sanity checks
     __sed_alias=""
@@ -1172,12 +1172,12 @@ CT_DoBuildTargetTuple() {
 
     # Canonicalise it
     if [ "${CT_TARGET_SKIP_CONFIG_SUB}" != "y" ]; then
-        if [ -n "${CT_TARGET_VENDOR}" ]; then
-            CT_TARGET=$(CT_DoConfigSub "${CT_TARGET}")
-        else
-            # Canonicalise with a fake vendor string then strip it out
-            local target=$(CT_BuildOneTargetTuple "CT_INVALID")
-            CT_TARGET=$(CT_DoConfigSub "${target}" |sed -r -s s:CT_INVALID-::)
+        CT_TARGET=$(CT_DoConfigSub "${CT_TARGET}")
+
+        if [ -n "${CT_OMIT_TARGET_VENDOR}" ]; then
+            # config.sub always returns a 3- or 4-part tuple, with vendor
+            # always being the 2nd part.
+            CT_TARGET="${CT_TARGET%%-*}-${CT_TARGET#*-*-}"
         fi
     fi
 
@@ -1203,11 +1203,14 @@ CT_DoBuildTargetTuple() {
     # Instead, save them into a different variable here. Then, after the first
     # core pass, we'll know which of them vary with multilibs (i.e. must be
     # filtered out).
-    if [ "${CT_MULTILIB}" = "y" ]; then
+    if [ -n "${CT_MULTILIB}" ]; then
         CT_ARCH_TARGET_CFLAGS_MULTILIB="${CT_ARCH_TARGET_CFLAGS}"
         CT_ARCH_TARGET_CFLAGS=
         CT_ARCH_TARGET_LDFLAGS_MULTILIB="${CT_ARCH_TARGET_LDFLAGS}"
         CT_ARCH_TARGET_LDFLAGS=
+    else
+        CT_ALL_TARGET_CFLAGS="${CT_ARCH_TARGET_CFLAGS} ${CT_TARGET_CFLAGS}"
+        CT_ALL_TARGET_LDFLAGS="${CT_ARCH_TARGET_LDFLAGS} ${CT_TARGET_LDFLAGS}"
     fi
 }
 
@@ -1327,7 +1330,7 @@ CT_DoSaveState() {
         done | ${sed} 's/^declare /declare -g /'
         echo "builtin unset ${CT_ENVVAR_UNSET}"
     } >"${state_dir}/env.sh"
-    
+
     # Save .config to check it hasn't changed when resuming.
     CT_DoExecLog STATE cp ".config" "${state_dir}/config"
 
@@ -1739,26 +1742,33 @@ CT_Mirrors()
         echo "https://releases.linaro.org/archive/${yymm}/components/toolchain/${project}-linaro"
         ;;
     kernel.org)
-        # TBD move to linux.sh?
-        if [ "${project}" != "linux" ]; then
-            echo "-unknown-"
-        fi
-        local version="${CT_LINUX_VERSION}"
-        case "${version}" in
-        '')
-            # Ignore, this happens before .config is fully evaluated
-            ;;
-        [34].*)
-            echo "http://www.kernel.org/pub/linux/kernel/v${version%%.*}.x"
-            ;;
-        2.6.*)
-            echo "http://www.kernel.org/pub/linux/kernel/v2.6"
+        # TBD move to linux.sh and dtc.sh?
+        case "${project}" in
+        linux)
+            local version="${CT_LINUX_VERSION}"
             case "${version}" in
-            2.6.*.*)
-                echo "http://www.kernel.org/pub/linux/kernel/v2.6/longterm"
-                echo "http://www.kernel.org/pub/linux/kernel/v2.6/longterm/v${version%.*}"
+            '')
+                # Ignore, this happens before .config is fully evaluated
+                ;;
+            [34].*)
+                echo "http://www.kernel.org/pub/linux/kernel/v${version%%.*}.x"
+                ;;
+            2.6.*)
+                echo "http://www.kernel.org/pub/linux/kernel/v2.6"
+                case "${version}" in
+                2.6.*.*)
+                    echo "http://www.kernel.org/pub/linux/kernel/v2.6/longterm"
+                    echo "http://www.kernel.org/pub/linux/kernel/v2.6/longterm/v${version%.*}"
+                    ;;
+                esac
+                ;;
+            *)
+                echo "-unknown-"
                 ;;
             esac
+            ;;
+        dtc)
+            echo "https://mirrors.edge.kernel.org/pub/software/utils/dtc"
             ;;
         *)
             echo "-unknown-"
@@ -1808,7 +1818,7 @@ CT_Download_cvs()
     fi
 }
 
-# Find the most recent version from Subversion. 
+# Find the most recent version from Subversion.
 CT_GetVersion_svn()
 {
     devel_branch="${devel_branch:-/trunk}"
@@ -1861,7 +1871,7 @@ CT_Download_hg()
     fi
     if [ "${devel_revision}" = "to.be.determined" ]; then
         # Report what we found out (as common message lacks the revision)
-        devel_revision=`hg identify -i` 
+        devel_revision=`hg identify -i`
         unique_id="${devel_revision}"
         CT_DoLog EXTRA "Retrieved revision ${devel_revision}"
     else
@@ -1997,6 +2007,7 @@ CT_PackageRun()
             src_release mirrors archive_filename archive_dirname archive_formats signature_format \
             src_devel devel_vcs devel_url devel_branch devel_revision devel_subdir devel_bootstrap \
             src_custom custom_location patch_order; do
+        eval "CT_DoLog DEBUG \"Package iterator: set ${v}='\${CT_${use}_${v^^}}'\""
         eval "local ${v}=\${CT_${use}_${v^^}}"
     done
 
@@ -2012,6 +2023,7 @@ CT_PackageRun()
         eval "eval ${v}=\${${v}//@/$}"
     done
 
+    CT_DoLog DEBUG "Package iterator: run ${run} $*"
     ${run} "$@"
 
     # Save certain variables that may be modified by the callback.
@@ -2020,7 +2032,7 @@ CT_PackageRun()
     for v in devel_branch devel_revision basename src_dir pkg_dir; do
         eval "[ \"\${${v}}\" != \"\${CT_${use}_${v^^}}\" ] || continue"
         eval "CT_${use}_${v^^}=\${${v}}"
-        eval "CT_DoLog DEBUG \"Override CT_${use}_${v^^}=\${CT_${use}_${v^^}}\""
+        eval "CT_DoLog DEBUG \"Package iterator: override CT_${use}_${v^^}=\${CT_${use}_${v^^}}\""
     done
 }
 
@@ -2248,7 +2260,7 @@ CT_DoExtractPatch()
                     done
                 fi
             done
- 
+
             # TBD create meta-package for config.sub/config.guess with replacement script
             if [ "${CT_OVERRIDE_CONFIG_GUESS_SUB}" = "y" ]; then
                 CT_DoLog ALL "Overiding config.guess and config.sub"
@@ -2378,14 +2390,16 @@ CT_GetPkgBuildVersion()
 
     __do_GetPkgBuildVersion() {
         tmp="${pkg_name}"
+        if [ "${version}" != "unknown" ]; then
+            tmp+="-${version}"
+        fi
         if [ "${src_devel}" = "y" ]; then
+            tmp+="-${devel_vcs}"
             if [ -n "${devel_revision}" ]; then
                 tmp+="-${devel_revision}"
             fi
         elif [ "${src_custom}" = "y" ]; then
-            tmp+="-${version}-custom"
-        else
-            tmp+="-${version}"
+            tmp+="-custom"
         fi
         if [ -n "${choicename}" -a "${pkg}" != "${component}" ]; then
             tmp+=" (${choicename})"
@@ -2394,18 +2408,6 @@ CT_GetPkgBuildVersion()
 
     CT_PackageRun "${pkg}" __do_GetPkgBuildVersion
     eval "${var}=\"${tmp}\""
-}
-
-# Get a package version as selected by a generated choice in kconfig.
-CT_GetChoicePkgBuildVersion()
-{
-    local choice="${1}"
-    local var="${2}"
-    local component
-
-    # Find the selected component
-    eval "component=\${CT_${choice}_CHOICE_KSYM}"
-    CT_GetPkgBuildVersion "${choice}" "${component}" "${var}"
 }
 
 # Finally, load paths.sh. For --enable-local build, it is located in

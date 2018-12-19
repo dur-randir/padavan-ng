@@ -121,7 +121,7 @@ comment "Tuple completion and aliasing"
 config TARGET_VENDOR
     string
     prompt "Tuple's vendor string"
-    depends on !LIBC_AVR_LIBC
+    depends on !OMIT_TARGET_VENDOR
     default "unknown"
     help
       Vendor part of the target tuple.
@@ -190,14 +190,14 @@ config NATIVE
     depends on EXPERIMENTAL
     help
       Build a native toolchain.
-      See: "docs/6 - Toolchain types.txt"
+      See: "docs/6_Toolchain_Types.md"
 
 config CROSS
     bool
     prompt "Cross"
     help
       Build a cross-toolchain.
-      See: "docs/6 - Toolchain types.txt"
+      See: "docs/6_Toolchain_Types.md"
 
 config CROSS_NATIVE
     bool
@@ -205,14 +205,14 @@ config CROSS_NATIVE
     depends on EXPERIMENTAL
     help
       Build a cross-native toolchain.
-      See: "docs/6 - Toolchain types.txt"
+      See: "docs/6_Toolchain_Types.md"
 
 config CANADIAN
     bool
     prompt "Canadian"
     help
       Build a canadian-toolchain.
-      See: "docs/6 - Toolchain types.txt"
+      See: "docs/6_Toolchain_Types.md"
 
 endchoice
 

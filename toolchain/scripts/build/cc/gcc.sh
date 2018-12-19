@@ -158,29 +158,31 @@ cc_gcc_multilib_housekeeping() {
 
     CT_IterateMultilibs evaluate_multilib_cflags evaluate_cflags
 
-    # Filtering out some of the options provided in CT-NG config. Then *prepend*
-    # them to CT_TARGET_CFLAGS, like scripts/crosstool-NG.sh does. Zero out
-    # the stashed MULTILIB flags so that we don't process them again in the passes
-    # that follow.
-    CT_DoLog DEBUG "Configured target CFLAGS: '${CT_ARCH_TARGET_CFLAGS_MULTILIB}'"
-    ml_unknown= # Pass through anything we don't know about
-    for f in ${CT_ARCH_TARGET_CFLAGS_MULTILIB}; do
-        eval ml=\$ml_`cc_gcc_classify_opt ${f}`
-        if [ "${ml}" != "seen" ]; then
-            new_cflags="${new_cflags} ${f}"
-        fi
-    done
-    CT_DoLog DEBUG "Filtered target CFLAGS: '${new_cflags}'"
-    CT_EnvModify CT_ALL_TARGET_CFLAGS "${new_cflags} ${CT_TARGET_CFLAGS}"
-    CT_EnvModify CT_ARCH_TARGET_CFLAGS_MULTILIB ""
+    if [ -n "${CT_MULTILIB}" ]; then
+        # Filtering out some of the options provided in CT-NG config. Then *prepend*
+        # them to CT_TARGET_CFLAGS, like scripts/crosstool-NG.sh does. Zero out
+        # the stashed MULTILIB flags so that we don't process them again in the passes
+        # that follow.
+        CT_DoLog DEBUG "Configured target CFLAGS: '${CT_ARCH_TARGET_CFLAGS_MULTILIB}'"
+        ml_unknown= # Pass through anything we don't know about
+        for f in ${CT_ARCH_TARGET_CFLAGS_MULTILIB}; do
+            eval ml=\$ml_`cc_gcc_classify_opt ${f}`
+            if [ "${ml}" != "seen" ]; then
+                new_cflags="${new_cflags} ${f}"
+            fi
+        done
+        CT_DoLog DEBUG "Filtered target CFLAGS: '${new_cflags}'"
+        CT_EnvModify CT_ALL_TARGET_CFLAGS "${new_cflags} ${CT_TARGET_CFLAGS}"
+        CT_EnvModify CT_ARCH_TARGET_CFLAGS_MULTILIB ""
 
-    # Currently, the only LDFLAGS are endianness-related
-    CT_DoLog DEBUG "Configured target LDFLAGS: '${CT_ARCH_TARGET_LDFLAGS_MULTILIB}'"
-    if [ "${ml_endian}" != "seen" ]; then
-        CT_EnvModify CT_ALL_TARGET_LDFLAGS "${CT_ARCH_TARGET_LDFLAGS_MULTILIB} ${CT_TARGET_LDFLAGS}"
-        CT_EnvModify CT_ARCH_TARGET_LDFLAGS_MULTILIB ""
+        # Currently, the only LDFLAGS are endianness-related
+        CT_DoLog DEBUG "Configured target LDFLAGS: '${CT_ARCH_TARGET_LDFLAGS_MULTILIB}'"
+        if [ "${ml_endian}" != "seen" ]; then
+            CT_EnvModify CT_ALL_TARGET_LDFLAGS "${CT_ARCH_TARGET_LDFLAGS_MULTILIB} ${CT_TARGET_LDFLAGS}"
+            CT_EnvModify CT_ARCH_TARGET_LDFLAGS_MULTILIB ""
+        fi
+        CT_DoLog DEBUG "Filtered target LDFLAGS: '${CT_ARCH_TARGET_LDFLAGS_MULTILIB}'"
     fi
-    CT_DoLog DEBUG "Filtered target LDFLAGS: '${CT_ARCH_TARGET_LDFLAGS_MULTILIB}'"
 }
 
 #------------------------------------------------------------------------------
@@ -711,6 +713,13 @@ do_gcc_core_backend() {
 
     cc_gcc_multilib_housekeeping cc="${prefix}/bin/${CT_TARGET}-${CT_CC}" \
         host="${host}"
+
+    # If binutils want the LTO plugin, point them to it
+    if [ -d "${CT_PREFIX_DIR}/lib/bfd-plugins" -a "${build_step}" = "gcc_host" ]; then
+        local gcc_version=$(cat "${CT_SRC_DIR}/gcc/gcc/BASE-VER" )
+        CT_DoExecLog ALL ln -sfv "../../libexec/gcc/${CT_TARGET}/${gcc_version}/liblto_plugin.so" \
+                "${CT_PREFIX_DIR}/lib/bfd-plugins/liblto_plugin.so"
+    fi
 }
 
 #------------------------------------------------------------------------------
@@ -1190,4 +1199,11 @@ do_gcc_backend() {
 
     cc_gcc_multilib_housekeeping cc="${prefix}/bin/${CT_TARGET}-${CT_CC}" \
         host="${host}"
+
+    # If binutils want the LTO plugin, point them to it
+    if [ -d "${CT_PREFIX_DIR}/lib/bfd-plugins" -a "${build_step}" = "gcc_host" ]; then
+        local gcc_version=$(cat "${CT_SRC_DIR}/gcc/gcc/BASE-VER" )
+        CT_DoExecLog ALL ln -sfv "../../libexec/gcc/${CT_TARGET}/${gcc_version}/liblto_plugin.so" \
+                "${CT_PREFIX_DIR}/lib/bfd-plugins/liblto_plugin.so"
+    fi
 }

@@ -253,11 +253,6 @@ if [    "${CT_SAVE_TARBALLS}" = "y"     \
     CT_SAVE_TARBALLS=
 fi
 
-# Check now if we can write to the destination directory:
-if [ -d "${CT_PREFIX_DIR}" ]; then
-    CT_TestAndAbort "Destination directory '${CT_PREFIX_DIR}' is not removable" ! -w $(dirname "${CT_PREFIX_DIR}")
-fi
-
 # Good, now grab a bit of informations on the system we're being run on,
 # just in case something goes awok, and it's not our fault:
 CT_SYS_USER=$(id -un)
@@ -669,7 +664,6 @@ if [ "${CT_ONLY_DOWNLOAD}" != "y" -a "${CT_ONLY_EXTRACT}" != "y" ]; then
     do_stop=0
     prev_step=
     [ -n "${CT_RESTART}" ] && do_it=0 || do_it=1
-    # Aha! CT_STEPS comes from steps.mk!
     for step in ${CT_STEPS}; do
         if [ ${do_it} -eq 0 ]; then
             if [ "${CT_RESTART}" = "${step}" ]; then

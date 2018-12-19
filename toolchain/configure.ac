@@ -153,8 +153,6 @@ AC_CHECK_PROGS([curl], [curl])
 CTNG_SET_KCONFIG_OPTION([curl])
 AC_SUBST([curl])
 
-CTNG_PROG_STAT
-
 CTNG_CPU_COUNT
 
 CTNG_PATH_TOOL_REQ([PATCH], [gpatch patch], [patch])
@@ -231,6 +229,9 @@ CTNG_PROG_VERSION([M4],
     [gnu_m4_1_4_12_or_newer])
 
 AC_SUBST([kconfig_options])
+
+AC_CHECK_PROGS([dtc], [dtc])
+CTNG_SET_KCONFIG_OPTION([dtc])
 
 AC_CHECK_PROGS([cvs], [cvs])
 CTNG_SET_KCONFIG_OPTION([cvs])

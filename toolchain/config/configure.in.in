@@ -9,12 +9,6 @@ config CONFIGURE_has_wget
 config CONFIGURE_has_curl
     @KCONFIG_curl@
 
-config CONFIGURE_has_stat_flavor_BSD
-    @KCONFIG_stat_flavor_BSD@
-
-config CONFIGURE_has_stat_flavor_GNU
-    @KCONFIG_stat_flavor_GNU@
-
 config CONFIGURE_has_make_3_81_or_newer
     @KCONFIG_make_3_81_or_newer@
 
@@ -35,6 +29,9 @@ config CONFIGURE_has_automake_1_15_or_newer
 
 config CONFIGURE_has_gnu_m4_1_4_12_or_newer
     @KCONFIG_gnu_m4_1_4_12_or_newer@
+
+config CONFIGURE_has_dtc
+    @KCONFIG_dtc@
 
 config CONFIGURE_has_cvs
     @KCONFIG_cvs@
