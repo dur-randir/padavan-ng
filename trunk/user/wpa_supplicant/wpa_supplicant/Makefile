@@ -16,7 +16,9 @@ CFLAGS += -I../src/utils
 CFLAGS += -I../src/common
 CFLAGS += -I../src/rsn_supp
 
-CFLAGS += -ffunction-sections -fdata-sections
+COMMON_FLAGS = -ffunction-sections -fdata-sections -fvisibility=hidden
+CFLAGS += $(COMMON_FLAGS)
+CXXFLAGS += $(COMMON_FLAGS) -fvisibility-inlines-hidden
 LDFLAGS += -Wl,--gc-sections
 
 ALL=wpa_supplicant wpa_passphrase wpa_cli

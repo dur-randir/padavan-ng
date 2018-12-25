@@ -1,6 +1,6 @@
 SRC_NAME=minidlna-1.x.x
 
-DLNA_CFLAGS  += -ffunction-sections -fdata-sections
+DLNA_CFLAGS  += -ffunction-sections -fdata-sections -fvisibility=hidden
 DLNA_CFLAGS  += -Os -Wall -g -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64
 DLNA_CFLAGS  += -I$(STAGEDIR)/include
 

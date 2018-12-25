@@ -1,6 +1,6 @@
 SRC_NAME=hfsprogs-332.XX
 
-CFLAGS+=$(COPT) -ffunction-sections -fdata-sections
+CFLAGS+=$(COPT) -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
 
 all:

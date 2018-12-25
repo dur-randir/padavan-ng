@@ -1,6 +1,6 @@
 SRC_NAME=rpcbind-91973cc
 
-CFLAGS +=$(COPT) -ffunction-sections -fdata-sections
+CFLAGS +=$(COPT) -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
 
 all: config_test

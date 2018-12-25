@@ -1,6 +1,6 @@
 SRC_NAME=openvpn-2.4.x
 
-CFLAGS += -ffunction-sections -fdata-sections
+CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
 
 all: config_test

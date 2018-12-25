@@ -1,4 +1,4 @@
-CFLAGS  += -ffunction-sections -fdata-sections
+CFLAGS  += -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
 
 utils_dir_y =

@@ -8,7 +8,7 @@ endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_DROPBEAR_FAST_CODE),y)
 COPT+=-DDROPBEAR_SMALL_CODE
 endif
-CFLAGS+=$(COPT) -ffunction-sections -fdata-sections
+CFLAGS+=$(COPT) -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
 
 all: config_test

@@ -1,4 +1,4 @@
-CFLAGS  += -ffunction-sections -fdata-sections
+CFLAGS  += -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
 
 # If you want to support multiple radius server for multiple bssid, add following line

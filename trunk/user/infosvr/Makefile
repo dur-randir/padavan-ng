@@ -1,6 +1,6 @@
 USERDIR = $(ROOTDIR)/user
 
-CFLAGS += -I. -I$(USERDIR)/shared -I$(USERDIR)/shared/include
+CFLAGS += -I. -I$(USERDIR)/shared -I$(USERDIR)/shared/include -fvisibility=hidden
 LDFLAGS += -L$(USERDIR)/shared -lshared
 
 OBJS=infosvr.o asus.o

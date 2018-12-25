@@ -1,7 +1,8 @@
 SRC_NAME=aria2-1.3X.X
 
-CFLAGS  += -ffunction-sections -fdata-sections
-CXXFLAGS += -ffunction-sections -fdata-sections
+COMMON_FLAGS = -ffunction-sections -fdata-sections -fvisibility=hidden
+CFLAGS  += $(COMMON_FLAGS)
+CXXFLAGS += $(COMMON_FLAGS) -fvisibility-inlines-hidden
 LDFLAGS += -Wl,--gc-sections
 
 all: config_test

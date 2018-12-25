@@ -17,7 +17,7 @@ endif
 
 SHDIR = $(ROOTDIR)/user/shared
 
-CFLAGS	+= -ffunction-sections -fdata-sections -Wall -I.
+CFLAGS	+= -ffunction-sections -fdata-sections -fvisibility=hidden -Wall -I.
 CFLAGS	+= -I$(SHDIR) -I$(ROOTDIR)/$(LINUXDIR)/include/nvram
 CFLAGS	+= -s
 LDFLAGS	+= -Wl,--gc-sections -L. -L../shared -lshared

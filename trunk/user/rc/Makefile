@@ -9,7 +9,7 @@ INSTALLDIR = $(ROOTDIR)/romfs
 include $(SHDIR)/boards.mk
 include $(SHDIR)/cflags.mk
 
-CFLAGS += -ffunction-sections -fdata-sections -s -I. -I$(SHDIR) -I$(SHDIR)/include
+CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden -s -I. -I$(SHDIR) -I$(SHDIR)/include
 CFLAGS += -I$(USERDIR)/wireless_tools
 CFLAGS += -I$(ROOTDIR)/$(LINUXDIR)/include/ralink
 

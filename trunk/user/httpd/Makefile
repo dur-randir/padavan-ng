@@ -8,6 +8,9 @@ SHDIR = $(ROOTDIR)/user/shared
 include $(SHDIR)/boards.mk
 include $(SHDIR)/cflags.mk
 
+CFLAGS  += -O2 -ffunction-sections -fdata-sections -fvisibility=hidden
+LDFLAGS += -Wl,--gc-sections
+
 CFLAGS += $(if $(TPLINK_HWID),-DTPLINK_HWID=$(TPLINK_HWID),)
 CFLAGS += $(if $(TPLINK_HWREV),-DTPLINK_HWREV=$(TPLINK_HWREV),)
 

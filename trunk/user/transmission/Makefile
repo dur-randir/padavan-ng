@@ -1,6 +1,8 @@
 SRC_NAME=transmission-2.9X
 
-CFLAGS   += -O2 -ffunction-sections -fdata-sections -D_LARGEFILE64_SOURCE -D_LFS64_LARGEFILE
+COMMON_FLAGS = -O2 -ffunction-sections -fdata-sections -fvisibility=hidden -D_LARGEFILE64_SOURCE -D_LFS64_LARGEFILE
+CFLAGS   += $(COMMON_FLAGS)
+CXXFLAGS += $(COMMON_FLAGS) -fvisibility-inlines-hidden
 LDFLAGS  += -Wl,--gc-sections
 
 THISDIR = $(shell pwd)

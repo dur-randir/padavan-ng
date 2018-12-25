@@ -2,7 +2,7 @@ SRC_NAME=radvd-2.X
 
 SHAREDIR = $(ROOTDIR)/user/shared
 
-CFLAGS += -ffunction-sections -fdata-sections
+CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
 
 all: config_test

@@ -31,7 +31,7 @@ CFLAGS       += -W -Wall
 CFLAGS       += -D_BSD_SOURCE -D_GNU_SOURCE
 CFLAGS       += -Iinclude -DVERSION=\"$(VERSION)\"
 CFLAGS       += -Iinclude -I$(SHAREDIR)
-CFLAGS       += -ffunction-sections -fdata-sections
+CFLAGS       += -ffunction-sections -fdata-sections -fvisibility=hidden
 
 LDFLAGS      += -L$(SHAREDIR) -lshared
 LDFLAGS      += -Wl,--gc-sections

@@ -26,7 +26,7 @@ CFLAGS += -DSUPPORT_LPRng
 CFLAGS += -I$(TOP)/shared
 CFLAGS += -Wall -I.
 CFLAGS += $(DEBFLAGS)
-CFLAGS += -ffunction-sections -fdata-sections
+CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden
 
 LDFLAGS += -lpthread
 LDFLAGS += -L$(TOP)/shared -lshared

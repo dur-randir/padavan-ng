@@ -1,8 +1,10 @@
 TARGET=Linux
+COMMON_FLAGS = -ffunction-sections -fdata-sections -fvisibility=hidden
 CFLAGS += -I$(STAGEDIR)/include -L$(STAGEDIR)/lib
 CFLAGS += -D_GNU_SOURCE -DADB_HOST=1 -DHAVE_FORKEXEC=1 -DHAVE_OFF64_T=1
 CFLAGS += -Isrc -Iinclude
-CFLAGS += -ffunction-sections -fdata-sections
+CFLAGS += $(COMMON_FLAGS)
+CXXFLAGS += $(COMMON_FLAGS) -fvisibility-inlines-hidden
 LDFLAGS += -Wl,--gc-sections
 
 SRCS += src/adb.c \

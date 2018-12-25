@@ -2,6 +2,9 @@ SRC_NAME=mt-daapd-svn
 
 THISDIR = $(shell pwd)
 
+CFLAGS  += -O2 -ffunction-sections -fdata-sections
+LDFLAGS += -Wl,--gc-sections
+
 all: config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME) && \
 	$(MAKE) -C $(SRC_NAME) install-strip DESTDIR=$(THISDIR)/install

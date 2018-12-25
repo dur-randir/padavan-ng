@@ -35,7 +35,7 @@ HOSTCC = gcc
 CFLAGS += -Wstrict-prototypes
 CFLAGS += -I../include
 CFLAGS += -D_GNU_SOURCE $(DEFINES)
-CFLAGS += -ffunction-sections -fdata-sections
+CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden
 YACCFLAGS = -d -t -v
 
 SUBDIRS=lib tc

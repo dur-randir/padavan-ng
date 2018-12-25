@@ -1,6 +1,6 @@
 SRC_NAME=mtd-utils-2.0.x
 
-CFLAGS+=$(COPT) -ffunction-sections -fdata-sections
+CFLAGS+=$(COPT) -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
 
 all: config_test

@@ -1,6 +1,6 @@
 SRC_NAME=ntfs-3g_ntfsprogs-2017.3.23
 
-CFLAGS += -O2 -ffunction-sections -fdata-sections
+CFLAGS += -O2 -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
 
 all: config_test

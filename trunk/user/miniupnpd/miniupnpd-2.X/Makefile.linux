@@ -38,7 +38,7 @@ STRIP ?= strip
 PKG_CONFIG ?= pkg-config
 CP = cp
 
-CFLAGS += -ffunction-sections -fdata-sections
+CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
 
 LDLIBS  = $(IPTABLESPATH)/libiptc/.libs/libip4tc.a

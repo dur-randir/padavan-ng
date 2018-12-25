@@ -4,6 +4,9 @@ RP_VERSION=3.12
 CFLAGS += '-DRP_VERSION="$(RP_VERSION)"'
 CFLAGS += $(if $(CONFIG_RAETH_GMAC2),,-DUSE_SINGLE_MAC)
 
+CFLAGS  += -O2 -ffunction-sections -fdata-sections -fvisibility=hidden
+LDFLAGS += -Wl,--gc-sections
+
 all: $(EXEC)
 
 %.o: %.c

@@ -1,6 +1,6 @@
 SRC_NAME=pptpd-1.3.3
 
-CFLAGS  += -O2 -ffunction-sections -fdata-sections
+CFLAGS  += -O2 -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
 
 all: config_test
