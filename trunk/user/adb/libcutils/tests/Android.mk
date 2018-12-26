@@ -19,6 +19,7 @@ test_src_files := \
     PropertiesTest.cpp \
 
 include $(CLEAR_VARS)
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_MODULE := libcutils_test
 LOCAL_SRC_FILES := $(test_src_files)
 LOCAL_SHARED_LIBRARIES := \
@@ -31,18 +32,21 @@ LOCAL_MODULE_STEM_32 := $(LOCAL_MODULE)32
 LOCAL_MODULE_STEM_64 := $(LOCAL_MODULE)64
 include $(BUILD_NATIVE_TEST)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := libcutils_test_static
-LOCAL_FORCE_STATIC_EXECUTABLE := true
-LOCAL_SRC_FILES := $(test_src_files)
-LOCAL_STATIC_LIBRARIES := \
-    libc \
-    libcutils \
-    liblog \
-    libstlport_static \
-    libutils \
+# The static libcutils tests cannot be built when using libc++ because there are
+# multiple symbol definition errors between libc++ and libgcc. b/18389856
+#include $(CLEAR_VARS)
+#LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+#LOCAL_MODULE := libcutils_test_static
+#LOCAL_FORCE_STATIC_EXECUTABLE := true
+#LOCAL_SRC_FILES := $(test_src_files)
+#LOCAL_STATIC_LIBRARIES := \
+#    libc \
+#    libcutils \
+#    liblog \
+#    libutils \
 
-LOCAL_MULTILIB := both
-LOCAL_MODULE_STEM_32 := $(LOCAL_MODULE)32
-LOCAL_MODULE_STEM_64 := $(LOCAL_MODULE)64
-include $(BUILD_NATIVE_TEST)
+#LOCAL_CXX_STL := stlport_static
+#LOCAL_MULTILIB := both
+#LOCAL_MODULE_STEM_32 := $(LOCAL_MODULE)32
+#LOCAL_MODULE_STEM_64 := $(LOCAL_MODULE)64
+#include $(BUILD_NATIVE_TEST)

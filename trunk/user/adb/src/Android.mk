@@ -24,6 +24,7 @@ ifeq ($(HOST_OS),darwin)
   USB_SRCS := usb_osx.c
   EXTRA_SRCS := get_my_path_darwin.c
   LOCAL_LDLIBS += -lpthread -framework CoreFoundation -framework IOKit -framework Carbon
+  LOCAL_CFLAGS += -Wno-sizeof-pointer-memaccess -Wno-unused-parameter
 endif
 
 ifeq ($(HOST_OS),freebsd)
@@ -62,7 +63,6 @@ LOCAL_SRC_FILES := \
 	file_sync_client.c \
 	$(EXTRA_SRCS) \
 	$(USB_SRCS) \
-	usb_vendors.c
 
 LOCAL_C_INCLUDES += external/openssl/include
 
@@ -82,6 +82,7 @@ ifeq ($(USE_SYSDEPS_WIN32),)
 	LOCAL_STATIC_LIBRARIES += libcutils
 endif
 
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 include $(BUILD_HOST_EXECUTABLE)
 
 $(call dist-for-goals,dist_files sdk,$(LOCAL_BUILT_MODULE))
@@ -113,8 +114,13 @@ LOCAL_SRC_FILES := \
 	remount_service.c \
 	usb_linux_client.c
 
-LOCAL_CFLAGS := -O2 -g -DADB_HOST=0 -Wall -Wno-unused-parameter -Werror
-LOCAL_CFLAGS += -D_XOPEN_SOURCE -D_GNU_SOURCE
+LOCAL_CFLAGS := \
+	-O2 \
+	-g \
+	-DADB_HOST=0 \
+	-D_XOPEN_SOURCE \
+	-D_GNU_SOURCE \
+	-Wall -Wno-unused-parameter -Werror -Wno-deprecated-declarations \
 
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 LOCAL_CFLAGS += -DALLOW_ADBD_ROOT=1
@@ -127,6 +133,7 @@ LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT_SBIN)
 LOCAL_UNSTRIPPED_PATH := $(TARGET_ROOT_OUT_SBIN_UNSTRIPPED)
 
 LOCAL_STATIC_LIBRARIES := liblog libcutils libc libmincrypt libselinux
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 include $(BUILD_EXECUTABLE)
 
 
@@ -149,7 +156,6 @@ LOCAL_SRC_FILES := \
 	file_sync_client.c \
 	get_my_path_linux.c \
 	usb_linux.c \
-	usb_vendors.c \
 	fdevent.c
 
 LOCAL_CFLAGS := \
@@ -169,5 +175,6 @@ LOCAL_STATIC_LIBRARIES := libzipfile libunz libcutils liblog
 
 LOCAL_SHARED_LIBRARIES := libcrypto
 
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 include $(BUILD_EXECUTABLE)
 endif

@@ -41,8 +41,6 @@
 #include <sys/prctl.h>
 #include <getopt.h>
 #include <selinux/selinux.h>
-#else
-#include "usb_vendors.h"
 #endif
 
 #if ADB_TRACE
@@ -329,6 +327,7 @@ static void send_msg_with_header(int fd, const char* msg, size_t msglen) {
 }
 #endif
 
+#if ADB_HOST
 static void send_msg_with_okay(int fd, const char* msg, size_t msglen) {
     char header[9];
     if (msglen > 0xffff)
@@ -337,6 +336,7 @@ static void send_msg_with_okay(int fd, const char* msg, size_t msglen) {
     writex(fd, header, 8);
     writex(fd, msg, msglen);
 }
+#endif // ADB_HOST
 
 static void send_connect(atransport *t)
 {
@@ -414,6 +414,7 @@ void adb_auth_verified(atransport *t)
     send_connect(t);
 }
 
+#if ADB_HOST
 static char *connection_state_name(atransport *t)
 {
     if (t == NULL) {
@@ -437,6 +438,7 @@ static char *connection_state_name(atransport *t)
         return "unknown";
     }
 }
+#endif // ADB_HOST
 
 /* qual_overwrite is used to overwrite a qualifier string.  dst is a
  * pointer to a char pointer.  It is assumed that if *dst is non-NULL, it
@@ -943,7 +945,7 @@ nomem:
     return INSTALL_STATUS_INTERNAL_ERROR;
 }
 
-#ifdef HAVE_WIN32_PROC
+#if defined(_WIN32)
 static BOOL WINAPI ctrlc_handler(DWORD type)
 {
     exit(STATUS_CONTROL_C_EXIT);
@@ -958,7 +960,7 @@ static void adb_cleanup(void)
 
 void start_logging(void)
 {
-#ifdef HAVE_WIN32_PROC
+#if defined(_WIN32)
     char    temp[ MAX_PATH ];
     FILE*   fnul;
     FILE*   flog;
@@ -1066,7 +1068,7 @@ void adb_set_affinity(void)
 
 int launch_server(int server_port)
 {
-#ifdef HAVE_WIN32_PROC
+#if defined(_WIN32)
     /* we need to start the server in the background                    */
     /* we create a PIPE that will be used to wait for the server's "OK" */
     /* message since the pipe handles must be inheritable, we use a     */
@@ -1165,7 +1167,7 @@ int launch_server(int server_port)
             return -1;
         }
     }
-#elif defined(HAVE_FORKEXEC)
+#else /* !defined(_WIN32) */
     char    path[PATH_MAX];
     int     fd[2];
 
@@ -1216,12 +1218,10 @@ int launch_server(int server_port)
 
         setsid();
     }
-#else
-#error "cannot implement background server start on this platform"
-#endif
+#endif /* !defined(_WIN32) */
     return 0;
 }
-#endif
+#endif /* ADB_HOST */
 
 /* Constructs a local name of form tcp:port.
  * target_str points to the target string, it's content will be overwritten.
@@ -1303,9 +1303,9 @@ int adb_main(int is_daemon, int server_port)
 #endif
 
     atexit(adb_cleanup);
-#ifdef HAVE_WIN32_PROC
+#if defined(_WIN32)
     SetConsoleCtrlHandler( ctrlc_handler, TRUE );
-#elif defined(HAVE_FORKEXEC)
+#else
     // No SIGCHLD. Let the service subproc handle its children.
     signal(SIGPIPE, SIG_IGN);
 #endif
@@ -1318,7 +1318,6 @@ int adb_main(int is_daemon, int server_port)
 #ifdef WORKAROUND_BUG6558362
     if(is_daemon) adb_set_affinity();
 #endif
-    usb_vendors_init();
     usb_init();
     local_init(DEFAULT_ADB_LOCAL_TRANSPORT_PORT);
     adb_auth_init();
@@ -1349,14 +1348,13 @@ int adb_main(int is_daemon, int server_port)
     ** AID_LOG to read system logs (adb logcat)
     ** AID_INPUT to diagnose input issues (getevent)
     ** AID_INET to diagnose network issues (netcfg, ping)
-    ** AID_GRAPHICS to access the frame buffer
     ** AID_NET_BT and AID_NET_BT_ADMIN to diagnose bluetooth (hcidump)
     ** AID_SDCARD_R to allow reading from the SD card
     ** AID_SDCARD_RW to allow writing to the SD card
     ** AID_NET_BW_STATS to read out qtaguid statistics
     */
-    gid_t groups[] = { AID_ADB, AID_LOG, AID_INPUT, AID_INET, AID_GRAPHICS,
-                       AID_NET_BT, AID_NET_BT_ADMIN, AID_SDCARD_R, AID_SDCARD_RW,
+    gid_t groups[] = { AID_ADB, AID_LOG, AID_INPUT, AID_INET, AID_NET_BT,
+                       AID_NET_BT_ADMIN, AID_SDCARD_R, AID_SDCARD_RW,
                        AID_NET_BW_STATS };
     if (setgroups(sizeof(groups)/sizeof(groups[0]), groups) != 0) {
         exit(1);
@@ -1421,10 +1419,10 @@ int adb_main(int is_daemon, int server_port)
     if (is_daemon)
     {
         // inform our parent that we are up and running.
-#ifdef HAVE_WIN32_PROC
+#if defined(_WIN32)
         DWORD  count;
         WriteFile( GetStdHandle( STD_OUTPUT_HANDLE ), "OK\n", 3, &count, NULL );
-#elif defined(HAVE_FORKEXEC)
+#else
         fprintf(stderr, "OK\n");
 #endif
         start_logging();
@@ -1554,8 +1552,6 @@ int handle_forward_request(const char* service, transport_type ttype, char* seri
 
 int handle_host_request(char *service, transport_type ttype, char* serial, int reply_fd, asocket *s)
 {
-    atransport *transport = NULL;
-
     if(!strcmp(service, "kill")) {
         fprintf(stderr,"adb server killed by remote request\n");
         fflush(stdout);
@@ -1565,6 +1561,7 @@ int handle_host_request(char *service, transport_type ttype, char* serial, int r
     }
 
 #if ADB_HOST
+    atransport *transport = NULL;
     // "transport:" is used for switching transport with a specified serial number
     // "transport-usb:" is used for switching transport to the only USB transport
     // "transport-local:" is used for switching transport to the only local transport

@@ -16,13 +16,6 @@
 LOCAL_PATH := $(my-dir)
 include $(CLEAR_VARS)
 
-ifeq ($(TARGET_CPU_SMP),true)
-    targetSmpFlag := -DANDROID_SMP=1
-else
-    targetSmpFlag := -DANDROID_SMP=0
-endif
-hostSmpFlag := -DANDROID_SMP=0
-
 commonSources := \
 	hashmap.c \
 	atomic.c.arm \
@@ -77,7 +70,6 @@ endif
 LOCAL_MODULE := libcutils
 LOCAL_SRC_FILES := $(commonSources) $(commonHostSources) dlmalloc_stubs.c
 LOCAL_STATIC_LIBRARIES := liblog
-LOCAL_CFLAGS += $(hostSmpFlag)
 ifneq ($(HOST_OS),windows)
 LOCAL_CFLAGS += -Werror
 endif
@@ -121,29 +113,40 @@ LOCAL_SRC_FILES := $(commonSources) \
 LOCAL_SRC_FILES_arm += \
         arch-arm/memset32.S \
 
+# arch-arm/memset32.S does not compile with Clang.
+LOCAL_CLANG_ASFLAGS_arm += -no-integrated-as
+
 LOCAL_SRC_FILES_arm64 += \
         arch-arm64/android_memset.S \
 
+ifndef ARCH_MIPS_REV6
 LOCAL_SRC_FILES_mips += \
         arch-mips/android_memset.c \
+
+LOCAL_CFLAGS_mips += -DHAVE_MEMSET16 -DHAVE_MEMSET32
+endif
+
+# TODO: switch mips64 back to using arch-mips/android_memset.c
+LOCAL_SRC_FILES_mips64 += \
+#       arch-mips/android_memset.c \
 
 LOCAL_SRC_FILES_x86 += \
         arch-x86/android_memset16.S \
         arch-x86/android_memset32.S \
 
 LOCAL_SRC_FILES_x86_64 += \
-        arch-x86_64/android_memset16_SSE2-atom.S \
-        arch-x86_64/android_memset32_SSE2-atom.S \
+        arch-x86_64/android_memset16.S \
+        arch-x86_64/android_memset32.S \
 
 LOCAL_CFLAGS_arm += -DHAVE_MEMSET16 -DHAVE_MEMSET32
 LOCAL_CFLAGS_arm64 += -DHAVE_MEMSET16 -DHAVE_MEMSET32
-LOCAL_CFLAGS_mips += -DHAVE_MEMSET16 -DHAVE_MEMSET32
+#LOCAL_CFLAGS_mips64 += -DHAVE_MEMSET16 -DHAVE_MEMSET32
 LOCAL_CFLAGS_x86 += -DHAVE_MEMSET16 -DHAVE_MEMSET32
 LOCAL_CFLAGS_x86_64 += -DHAVE_MEMSET16 -DHAVE_MEMSET32
 
 LOCAL_C_INCLUDES := $(libcutils_c_includes)
 LOCAL_STATIC_LIBRARIES := liblog
-LOCAL_CFLAGS += $(targetSmpFlag) -Werror
+LOCAL_CFLAGS += -Werror -std=gnu90
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 include $(BUILD_STATIC_LIBRARY)
 
@@ -153,7 +156,7 @@ LOCAL_MODULE := libcutils
 # liblog symbols present in libcutils.
 LOCAL_WHOLE_STATIC_LIBRARIES := libcutils liblog
 LOCAL_SHARED_LIBRARIES := liblog
-LOCAL_CFLAGS += $(targetSmpFlag) -Werror
+LOCAL_CFLAGS += -Werror
 LOCAL_C_INCLUDES := $(libcutils_c_includes)
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 include $(BUILD_SHARED_LIBRARY)
