@@ -1,9 +1,12 @@
-SRC_NAME=openssl-1.0.2
+SRC_NAME=openssl-1.1.1
 
 # openssl use CROSS_COMPILE prefix
 CC=gcc $(CPUFLAGS)
+CXX=g++ $(CPUFLAGS)
+AR=ar
+RANLIB=ranlib
 
-COPTS=$(CFLAGS) -ffunction-sections -fdata-sections -Wl,--gc-sections -I$(DESTDIR)/include
+COPTS=$(CFLAGS) -O2
 COPTS+=$(if $(CONFIG_IPV6),-DOPENSSL_USE_IPV6=1,)
 COPTS+=-DOPENSSL_SMALL_FOOTPRINT
 
@@ -11,19 +14,19 @@ LOPTS=-Wl,--gc-sections -L$(DESTDIR)/lib
 
 OPENSSL_APPS =
 
-OPENSSL_CIPHERS = no-capieng no-cms no-gmp no-jpake no-rfc3779 no-seed \
-                  no-ec2m no-err no-idea no-rc5 no-ripemd no-rmd160 \
-                  no-static-engine no-hw no-md2 no-sse2 no-dso no-ts no-sha0 no-mdc2 no-krb5 \
-                  no-smime no-ans1 no-cast no-whirlpool no-sctp no-srp no-ssl2 no-ssl3
+OPENSSL_CIPHERS = no-capieng no-cms no-rfc3779 no-seed no-async no-tls1_3 \
+                  no-ec2m no-err no-idea no-rc5 no-rmd160 \
+                  no-static-engine no-hw no-md2 no-sse2 no-dso no-ts no-mdc2 \
+                  no-cast no-whirlpool no-sctp no-srp no-ssl3 \
+                  no-aria no-sm2 no-sm3 no-sm4
 
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_TOR),y)
 OPENSSL_CIPHERS += no-threads
 endif
 
 ifdef CONFIG_CRYPTO_DEV_LINUX
-COPTS+=-DHAVE_CRYPTODEV
+COPTS+=-DHAVE_CRYPTODEV -DOPENSSL_PREFER_CHACHA_OVER_GCM
 else
-OPENSSL_APPS += no-speed
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_TOR),y)
 OPENSSL_CIPHERS += no-engine
 endif
@@ -38,7 +41,6 @@ OPENSSL_CIPHERS += no-ec
 endif
 
 all: config_test
-	$(MAKE) -C $(SRC_NAME) depend
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
 
 config_test:
@@ -49,26 +51,12 @@ config_test:
 	fi )
 
 configure:
-	# build all symlinks
 	( cd $(SRC_NAME) ; \
 	./Configure \
-		linux-mipsel \
+		linux-mips32el \
 		shared \
 		--prefix=/ \
-		--install_prefix=$(STAGEDIR) \
 		--openssldir=/etc/ssl \
-		$(COPTS) \
-		$(LOPTS) ; \
-	)
-	# refresh config for target
-	( cd $(SRC_NAME) ; \
-	./Configure \
-		linux-mipsel \
-		shared \
-		--prefix=/ \
-		--install_prefix=$(STAGEDIR) \
-		--openssldir=/etc/ssl \
-		no-symlinks \
 		$(COPTS) \
 		$(LOPTS) \
 		$(OPENSSL_APPS) \
@@ -77,13 +65,11 @@ configure:
 
 clean:
 	$(MAKE) -C $(SRC_NAME) distclean
-	rm -rf $(SRC_NAME)/include/*
 	rm -f config_done
 
 install:
-	$(MAKE) -C $(SRC_NAME) install DESTDIR="$(STAGEDIR)"
-	# restore Makefile after depend command
-	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME) dclean
+	$(MAKE) -C $(SRC_NAME) install_sw DESTDIR="$(STAGEDIR)"
+	$(MAKE) -C $(SRC_NAME) install_ssldirs DESTDIR="$(STAGEDIR)"
 	# remove unneeded
 	rm -f $(DESTDIR)/lib/libssl.a
 	rm -f $(DESTDIR)/lib/libcrypto.a
