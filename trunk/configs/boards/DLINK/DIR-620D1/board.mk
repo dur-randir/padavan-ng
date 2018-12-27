@@ -4,5 +4,5 @@
 # DIR620D   # DLINK DIR-620D1     # RT3352  #
 ##################################################################
 
-CFLAGS += -DBOARD_DIR620D -DVENDOR_ASUS
+CFLAGS += -DBOARD_DIR620D -DVENDOR_DLINK
 BOARD_NUM_USB_PORTS=1
