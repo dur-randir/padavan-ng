@@ -81,6 +81,7 @@ dir_y						+= busybox
 dir_y						+= iptables
 dir_$(CONFIG_FIRMWARE_INCLUDE_IPSET)		+= ipset
 dir_y						+= ebtables
+dir_$(CONFIG_FIRMWARE_INCLUDE_EOIP)		+= eoip-ctl
 dir_y						+= iproute2
 dir_y						+= wireless_tools
 dir_y						+= shared

@@ -493,6 +493,10 @@ if [ "$CONFIG_FIRMWARE_INCLUDE_ZRAM" = "y" ] ; then
 	func_enable_busybox_param "CONFIG_FEATURE_SWAPONOFF_LABEL"
 	func_enable_busybox_param "CONFIG_FEATURE_SWAPON_PRI"
 fi
+############################## EOIP SUPPORT ###########################
+if [ "$CONFIG_FIRMWARE_INCLUDE_EOIP" = "y" ] ; then
+	func_enable_kernel_param "CONFIG_NET_EOIP"
+fi
 #######################################################################
 echo --------------------------MAKE-DEP--------------------------------
 make dep
