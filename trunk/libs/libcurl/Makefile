@@ -39,7 +39,6 @@ configure:
 		--disable-tls-srp \
 		--disable-libcurl-option \
 		--disable-threaded-resolver \
-		--without-axtls \
 		--without-brotli \
 		--without-gnutls \
 		--without-ca-path \

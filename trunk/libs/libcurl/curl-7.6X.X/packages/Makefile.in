@@ -327,7 +327,6 @@ STRIP = @STRIP@
 SUPPORT_FEATURES = @SUPPORT_FEATURES@
 SUPPORT_PROTOCOLS = @SUPPORT_PROTOCOLS@
 USE_ARES = @USE_ARES@
-USE_AXTLS = @USE_AXTLS@
 USE_CYASSL = @USE_CYASSL@
 USE_DARWINSSL = @USE_DARWINSSL@
 USE_GNUTLS = @USE_GNUTLS@
@@ -403,12 +402,10 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = Win32 Linux Solaris AIX vms
+SUBDIRS = vms
 EXTRA_DIST = README \
   DOS/README \
   DOS/common.dj \
-  NetWare/get_ver.awk \
-  NetWare/get_exp.awk \
   OS400/README.OS400 \
   OS400/ccsidcurl.c \
   OS400/ccsidcurl.h \
