@@ -35,7 +35,7 @@ clean:
 	rm -f config_done GeoLite2-Country.mmdb*
 
 romfs:
-	$(ROMFSINST) $(SRC_NAME)/src/or/tor /usr/sbin/tor
+	$(ROMFSINST) $(SRC_NAME)/src/app/tor /usr/sbin/tor
 	$(ROMFSINST) -p +x /usr/bin/tor.sh
 	mkdir -p $(INSTALLDIR)/usr/share/tor
 ifeq ($(CONFIG_FIRMWARE_INCLUDE_TOR_GEOIP),y)
