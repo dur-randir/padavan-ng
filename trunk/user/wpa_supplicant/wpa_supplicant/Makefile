@@ -859,6 +859,7 @@ ifdef CONFIG_IEEE8021X_EAPOL
 CFLAGS += -DIEEE8021X_EAPOL
 OBJS += ../src/eapol_supp/eapol_supp_sm.o
 OBJS += ../src/eap_peer/eap.o ../src/eap_peer/eap_methods.o
+NEED_RC4=y
 NEED_EAP_COMMON=y
 ifdef CONFIG_DYNAMIC_EAP_METHODS
 CFLAGS += -DCONFIG_DYNAMIC_EAP_METHODS
