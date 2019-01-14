@@ -158,8 +158,8 @@ check_PROGRAMS = test_blkdev$(EXEEXT) test_canonicalize$(EXEEXT) \
 @USE_PLYMOUTH_SUPPORT_TRUE@am__append_2 = lib/plymouth-ctrl.c
 @HAVE_LANGINFO_FALSE@am__append_3 = lib/langinfo.c
 @HAVE_CPU_SET_T_TRUE@am__append_4 = lib/cpuset.c
-@HAVE_OPENAT_TRUE@am__append_5 = lib/path.c lib/procutils.c \
-@HAVE_OPENAT_TRUE@	lib/sysfs.c
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@am__append_5 = lib/path.c \
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@	lib/procutils.c lib/sysfs.c
 # tinfo or ncurses are optional
 @HAVE_TINFO_TRUE@am__append_6 = $(TINFO_LIBS)
 @HAVE_TINFO_TRUE@am__append_7 = $(TINFO_CFLAGS)
@@ -170,8 +170,9 @@ check_PROGRAMS = test_blkdev$(EXEEXT) test_canonicalize$(EXEEXT) \
 @LINUX_TRUE@	test_sysfs \
 @LINUX_TRUE@	test_pager
 
-@HAVE_OPENAT_TRUE@am__append_12 = test_procutils test_path
-@HAVE_CPU_SET_T_TRUE@@HAVE_OPENAT_TRUE@am__append_13 = lib/cpuset.c
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@am__append_12 = test_procutils \
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@	test_path
+@HAVE_CPU_SET_T_TRUE@@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@am__append_13 = lib/cpuset.c
 @HAVE_CPU_SET_T_TRUE@@LINUX_TRUE@am__append_14 = lib/cpuset.c
 @LINUX_TRUE@am__append_15 = test_linux_version
 @BUILD_LIBUUID_TRUE@am__append_16 = \
@@ -842,8 +843,9 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(sbindir)" \
 	"$(DESTDIR)$(smartcolsincdir)" "$(DESTDIR)$(uuidincdir)"
 @HAVE_CPU_SET_T_TRUE@@LINUX_TRUE@am__EXEEXT_14 = test_cpuset$(EXEEXT)
 @LINUX_TRUE@am__EXEEXT_15 = test_sysfs$(EXEEXT) test_pager$(EXEEXT)
-@HAVE_OPENAT_TRUE@am__EXEEXT_16 = test_procutils$(EXEEXT) \
-@HAVE_OPENAT_TRUE@	test_path$(EXEEXT)
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@am__EXEEXT_16 =  \
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@	test_procutils$(EXEEXT) \
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@	test_path$(EXEEXT)
 @LINUX_TRUE@am__EXEEXT_17 = test_linux_version$(EXEEXT)
 @BUILD_LIBUUID_TRUE@am__EXEEXT_18 = test_uuid_parser$(EXEEXT)
 @BUILD_LIBBLKID_TESTS_TRUE@@BUILD_LIBBLKID_TRUE@am__EXEEXT_19 = test_blkid_cache$(EXEEXT) \
@@ -1116,9 +1118,10 @@ am__libcommon_la_SOURCES_DIST = lib/blkdev.c lib/canonicalize.c \
 @USE_PLYMOUTH_SUPPORT_TRUE@	lib/libcommon_la-plymouth-ctrl.lo
 @HAVE_LANGINFO_FALSE@am__objects_4 = lib/libcommon_la-langinfo.lo
 @HAVE_CPU_SET_T_TRUE@am__objects_5 = lib/libcommon_la-cpuset.lo
-@HAVE_OPENAT_TRUE@am__objects_6 = lib/libcommon_la-path.lo \
-@HAVE_OPENAT_TRUE@	lib/libcommon_la-procutils.lo \
-@HAVE_OPENAT_TRUE@	lib/libcommon_la-sysfs.lo
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@am__objects_6 =  \
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@	lib/libcommon_la-path.lo \
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@	lib/libcommon_la-procutils.lo \
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@	lib/libcommon_la-sysfs.lo
 am_libcommon_la_OBJECTS = lib/libcommon_la-blkdev.lo \
 	lib/libcommon_la-canonicalize.lo lib/libcommon_la-crc32.lo \
 	lib/libcommon_la-crc32c.lo lib/libcommon_la-env.lo \
@@ -2697,12 +2700,13 @@ test_pager_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(test_pager_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am__test_path_SOURCES_DIST = lib/path.c lib/fileutils.c lib/cpuset.c
-@HAVE_CPU_SET_T_TRUE@@HAVE_OPENAT_TRUE@am__objects_33 = lib/test_path-cpuset.$(OBJEXT)
-@HAVE_OPENAT_TRUE@am_test_path_OBJECTS = lib/test_path-path.$(OBJEXT) \
-@HAVE_OPENAT_TRUE@	lib/test_path-fileutils.$(OBJEXT) \
-@HAVE_OPENAT_TRUE@	$(am__objects_33)
+@HAVE_CPU_SET_T_TRUE@@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@am__objects_33 = lib/test_path-cpuset.$(OBJEXT)
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@am_test_path_OBJECTS = lib/test_path-path.$(OBJEXT) \
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@	lib/test_path-fileutils.$(OBJEXT) \
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@	$(am__objects_33)
 test_path_OBJECTS = $(am_test_path_OBJECTS)
-@HAVE_OPENAT_TRUE@test_path_DEPENDENCIES = $(am__DEPENDENCIES_2)
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@test_path_DEPENDENCIES =  \
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@	$(am__DEPENDENCIES_2)
 test_path_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(test_path_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -2711,8 +2715,7 @@ test_pathnames_OBJECTS = $(am_test_pathnames_OBJECTS)
 test_pathnames_LDADD = $(LDADD)
 test_pathnames_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__test_procutils_SOURCES_DIST = lib/procutils.c
-@HAVE_OPENAT_TRUE@am_test_procutils_OBJECTS =  \
-@HAVE_OPENAT_TRUE@	lib/test_procutils-procutils.$(OBJEXT)
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@am_test_procutils_OBJECTS = lib/test_procutils-procutils.$(OBJEXT)
 test_procutils_OBJECTS = $(am_test_procutils_OBJECTS)
 test_procutils_LDADD = $(LDADD)
 test_procutils_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -4282,12 +4285,13 @@ test_colors_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_COLORS
 test_colors_LDADD = $(LDADD) libtcolors.la
 test_randutils_SOURCES = lib/randutils.c
 test_randutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_RANDUTILS
-@HAVE_OPENAT_TRUE@test_procutils_SOURCES = lib/procutils.c
-@HAVE_OPENAT_TRUE@test_procutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PROCUTILS
-@HAVE_OPENAT_TRUE@test_path_SOURCES = lib/path.c lib/fileutils.c \
-@HAVE_OPENAT_TRUE@	$(am__append_13)
-@HAVE_OPENAT_TRUE@test_path_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PATH
-@HAVE_OPENAT_TRUE@test_path_LDADD = $(LDADD)
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@test_procutils_SOURCES = lib/procutils.c
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@test_procutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PROCUTILS
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@test_path_SOURCES = lib/path.c \
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@	lib/fileutils.c \
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@	$(am__append_13)
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@test_path_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PATH
+@HAVE_DIRFD_TRUE@@HAVE_OPENAT_TRUE@test_path_LDADD = $(LDADD)
 @LINUX_TRUE@test_cpuset_SOURCES = lib/cpuset.c
 @LINUX_TRUE@test_cpuset_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_CPUSET
 @LINUX_TRUE@test_sysfs_SOURCES = lib/sysfs.c lib/path.c \

@@ -29,7 +29,7 @@ PACKAGE_VERSION_RELEASE=$(echo $PACKAGE_VERSION | awk -F. '{
 
 dnl libblkid version
 LIBBLKID_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
-LIBBLKID_DATE="06-Nov-2018"
+LIBBLKID_DATE="09-Jan-2019"
 LIBBLKID_LT_MAJOR=1
 LIBBLKID_LT_MINOR=1
 LIBBLKID_LT_MICRO=0
@@ -594,10 +594,7 @@ AS_IF([test x"$have_dirfd" = xno], [
 		 #include <dirent.h>])
 ])
 
-AS_CASE([$have_dirfd:$have_ddfd],
-  [no:no],
-    [AC_MSG_ERROR([cannot find a method to get filedescriptor of directory])]
-)
+AM_CONDITIONAL([HAVE_DIRFD], [test "x$have_dirfd" = xyes -o "x$have_ddfd" = xyes])
 
 
 AC_MSG_CHECKING([whether program_invocation_short_name is defined])
@@ -784,6 +781,7 @@ AC_CHECK_DECLS([CPU_ALLOC], [], [], [[
 # on Solaris, you can't mix and match standards, since we use c99
 # aparently at this stage, XOPEN_SOURCE will conflict.  As workaround,
 # check for crypt.h and use that without XOPEN_SOURCE.
+have_crypt=no
 AC_CHECK_HEADERS([crypt.h])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #ifdef HAVE_CRYPT_H
@@ -808,8 +806,9 @@ char *c = crypt("abc","pw");
   ]])],[
   AC_DEFINE([HAVE_LIBCRYPT], [1], [Do we need -lcrypt?])
   have_libcrypt=yes
+  have_crypt=yes
   ],[
-  AC_MSG_ERROR([crypt() is not available])
+  AC_MSG_WARN([crypt() is not available])
   ])
 ])
 AM_CONDITIONAL([HAVE_LIBCRYPT], [test "x$have_libcrypt" = xyes])
@@ -1065,6 +1064,7 @@ AC_ARG_ENABLE([libblkid],
 )
 UL_BUILD_INIT([libblkid])
 UL_REQUIRES_HAVE([libblkid], [openat], [openat functions])
+UL_REQUIRES_HAVE([libblkid], [dirfd,ddfd], [dirfd or ddfd function])
 AC_SUBST([LIBBLKID_DATE])
 AC_SUBST([LIBBLKID_VERSION])
 AC_SUBST([LIBBLKID_VERSION_INFO])
@@ -1086,6 +1086,7 @@ AC_ARG_ENABLE([libmount],
 UL_BUILD_INIT([libmount])
 UL_REQUIRES_BUILD([libmount], [libblkid])
 UL_REQUIRES_HAVE([libmount], [scanf_alloc_modifier], [scanf string alloc modifier])
+UL_REQUIRES_HAVE([libmount], [dirfd,ddfd], [dirfd or ddfd function])
 AM_CONDITIONAL([BUILD_LIBMOUNT], [test "x$build_libmount" = xyes])
 AM_CONDITIONAL([BUILD_LIBMOUNT_TESTS], [test "x$build_libmount" = xyes -a "x$enable_static" = xyes])
 AS_IF([test "x$build_libmount" = xyes], [
@@ -1152,21 +1153,31 @@ AC_SUBST([LIBFDISK_VERSION_INFO])
 AC_DEFINE_UNQUOTED([LIBFDISK_VERSION], ["$LIBFDISK_VERSION"], [libfdisk version string])
 
 
-UL_BUILD_INIT([fdisk], [check])
+AC_ARG_ENABLE([fdisks],
+  AS_HELP_STRING([--disable-fdisks], [do not build fdisk(8), sfdisk(8) and cfdisk(8)]),
+  [], [UL_DEFAULT_ENABLE([fdisks], [check])]
+)
+enable_fdisk=$enable_fdisks
+enable_sfdisk=$enable_fdisks
+enable_cfdisk=$enable_fdisks
+
+UL_BUILD_INIT([fdisk])
 UL_REQUIRES_HAVE([fdisk], [openat], [openat functions])
+UL_REQUIRES_HAVE([fdisk], [dirfd,ddfd], [dirfd or ddfd function])
 UL_REQUIRES_BUILD([fdisk], [libfdisk])
 UL_REQUIRES_BUILD([fdisk], [libsmartcols])
 AM_CONDITIONAL([BUILD_FDISK], [test "x$build_fdisk" = xyes])
 
 
-UL_BUILD_INIT([sfdisk], [check])
+UL_BUILD_INIT([sfdisk])
 UL_REQUIRES_HAVE([sfdisk], [openat], [openat functions])
+UL_REQUIRES_HAVE([sfdisk], [dirfd,ddfd], [dirfd or ddfd function])
 UL_REQUIRES_BUILD([sfdisk], [libfdisk])
 UL_REQUIRES_BUILD([sfdisk], [libsmartcols])
 AM_CONDITIONAL([BUILD_SFDISK], [test "x$build_sfdisk" = xyes])
 
 
-UL_BUILD_INIT([cfdisk], [check])
+UL_BUILD_INIT([cfdisk])
 UL_REQUIRES_BUILD([cfdisk], [libfdisk])
 UL_REQUIRES_BUILD([cfdisk], [libsmartcols])
 UL_REQUIRES_HAVE([cfdisk], [open_memstream], [open_memstream function])
@@ -1632,6 +1643,7 @@ AC_ARG_ENABLE([switch_root],
 UL_BUILD_INIT([switch_root])
 UL_REQUIRES_LINUX([switch_root])
 UL_REQUIRES_HAVE([switch_root], [openat], [openat function])
+UL_REQUIRES_HAVE([switch_root], [dirfd,ddfd], [dirfd or ddfd function])
 AM_CONDITIONAL([BUILD_SWITCH_ROOT], [test "x$build_switch_root" = xyes])
 
 
@@ -1878,6 +1890,7 @@ AC_ARG_ENABLE([newgrp],
   [], [UL_DEFAULT_ENABLE([newgrp], [no])]
 )
 UL_BUILD_INIT([newgrp])
+UL_REQUIRES_HAVE([newgrp], [crypt], [crypt function])
 AM_CONDITIONAL([BUILD_NEWGRP], [test "x$build_newgrp" = xyes])
 
 
@@ -1974,6 +1987,7 @@ AC_ARG_ENABLE([sulogin],
   [], [UL_DEFAULT_ENABLE([sulogin], [check])]
 )
 UL_BUILD_INIT([sulogin])
+UL_REQUIRES_HAVE([sulogin], [crypt], [crypt function])
 UL_REQUIRES_HAVE([sulogin], [shadow_h], [shadow.h header])
 AM_CONDITIONAL([BUILD_SULOGIN], [test "x$build_sulogin" = xyes])
 
