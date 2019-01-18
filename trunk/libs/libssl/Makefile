@@ -9,35 +9,35 @@ RANLIB=ranlib
 COPTS=$(CFLAGS) -O2
 COPTS+=$(if $(CONFIG_IPV6),-DOPENSSL_USE_IPV6=1,)
 COPTS+=-DOPENSSL_SMALL_FOOTPRINT
+COPTS+=-DOPENSSL_PREFER_CHACHA_OVER_GCM
 
 LOPTS=-Wl,--gc-sections -L$(DESTDIR)/lib
 
-OPENSSL_APPS =
-
-OPENSSL_CIPHERS = no-capieng no-cms no-rfc3779 no-seed no-async no-tls1_3 \
+OPENSSL_OPTIONS = no-capieng no-cms no-rfc3779 no-seed no-async \
                   no-ec2m no-err no-idea no-rc5 no-rmd160 \
-                  no-static-engine no-hw no-md2 no-sse2 no-dso no-ts no-mdc2 \
+                  no-static-engine no-hw-padlock no-md2 no-sse2 no-dso no-ts no-mdc2 \
                   no-cast no-whirlpool no-sctp no-srp no-ssl3 \
                   no-aria no-sm2 no-sm3 no-sm4
 
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_TOR),y)
-OPENSSL_CIPHERS += no-threads
+OPENSSL_OPTIONS += no-threads
 endif
 
-ifdef CONFIG_CRYPTO_DEV_LINUX
-COPTS+=-DHAVE_CRYPTODEV -DOPENSSL_PREFER_CHACHA_OVER_GCM
-else
+#ifdef CONFIG_CRYPTO_DEV_LINUX
+#OPENSSL_OPTIONS += enable-devcryptoeng
+#else
+OPENSSL_OPTIONS += no-hw no-devcryptoeng
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_TOR),y)
-OPENSSL_CIPHERS += no-engine
+OPENSSL_OPTIONS += no-engine
 endif
-endif
+#endif
 
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_SSWAN),y)
-OPENSSL_CIPHERS += no-rc2
+OPENSSL_OPTIONS += no-rc2
 endif
 
 ifeq (,$(filter y,$(CONFIG_FIRMWARE_INCLUDE_OPENSSL_EC) $(CONFIG_FIRMWARE_INCLUDE_TOR)))
-OPENSSL_CIPHERS += no-ec
+OPENSSL_OPTIONS += no-ec
 endif
 
 all: config_test
@@ -59,8 +59,7 @@ configure:
 		--openssldir=/etc/ssl \
 		$(COPTS) \
 		$(LOPTS) \
-		$(OPENSSL_APPS) \
-		$(OPENSSL_CIPHERS) ; \
+		$(OPENSSL_OPTIONS) ; \
 	)
 
 clean:
