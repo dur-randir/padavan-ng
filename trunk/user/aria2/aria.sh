@@ -112,7 +112,7 @@ EOF
 	if [ ! -f "$FILE_WEB_CONF" ] ; then
 		cat > "$FILE_WEB_CONF" <<EOF
 angular
-.module('webui.services.configuration',  [])
+.module('webui.services.configuration', [])
 .constant('\$name', 'Aria2 WebUI')
 .constant('\$titlePattern', 'DL: {download_speed} - UL: {upload_speed}')
 .constant('\$pageSize', 11)
@@ -122,9 +122,8 @@ angular
   port: '$aria_rport',
   encrypt: false,
   auth: {
-  //token: 'admin',
   user: '$aria_user',
-  pass: '$aria_pass',
+  pass: '$aria_pass'
   },
   directURL: ''
 })
@@ -135,7 +134,7 @@ angular
     show: true,
     stats: true,
     filters: true,
-    starredProps: true,
+    starredProps: true
   }
 })
 .constant('\$starredProps', [
@@ -144,8 +143,7 @@ angular
 .constant('\$downloadProps', [
   'pause', 'dir', 'max-connection-per-server'
 ])
-.constant('\$globalTimeout', 1000)
-;
+.constant('\$globalTimeout', 1000).name;
 
 EOF
 	else
