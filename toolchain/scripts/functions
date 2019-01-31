@@ -1456,6 +1456,7 @@ CT_IterateMultilibs() {
     local multi_dir multi_os_dir multi_os_dir_gcc multi_root multi_flags multi_index multi_target
     local root_suffix
     local dir_postfix
+    local v
 
     # Name used internally below
     if [ "${prefix}" = "sysroot-check" ]; then
@@ -1547,6 +1548,11 @@ CT_IterateMultilibs() {
         dir_postfix=_${multi_dir//\//_}
         dir_postfix=${dir_postfix%_.}
         CT_mkdir_pushd "${prefix}${dir_postfix}"
+        CT_DoLog DEBUG "Multilib iterator: call function '${func}' in '${prefix}${dir_postfix}'"
+        for v in multi_dir multi_os_dir multi_os_dir_gcc multi_flags multi_root multi_target multi_index; do
+            CT_DoLog DEBUG "  ${v}=${!v}"
+        done
+
         $func multi_dir="${multi_dir}"               \
               multi_os_dir="${multi_os_dir}"         \
               multi_os_dir_gcc="${multi_os_dir_gcc}" \
@@ -2446,4 +2452,15 @@ CT_InstallCopyingInformation()
     done
 
     shopt -u nullglob
+}
+
+CT_InstallConfigurationFile()
+{
+    local path="${1}"
+    local suffix="${2}"
+
+    CT_DoExecLog ALL mkdir -p "${CT_PREFIX_DIR}/bin"
+    CT_DoExecLog DEBUG ${install} -m 0755 "${CT_LIB_DIR}/scripts/toolchain-config.in" "${CT_PREFIX_DIR}/bin/${CT_TARGET}-${suffix}.config"
+    CT_DoExecLog DEBUG ${sed} -i -e 's,@@grep@@,"'"${grep}"'",;' "${CT_PREFIX_DIR}/bin/${CT_TARGET}-${suffix}.config"
+    bzip2 -c -9 "${path}" >>"${CT_PREFIX_DIR}/bin/${CT_TARGET}-${suffix}.config"
 }
