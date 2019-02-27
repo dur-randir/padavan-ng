@@ -66,7 +66,10 @@ const struct dhcp_optflag dhcp_optflags[] = {
 	{ OPTION_STRING                           , 0xd1 }, /* DHCP_PXE_CONF_FILE */
 	{ OPTION_STRING                           , 0xd2 }, /* DHCP_PXE_PATH_PREFIX */
 	{ OPTION_U32                              , 0xd3 }, /* DHCP_REBOOT_TIME   */
+#if ENABLE_FEATURE_UDHCP_RFC5969
+	{ OPTION_6RD                              , 0x96 }, /* DHCP_COMCAST_6RD   */
 	{ OPTION_6RD                              , 0xd4 }, /* DHCP_6RD           */
+#endif
 	{ OPTION_STATIC_ROUTES | OPTION_LIST      , 0xf9 }, /* DHCP_MS_STATIC_ROUTES */
 	{ OPTION_STRING                           , 0xfc }, /* DHCP_WPAD          */
 
@@ -135,7 +138,10 @@ const char dhcp_option_strings[] ALIGN1 =
 	"pxeconffile" "\0"      /* DHCP_PXE_CONF_FILE   */
 	"pxepathprefix" "\0"    /* DHCP_PXE_PATH_PREFIX */
 	"reboottime" "\0"       /* DHCP_REBOOT_TIME     */
+#if ENABLE_FEATURE_UDHCP_RFC5969
+	"ip6rd" "\0"            /* DHCP_COMCAST_6RD     */
 	"ip6rd" "\0"            /* DHCP_6RD             */
+#endif
 	"msstaticroutes" "\0"   /* DHCP_MS_STATIC_ROUTES*/
 	"wpad" "\0"             /* DHCP_WPAD            */
 	;
@@ -394,6 +400,23 @@ int FAST_FUNC udhcp_str2nip(const char *str, void *arg)
 	return 1;
 }
 
+/* Convert IPv6 address into string */
+int FAST_FUNC sprint_nip6(char *dest, const uint8_t *ip6)
+{
+	int i, len = 0;
+
+	for (i = 0; i < 16; i += 2)
+	{
+		if (i > 0)
+			dest[len++] = ':';
+		bin2hex(dest + len, (const char * )&ip6[i], 2);
+		len += 4;
+	}
+	dest[len] = '\0';
+
+	return len;
+}
+
 /* udhcp_str2optset:
  * Parse string option representation to binary form and add it to opt_list.
  * Called to parse "udhcpc -x OPTNAME:OPTVAL"
@@ -646,23 +669,4 @@ case_OPTION_STRING:
 	} while (retval && (optflag->flags & OPTION_LIST));
 
 	return retval;
-}
-
-/* note: ip is a pointer to an IPv6 in network order, possibly misaliged */
-int FAST_FUNC sprint_nip6(char *dest, /*const char *pre,*/ const uint8_t *ip)
-{
-	char hexstrbuf[16 * 2];
-	bin2hex(hexstrbuf, (void*)ip, 16);
-	return sprintf(dest, /* "%s" */
-		"%.4s:%.4s:%.4s:%.4s:%.4s:%.4s:%.4s:%.4s",
-		/* pre, */
-		hexstrbuf + 0 * 4,
-		hexstrbuf + 1 * 4,
-		hexstrbuf + 2 * 4,
-		hexstrbuf + 3 * 4,
-		hexstrbuf + 4 * 4,
-		hexstrbuf + 5 * 4,
-		hexstrbuf + 6 * 4,
-		hexstrbuf + 7 * 4
-	);
 }
