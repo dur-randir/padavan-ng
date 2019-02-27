@@ -1,4 +1,4 @@
-SRC_NAME=busybox-1.2X.X
+SRC_NAME=busybox-1.3X.X
 
 all:
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
