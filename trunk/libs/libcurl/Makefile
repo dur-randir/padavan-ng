@@ -59,6 +59,7 @@ configure:
 		--without-mbedtls \
 		--without-mesalink \
 		--without-polarssl \
+		--without-schannel \
 		--without-wolfssl \
 		--without-winidn \
 		--without-winssl \
