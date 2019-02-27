@@ -1,8 +1,8 @@
-/* $Id: miniupnpd.c,v 1.233 2018/07/06 12:42:02 nanard Exp $ */
+/* $Id: miniupnpd.c,v 1.234 2019/02/10 11:59:28 nanard Exp $ */
 /* vim: tabstop=4 shiftwidth=4 noexpandtab
  * MiniUPnP project
  * http://miniupnp.free.fr/ or http://miniupnp.tuxfamily.org/
- * (c) 2006-2018 Thomas Bernard
+ * (c) 2006-2019 Thomas Bernard
  * This software is subject to the conditions detailed
  * in the LICENCE file provided within the distribution */
 
@@ -2068,7 +2068,7 @@ main(int argc, char * * argv)
 #else /* ENABLE_IPV6 */
 		shttpsl = OpenAndConfHTTPSocket(&listen_port);
 #endif /* ENABLE_IPV6 */
-		if(shttpl < 0)
+		if(shttpsl < 0)
 		{
 			syslog(LOG_ERR, "Failed to open socket for HTTPS. EXITING");
 			return 1;

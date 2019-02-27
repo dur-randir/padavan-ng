@@ -1,4 +1,4 @@
-/* $Id: upnpstun.c,v 1.1 2018/07/06 11:43:31 nanard Exp $ */
+/* $Id: upnpstun.c,v 1.3 2019/02/10 11:45:53 nanard Exp $ */
 /* vim: tabstop=4 shiftwidth=4 noexpandtab
  * MiniUPnP project
  * http://miniupnp.free.fr/ or http://miniupnp.tuxfamily.org/
@@ -45,10 +45,10 @@ static int delete_filter_rule(const char * ifname, unsigned short port, int prot
 /* Generate random STUN Transaction Id */
 static void generate_transaction_id(unsigned char transaction_id[12])
 {
-	int i;
+	size_t i;
 
-	for (i = 0; i < 12; ++i)
-		transaction_id[i] = random()%255;
+	for (i = 0; i < 12; i++)
+		transaction_id[i] = random() & 255;
 }
 
 /* Create and fill STUN Binding Request */

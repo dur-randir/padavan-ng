@@ -1,4 +1,4 @@
-/* $Id: upnpredirect.c,v 1.95 2018/07/06 12:05:48 nanard Exp $ */
+/* $Id: upnpredirect.c,v 1.96 2019/02/10 11:51:07 nanard Exp $ */
 /* vim: tabstop=4 shiftwidth=4 noexpandtab
  * MiniUPnP project
  * http://miniupnp.free.fr/ or https://miniupnp.tuxfamily.org/
@@ -356,6 +356,10 @@ upnp_redirect(const char * rhost, unsigned short eport,
 		                 "%hu->%s:%hu %s", eport, iaddr, iport, protocol);
 		return -3;
 	}
+
+	if (desc == NULL)
+		desc = "";	/* assume empty description */
+
 	/* IGDv1 (WANIPConnection:1 Service Template Version 1.01 / Nov 12, 2001)
 	 * - 2.2.20.PortMappingDescription :
 	 *  Overwriting Previous / Existing Port Mappings:

@@ -1,4 +1,4 @@
-/* $Id: upnpsoap.c,v 1.152 2018/07/06 12:05:48 nanard Exp $ */
+/* $Id: upnpsoap.c,v 1.153 2019/02/10 11:47:11 nanard Exp $ */
 /* vim: tabstop=4 shiftwidth=4 noexpandtab
  * MiniUPnP project
  * http://miniupnp.free.fr/ or https://miniupnp.tuxfamily.org/
@@ -1849,6 +1849,13 @@ GetOutboundPinholeTimeout(struct upnphttp * h, const char * action, const char *
 	rem_host = GetValueFromNameValueList(&data, "RemoteHost");
 	rem_port = GetValueFromNameValueList(&data, "RemotePort");
 	protocol = GetValueFromNameValueList(&data, "Protocol");
+
+	if (!int_port || !rem_port || !protocol)
+	{
+		ClearNameValueList(&data);
+		SoapError(h, 402, "Invalid Args");
+		return;
+	}
 
 	rport = (unsigned short)atoi(rem_port);
 	iport = (unsigned short)atoi(int_port);
