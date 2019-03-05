@@ -574,8 +574,9 @@ function AuthSelection(auth){
 	var wan_type = document.form.wan_proto.value;
 
 	if(wan_type == "pppoe" || wan_type == "pptp" || wan_type == "l2tp"){
-		showhide_div("row_auth_user", 0);
-		showhide_div("row_auth_pass", 0);
+		var show = (wan_type == "pptp") ? 1 : 0;
+		showhide_div("row_auth_user", show);
+		showhide_div("row_auth_pass", show);
 		showhide_div("row_auth_host", 0);
 		return 0;
 	}
