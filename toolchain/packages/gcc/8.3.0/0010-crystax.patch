@@ -30,6 +30,10 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
  libstdc++-v3/include/bits/locale_facets.h  |   18 +++++++-
  libstdc++-v3/libsupc++/guard.cc            |    5 ++
  21 files changed, 235 insertions(+), 20 deletions(-)
+ create mode 100644 gcc/config/aarch64/aarch64-linux-android.h
+ create mode 100644 gcc/config/mips/android.h
+ create mode 100644 gcc/config/mips/t-linux-android
+ create mode 100644 gcc/config/mips/t-linux-android64
 
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
@@ -53,7 +57,7 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
  	esac
  	aarch64_multilibs="${with_multilib_list}"
  	if test "$aarch64_multilibs" = "default"; then
-@@ -2130,6 +2134,17 @@
+@@ -2133,6 +2137,17 @@
  	tm_file="dbxelf.h elfos.h gnu-user.h linux.h linux-android.h glibc-stdint.h ${tm_file} mips/gnu-user.h mips/linux.h mips/linux-common.h"
  	extra_options="${extra_options} linux-android.opt"
  	case ${target} in
@@ -254,8 +258,8 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
 +
  #undef  ASM_SPEC
  #define ASM_SPEC \
--  "--32 %{!mno-sse2avx:%{mavx:-msse2avx}} %{msse2avx:%{!mavx:-msse2avx}}"
-+  "--32 %{!mno-sse2avx:%{mavx:-msse2avx}} %{msse2avx:%{!mavx:-msse2avx}} " \
+-  "--32 %{msse2avx:%{!mavx:-msse2avx}}"
++  "--32 %{msse2avx:%{!mavx:-msse2avx}} " \
 +  LINUX_OR_ANDROID_CC ("", ANDROID_ASM_SPEC)
  
  #undef  SUBTARGET_EXTRA_SPECS
@@ -488,16 +492,16 @@ Date:   Wed Jul 29 11:28:29 2015 +0300
  namespace std _GLIBCXX_VISIBILITY(default)
  {
  _GLIBCXX_BEGIN_NAMESPACE_VERSION
-@@ -1102,7 +1116,7 @@
+@@ -1104,7 +1118,7 @@
         *  @return  @a __hi.
        */
        virtual const char*
 -      do_widen(const char* __lo, const char* __hi, char_type* __to) const
 +      do_widen(const char* __lo, const char* __hi, char_type* __to) const __CRYSTAX_X86_DONT_OPTIMIZE
        {
- 	__builtin_memcpy(__to, __lo, __hi - __lo);
- 	return __hi;
-@@ -1163,7 +1177,7 @@
+ 	if (__builtin_expect(__hi != __lo, true))
+ 	  __builtin_memcpy(__to, __lo, __hi - __lo);
+@@ -1167,7 +1181,7 @@
  
      private:
        void _M_narrow_init() const;

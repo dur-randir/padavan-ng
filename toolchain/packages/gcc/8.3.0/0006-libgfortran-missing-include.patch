@@ -4,10 +4,10 @@
 
 --- a/libgfortran/io/close.c
 +++ b/libgfortran/io/close.c
-@@ -25,6 +25,7 @@
- #include "io.h"
- #include "unix.h"
- #include <limits.h>
+@@ -28,6 +28,7 @@
+ #if !HAVE_UNLINK_OPEN_FILE
+ #include <string.h>
+ #endif
 +#include <stdlib.h>
  
  typedef enum
