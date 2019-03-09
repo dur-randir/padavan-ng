@@ -6,7 +6,7 @@ CXX=g++ $(CPUFLAGS)
 AR=ar
 RANLIB=ranlib
 
-COPTS=$(CFLAGS) -O2
+COPTS=$(CFLAGS) -Os
 COPTS+=$(if $(CONFIG_IPV6),-DOPENSSL_USE_IPV6=1,)
 COPTS+=-DOPENSSL_SMALL_FOOTPRINT
 COPTS+=-DOPENSSL_PREFER_CHACHA_OVER_GCM
@@ -14,7 +14,7 @@ COPTS+=-DOPENSSL_PREFER_CHACHA_OVER_GCM
 LOPTS=-Wl,--gc-sections -L$(DESTDIR)/lib
 
 OPENSSL_OPTIONS = no-capieng no-cms no-rfc3779 no-seed no-async \
-                  no-ec2m no-err no-idea no-rc5 no-rmd160 \
+                  no-ec2m no-err no-idea no-rc5 no-rmd160 no-blake2 \
                   no-static-engine no-hw-padlock no-md2 no-sse2 no-dso no-ts no-mdc2 \
                   no-cast no-whirlpool no-sctp no-srp no-ssl3 \
                   no-aria no-sm2 no-sm3 no-sm4
