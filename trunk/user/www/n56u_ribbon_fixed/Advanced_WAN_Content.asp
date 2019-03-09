@@ -309,7 +309,7 @@ function change_wan_type(wan_type, flag){
 	showhide_div("row_dhcp_toggle", is_pppoe||is_pptp||is_l2tp);
 	showhide_div("row_dns_toggle", !is_static);
 	showhide_div("tbl_vpn_control", is_pppoe||is_pptp||is_l2tp);
-	showhide_div("row_auth_type", is_static||is_dhcp);
+	showhide_div("row_auth_type", is_static||is_dhcp||is_pptp);
 
 	if(is_pppoe||is_pptp||is_l2tp){
 		$("dhcp_sect_desc").innerHTML = "<#WAN_MAN_desc#>";
