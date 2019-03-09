@@ -107,7 +107,7 @@ ifdef UCLINUX_BUILD_LIB
   ifdef CONFIG_LIB_DEBUG
 	CFLAGS  :=  $(if $(LOPT),$(LOPT),-O1) -g
   else
-	CFLAGS  :=  $(if $(LOPT),$(LOPT),-O2) -fomit-frame-pointer -fno-stack-protector -femit-struct-debug-baseonly -fno-var-tracking
+	CFLAGS  :=  $(if $(LOPT),$(LOPT),-Os) -fomit-frame-pointer -fno-stack-protector -femit-struct-debug-baseonly -fno-var-tracking
   endif
 	CFLAGS  += -pipe
 	CFLAGS  += $(VENDOR_CFLAGS)

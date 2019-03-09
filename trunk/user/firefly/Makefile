@@ -2,7 +2,7 @@ SRC_NAME=mt-daapd-svn
 
 THISDIR = $(shell pwd)
 
-CFLAGS  += -O2 -ffunction-sections -fdata-sections
+CFLAGS  += -ffunction-sections -fdata-sections
 LDFLAGS += -Wl,--gc-sections
 
 all: config_test

@@ -29,7 +29,7 @@ GZIP  := /bin/gzip
 MKDEPOPT := -MM
 DEBUG_ON := -g
 
-ALL_CFLAGS  = -W -Wall -Werror --pedantic $(CFLAGS) -O2
+ALL_CFLAGS  = -W -Wall -Werror --pedantic $(CFLAGS)
 ALL_CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden
 
 LDFLAGS += -Wl,--gc-sections

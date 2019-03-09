@@ -8,7 +8,7 @@ SRC= $(TOP)/src
 TST= $(TOP)/test
 
 CC= gcc
-CFLAGS= -O2 -Wall -I$(INC) $(MYCFLAGS)
+CFLAGS= -Os -Wall -I$(INC) $(MYCFLAGS)
 MYCFLAGS= 
 MYLDFLAGS= -Wl,-E
 MYLIBS= -lm
