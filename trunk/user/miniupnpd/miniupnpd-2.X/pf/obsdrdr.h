@@ -1,8 +1,7 @@
-/* $Id: obsdrdr.h,v 1.24 2018/07/06 12:00:10 nanard Exp $ */
-/* vim: tabstop=4 shiftwidth=4 noexpandtab
- * MiniUPnP project
+/* $Id: obsdrdr.h,v 1.23 2014/03/06 12:24:33 nanard Exp $ */
+/* MiniUPnP project
  * http://miniupnp.free.fr/ or http://miniupnp.tuxfamily.org/
- * (c) 2006-2018 Thomas Bernard
+ * (c) 2006-2014 Thomas Bernard
  * This software is subject to the conditions detailed
  * in the LICENCE file provided within the distribution */
 
@@ -58,9 +57,6 @@ delete_redirect_rule(const char * ifname, unsigned short eport, int proto);
 int
 delete_redirect_and_filter_rules(const char * ifname, unsigned short eport,
                                  int proto);
-
-int
-delete_filter_rule(const char * ifname, unsigned short port, int proto);
 
 #ifdef TEST
 int

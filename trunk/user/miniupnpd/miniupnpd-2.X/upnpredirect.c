@@ -1,4 +1,4 @@
-/* $Id: upnpredirect.c,v 1.96 2019/02/10 11:51:07 nanard Exp $ */
+/* $Id: upnpredirect.c,v 1.94 2018/05/03 08:27:40 nanard Exp $ */
 /* vim: tabstop=4 shiftwidth=4 noexpandtab
  * MiniUPnP project
  * http://miniupnp.free.fr/ or https://miniupnp.tuxfamily.org/
@@ -356,10 +356,6 @@ upnp_redirect(const char * rhost, unsigned short eport,
 		                 "%hu->%s:%hu %s", eport, iaddr, iport, protocol);
 		return -3;
 	}
-
-	if (desc == NULL)
-		desc = "";	/* assume empty description */
-
 	/* IGDv1 (WANIPConnection:1 Service Template Version 1.01 / Nov 12, 2001)
 	 * - 2.2.20.PortMappingDescription :
 	 *  Overwriting Previous / Existing Port Mappings:
@@ -444,8 +440,6 @@ upnp_redirect_internal(const char * rhost, unsigned short eport,
 {
 	/*syslog(LOG_INFO, "redirecting port %hu to %s:%hu protocol %s for: %s",
 		eport, iaddr, iport, protocol, desc);			*/
-	if(disable_port_forwarding)
-		return -1;
 	if(add_redirect_rule2(ext_if_name, rhost, eport, iaddr, iport, proto,
 	                      desc, timestamp) < 0) {
 		return -1;
@@ -785,3 +779,4 @@ write_ruleset_details(int s)
 	}
 }
 #endif
+

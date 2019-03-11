@@ -1,4 +1,4 @@
-/* $Id: pcpserver.c,v 1.50 2019/02/10 11:58:16 nanard Exp $ */
+/* $Id: pcpserver.c,v 1.48 2018/05/08 21:28:28 nanard Exp $ */
 /* MiniUPnP project
  * Website : http://miniupnp.free.fr/
  * Author : Peter Tatrai
@@ -177,7 +177,7 @@ static const char * getPCPOpCodeStr(uint8_t opcode)
  * buffers are same */
 static void copyIPv6IfDifferent(void * dest, const void * src)
 {
-	if(dest != src && src != NULL) {
+	if(dest != src) {
 		memcpy(dest, src, sizeof(struct in6_addr));
 	}
 }
@@ -1434,7 +1434,7 @@ static int processPCPRequest(void * req, int req_size, pcp_info_t *pcp_msg_info)
 }
 
 
-static void createPCPResponse(unsigned char *response, const pcp_info_t *pcp_msg_info)
+static void createPCPResponse(unsigned char *response, pcp_info_t *pcp_msg_info)
 {
 	response[2] = 0;	/* reserved */
 	memset(response + 12, 0, 12);	/* reserved */
@@ -1445,7 +1445,7 @@ static void createPCPResponse(unsigned char *response, const pcp_info_t *pcp_msg
 		response[0] = pcp_msg_info->version;
 	}
 
-	response[1] = pcp_msg_info->opcode | 0x80;	/* r_opcode */
+	response[1] |= 0x80;	/* r_opcode */
 	response[3] = pcp_msg_info->result_code;
 	if(epoch_origin == 0) {
 		epoch_origin = startup_time;

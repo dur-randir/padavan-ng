@@ -1,4 +1,4 @@
-/* $Id: upnpevents.c,v 1.41 2019/02/10 11:57:18 nanard Exp $ */
+/* $Id: upnpevents.c,v 1.40 2018/05/03 08:26:32 nanard Exp $ */
 /* vim: tabstop=4 shiftwidth=4 noexpandtab
  * MiniUPnP project
  * http://miniupnp.free.fr/ or http://miniupnp.tuxfamily.org/
@@ -443,34 +443,19 @@ static void upnp_event_prepare(struct upnp_event_notify * obj)
 		l = 0;
 	}
 	obj->buffersize = 1024;
-	for (;;) {
-		obj->buffer = malloc(obj->buffersize);
-		if(!obj->buffer) {
-			syslog(LOG_ERR, "%s: malloc returned NULL", "upnp_event_prepare");
-			if(xml) {
-				free(xml);
-			}
-			obj->state = EError;
-			return;
+	obj->buffer = malloc(obj->buffersize);
+	if(!obj->buffer) {
+		syslog(LOG_ERR, "%s: malloc returned NULL", "upnp_event_prepare");
+		if(xml) {
+			free(xml);
 		}
-		obj->tosend = snprintf(obj->buffer, obj->buffersize, notifymsg,
-		                       obj->path, obj->addrstr, obj->portstr, l+2,
-		                       obj->sub->uuid, obj->sub->seq,
-		                       l, xml);
-		if (obj->tosend < 0) {
-			syslog(LOG_ERR, "%s: snprintf() failed", "upnp_event_prepare");
-			if(xml) {
-				free(xml);
-			}
-			obj->state = EError;
-			return;
-		} else if (obj->tosend < obj->buffersize) {
-			break; /* the buffer was large enough */
-		}
-		/* Try again with a buffer big enough */
-		free(obj->buffer);
-		obj->buffersize = obj->tosend + 1;	/* reserve space for the final 0 */
+		obj->state = EError;
+		return;
 	}
+	obj->tosend = snprintf(obj->buffer, obj->buffersize, notifymsg,
+	                       obj->path, obj->addrstr, obj->portstr, l+2,
+	                       obj->sub->uuid, obj->sub->seq,
+	                       l, xml);
 	if(xml) {
 		free(xml);
 		xml = NULL;
