@@ -1,0 +1,63 @@
+---
+ gdb/po/gdb.pot   |    5 ++++-
+ gdb/solib-dsbt.c |    5 ++++-
+ gdb/solib-frv.c  |    5 ++++-
+ gdb/solib-svr4.c |    5 ++++-
+ 4 files changed, 16 insertions(+), 4 deletions(-)
+
+--- a/gdb/po/gdb.pot
++++ b/gdb/po/gdb.pot
+@@ -24644,7 +24644,10 @@
+ msgid ""
+ "Unable to find dynamic linker breakpoint function.\n"
+ "GDB will be unable to debug shared library initializers\n"
+-"and track explicitly loaded dynamic code."
++"and track explicitly loaded dynamic code.\n"
++"********************************************************\n"
++"*** MAKE SURE YOU HAVE UNSTRIPPED LIBC/LIBDL LIBRARY ***\n"
++"********************************************************"
+ msgstr ""
+ 
+ #: solib-dsbt.c:1006 solib-frv.c:863
+--- a/gdb/solib-dsbt.c
++++ b/gdb/solib-dsbt.c
+@@ -771,7 +771,10 @@
+ {
+   warning (_("Unable to find dynamic linker breakpoint function.\n"
+ 	     "GDB will be unable to debug shared library initializers\n"
+-	     "and track explicitly loaded dynamic code."));
++	     "and track explicitly loaded dynamic code.\n"
++	     "********************************************************\n"
++	     "*** MAKE SURE YOU HAVE UNSTRIPPED LIBC/LIBDL LIBRARY ***\n"
++	     "********************************************************"));
+ }
+ 
+ /* Helper function for gdb_bfd_lookup_symbol.  */
+--- a/gdb/solib-frv.c
++++ b/gdb/solib-frv.c
+@@ -478,7 +478,10 @@
+ {
+   warning (_("Unable to find dynamic linker breakpoint function.\n"
+            "GDB will be unable to debug shared library initializers\n"
+-	   "and track explicitly loaded dynamic code."));
++	   "and track explicitly loaded dynamic code.\n"
++	   "********************************************************\n"
++	   "*** MAKE SURE YOU HAVE UNSTRIPPED LIBC/LIBDL LIBRARY ***\n"
++	   "********************************************************"));
+ }
+ 
+ /* Helper function for gdb_bfd_lookup_symbol.  */
+--- a/gdb/solib-svr4.c
++++ b/gdb/solib-svr4.c
+@@ -2511,7 +2511,10 @@
+       xfree (interp_name);
+       warning (_("Unable to find dynamic linker breakpoint function.\n"
+                "GDB will be unable to debug shared library initializers\n"
+-               "and track explicitly loaded dynamic code."));
++               "and track explicitly loaded dynamic code.\n"
++               "********************************************************\n"
++               "*** MAKE SURE YOU HAVE UNSTRIPPED LIBC/LIBDL LIBRARY ***\n"
++               "********************************************************"));
+     }
+ 
+   /* Scan through the lists of symbols, trying to look up the symbol and

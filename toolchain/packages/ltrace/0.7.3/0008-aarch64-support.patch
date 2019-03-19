@@ -1,6 +1,21 @@
-diff -ruNp ltrace-0.7.3.orig/configure.ac ltrace-0.7.3/configure.ac
---- ltrace-0.7.3.orig/configure.ac	2018-09-19 22:39:57.370201075 +0300
-+++ ltrace-0.7.3/configure.ac	2018-09-21 13:16:44.579714097 +0300
+---
+ configure.ac                           |    3 
+ sysdeps/linux-gnu/Makefile.am          |    3 
+ sysdeps/linux-gnu/aarch64/Makefile.am  |   25 
+ sysdeps/linux-gnu/aarch64/arch.h       |   37 +
+ sysdeps/linux-gnu/aarch64/fetch.c      |  366 ++++++++++
+ sysdeps/linux-gnu/aarch64/plt.c        |   38 +
+ sysdeps/linux-gnu/aarch64/ptrace.h     |   22 
+ sysdeps/linux-gnu/aarch64/regs.c       |  131 +++
+ sysdeps/linux-gnu/aarch64/signalent.h  |   52 +
+ sysdeps/linux-gnu/aarch64/syscallent.h | 1100 +++++++++++++++++++++++++++++++++
+ sysdeps/linux-gnu/aarch64/trace.c      |   84 ++
+ type.c                                 |   36 +
+ type.h                                 |   11 
+ 13 files changed, 1905 insertions(+), 3 deletions(-)
+
+--- a/configure.ac
++++ b/configure.ac
 @@ -1,6 +1,6 @@
  # -*- Autoconf -*-
  # This file is part of ltrace.
@@ -9,7 +24,7 @@ diff -ruNp ltrace-0.7.3.orig/configure.ac ltrace-0.7.3/configure.ac
  # Copyright (C) 2010,2011 Joe Damato
  # Copyright (C) 2010 Marc Kleine-Budde
  # Copyright (C) 2010 Zachary T Welch
-@@ -318,6 +318,7 @@ AC_CONFIG_FILES([
+@@ -318,6 +318,7 @@
  	Makefile
  	sysdeps/Makefile
  	sysdeps/linux-gnu/Makefile
@@ -17,9 +32,8 @@ diff -ruNp ltrace-0.7.3.orig/configure.ac ltrace-0.7.3/configure.ac
  	sysdeps/linux-gnu/alpha/Makefile
  	sysdeps/linux-gnu/arm/Makefile
  	sysdeps/linux-gnu/cris/Makefile
-diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/arch.h ltrace-0.7.3/sysdeps/linux-gnu/aarch64/arch.h
---- ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/arch.h	1970-01-01 03:00:00.000000000 +0300
-+++ ltrace-0.7.3/sysdeps/linux-gnu/aarch64/arch.h	2018-09-21 13:16:44.583714109 +0300
+--- /dev/null
++++ b/sysdeps/linux-gnu/aarch64/arch.h
 @@ -0,0 +1,37 @@
 +/*
 + * This file is part of ltrace.
@@ -58,9 +72,8 @@ diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/arch.h ltrace-0.7.3/sysde
 +#define ARCH_HAVE_ALIGNOF
 +
 +#endif /* LTRACE_AARCH64_ARCH_H */
-diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/fetch.c ltrace-0.7.3/sysdeps/linux-gnu/aarch64/fetch.c
---- ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/fetch.c	1970-01-01 03:00:00.000000000 +0300
-+++ ltrace-0.7.3/sysdeps/linux-gnu/aarch64/fetch.c	2018-09-21 13:19:30.672085071 +0300
+--- /dev/null
++++ b/sysdeps/linux-gnu/aarch64/fetch.c
 @@ -0,0 +1,366 @@
 +/*
 + * This file is part of ltrace.
@@ -428,9 +441,8 @@ diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/fetch.c ltrace-0.7.3/sysd
 +{
 +	return (size_t) -2;
 +}
-diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/Makefile.am ltrace-0.7.3/sysdeps/linux-gnu/aarch64/Makefile.am
---- ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/Makefile.am	1970-01-01 03:00:00.000000000 +0300
-+++ ltrace-0.7.3/sysdeps/linux-gnu/aarch64/Makefile.am	2018-09-21 13:16:44.579714097 +0300
+--- /dev/null
++++ b/sysdeps/linux-gnu/aarch64/Makefile.am
 @@ -0,0 +1,25 @@
 +# This file is part of ltrace.
 +# Copyright (C) 2014 Petr Machata, Red Hat, Inc.
@@ -457,9 +469,8 @@ diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/Makefile.am ltrace-0.7.3/
 +noinst_HEADERS = arch.h ptrace.h signalent.h syscallent.h
 +
 +MAINTAINERCLEANFILES = Makefile.in
-diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/plt.c ltrace-0.7.3/sysdeps/linux-gnu/aarch64/plt.c
---- ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/plt.c	1970-01-01 03:00:00.000000000 +0300
-+++ ltrace-0.7.3/sysdeps/linux-gnu/aarch64/plt.c	2018-09-21 13:16:44.583714109 +0300
+--- /dev/null
++++ b/sysdeps/linux-gnu/aarch64/plt.c
 @@ -0,0 +1,38 @@
 +/*
 + * This file is part of ltrace.
@@ -499,9 +510,8 @@ diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/plt.c ltrace-0.7.3/sysdep
 +{
 +	return lte->plt_addr + 32 + ndx * 16;
 +}
-diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/ptrace.h ltrace-0.7.3/sysdeps/linux-gnu/aarch64/ptrace.h
---- ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/ptrace.h	1970-01-01 03:00:00.000000000 +0300
-+++ ltrace-0.7.3/sysdeps/linux-gnu/aarch64/ptrace.h	2018-09-21 13:16:44.583714109 +0300
+--- /dev/null
++++ b/sysdeps/linux-gnu/aarch64/ptrace.h
 @@ -0,0 +1,22 @@
 +/*
 + * This file is part of ltrace.
@@ -525,9 +535,8 @@ diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/ptrace.h ltrace-0.7.3/sys
 +
 +#include <sys/ptrace.h>
 +#include <asm/ptrace.h>
-diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/regs.c ltrace-0.7.3/sysdeps/linux-gnu/aarch64/regs.c
---- ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/regs.c	1970-01-01 03:00:00.000000000 +0300
-+++ ltrace-0.7.3/sysdeps/linux-gnu/aarch64/regs.c	2018-09-21 13:18:57.472018830 +0300
+--- /dev/null
++++ b/sysdeps/linux-gnu/aarch64/regs.c
 @@ -0,0 +1,131 @@
 +/*
 + * This file is part of ltrace.
@@ -660,9 +669,8 @@ diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/regs.c ltrace-0.7.3/sysde
 +	/* XXX double cast */
 +	return (arch_addr_t) (uintptr_t) regs.regs[30];
 +}
-diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/signalent.h ltrace-0.7.3/sysdeps/linux-gnu/aarch64/signalent.h
---- ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/signalent.h	1970-01-01 03:00:00.000000000 +0300
-+++ ltrace-0.7.3/sysdeps/linux-gnu/aarch64/signalent.h	2018-09-21 13:16:44.583714109 +0300
+--- /dev/null
++++ b/sysdeps/linux-gnu/aarch64/signalent.h
 @@ -0,0 +1,52 @@
 +/*
 + * This file is part of ltrace.
@@ -716,9 +724,8 @@ diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/signalent.h ltrace-0.7.3/
 +	"SIGIO",			/* 29 */
 +	"SIGPWR",			/* 30 */
 +	"SIGSYS",			/* 31 */
-diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/syscallent.h ltrace-0.7.3/sysdeps/linux-gnu/aarch64/syscallent.h
---- ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/syscallent.h	1970-01-01 03:00:00.000000000 +0300
-+++ ltrace-0.7.3/sysdeps/linux-gnu/aarch64/syscallent.h	2018-09-21 13:16:44.583714109 +0300
+--- /dev/null
++++ b/sysdeps/linux-gnu/aarch64/syscallent.h
 @@ -0,0 +1,1100 @@
 +/*
 + * This file is part of ltrace.
@@ -1820,9 +1827,8 @@ diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/syscallent.h ltrace-0.7.3
 +	"uselib",                          /* 1077 */
 +	"_sysctl",                         /* 1078 */
 +	"fork",                            /* 1079 */
-diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/trace.c ltrace-0.7.3/sysdeps/linux-gnu/aarch64/trace.c
---- ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/trace.c	1970-01-01 03:00:00.000000000 +0300
-+++ ltrace-0.7.3/sysdeps/linux-gnu/aarch64/trace.c	2018-09-21 13:18:57.472018830 +0300
+--- /dev/null
++++ b/sysdeps/linux-gnu/aarch64/trace.c
 @@ -0,0 +1,84 @@
 +/*
 + * This file is part of ltrace.
@@ -1908,9 +1914,8 @@ diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/aarch64/trace.c ltrace-0.7.3/sysd
 +
 +	return 0;
 +}
-diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/Makefile.am ltrace-0.7.3/sysdeps/linux-gnu/Makefile.am
---- ltrace-0.7.3.orig/sysdeps/linux-gnu/Makefile.am	2013-09-17 03:04:28.000000000 +0400
-+++ ltrace-0.7.3/sysdeps/linux-gnu/Makefile.am	2018-09-21 13:16:44.579714097 +0300
+--- a/sysdeps/linux-gnu/Makefile.am
++++ b/sysdeps/linux-gnu/Makefile.am
 @@ -1,4 +1,5 @@
  # This file is part of ltrace.
 +# Copyright (C) 2014 Petr Machata, Red Hat, Inc.
@@ -1926,10 +1931,9 @@ diff -ruNp ltrace-0.7.3.orig/sysdeps/linux-gnu/Makefile.am ltrace-0.7.3/sysdeps/
  
  SUBDIRS = \
  	$(HOST_CPU)
-diff -ruNp ltrace-0.7.3.orig/type.c ltrace-0.7.3/type.c
---- ltrace-0.7.3.orig/type.c	2013-02-05 15:05:39.000000000 +0400
-+++ ltrace-0.7.3/type.c	2018-09-21 17:41:32.063272053 +0300
-@@ -568,3 +568,39 @@ type_get_fp_equivalent(struct arg_type_i
+--- a/type.c
++++ b/type.c
+@@ -568,3 +568,39 @@
  	}
  	abort();
  }
@@ -1969,9 +1973,8 @@ diff -ruNp ltrace-0.7.3.orig/type.c ltrace-0.7.3/type.c
 +	}
 +	return ret;
 +}
-diff -ruNp ltrace-0.7.3.orig/type.h ltrace-0.7.3/type.h
---- ltrace-0.7.3.orig/type.h	2012-11-10 16:43:55.000000000 +0400
-+++ ltrace-0.7.3/type.h	2018-09-21 17:41:54.835463815 +0300
+--- a/type.h
++++ b/type.h
 @@ -1,6 +1,6 @@
  /*
   * This file is part of ltrace.
@@ -1980,7 +1983,7 @@ diff -ruNp ltrace-0.7.3.orig/type.h ltrace-0.7.3/type.h
   * Copyright (C) 1997-2009 Juan Cespedes
   *
   * This program is free software; you can redistribute it and/or
-@@ -142,4 +142,13 @@ int type_is_signed(enum arg_type type);
+@@ -142,4 +142,13 @@
   * type.  */
  struct arg_type_info *type_get_fp_equivalent(struct arg_type_info *info);
  

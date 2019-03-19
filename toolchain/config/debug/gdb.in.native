@@ -51,11 +51,6 @@ config GDB_NATIVE_EXTRA_CFLAGS
     help
       Extra flags passed to CFLAGS environment
 
-config GDB_NATIVE_EXTRA_CXXFLAGS
-    string "Extra C++ compiler flags for native gdb"
-    help
-      Extra flags passed to CXXFLAGS environment
-
 config GDB_NATIVE_EXTRA_LDFLAGS
     string "Extra C/C++ linker flags for native gdb"
     help

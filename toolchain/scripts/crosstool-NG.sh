@@ -102,6 +102,14 @@ for d in            \
         esac
 done
 
+n_open_files=$(ulimit -n)
+if [ "${n_open_files}" -lt 2048 ]; then
+    # Newer ld seems to keep a lot of open file descriptors, hitting the default limit
+    # (1024) for example during uClibc-ng link.
+    CT_DoLog WARN "Number of open files ${n_open_files} may not be sufficient to build the toolchain; increasing to 2048"
+    ulimit -n 2048
+fi
+
 # Where will we work?
 CT_WORK_DIR="${CT_WORK_DIR:-${CT_TOP_DIR}/.build}"
 CT_BUILD_DIR="${CT_BUILD_TOP_DIR}/build"
@@ -523,6 +531,9 @@ if [ -z "${CT_RESTART}" ]; then
     CT_LDFLAGS_FOR_BUILD="-L${CT_BUILDTOOLS_PREFIX_DIR}/lib"
     CT_LDFLAGS_FOR_BUILD+=" ${CT_EXTRA_LDFLAGS_FOR_BUILD}"
 
+    if ${CT_BUILD}-gcc --version 2>&1 | grep clang; then
+        CT_CFLAGS_FOR_BUILD+=" -Qunused-arguments"
+    fi
     case "${CT_BUILD}" in
         *darwin*)
             # Two issues while building on MacOS. Really, we should be checking for
@@ -550,6 +561,9 @@ if [ -z "${CT_RESTART}" ]; then
     CT_CFLAGS_FOR_HOST+=" ${CT_EXTRA_CFLAGS_FOR_HOST}"
     CT_LDFLAGS_FOR_HOST="-L${CT_HOST_COMPLIBS_DIR}/lib"
     CT_LDFLAGS_FOR_HOST+=" ${CT_EXTRA_LDFLAGS_FOR_HOST}"
+    if ${CT_HOST}-gcc --version 2>&1 | grep clang; then
+        CT_CFLAGS_FOR_HOST+=" -Qunused-arguments"
+    fi
     case "${CT_HOST}" in
         *darwin*)
             # Same as above, for host

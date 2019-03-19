@@ -1,0 +1,16 @@
+---
+ libgcc/unwind-dw2-fde.h |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/libgcc/unwind-dw2-fde.h
++++ b/libgcc/unwind-dw2-fde.h
+@@ -168,6 +168,9 @@
+ static inline int
+ last_fde (struct object *obj __attribute__ ((__unused__)), const fde *f)
+ {
++  if (f->length >= 0xfffffff0) /* special DWARF extension */
++    return 1;
++
+ #ifdef DWARF2_OBJECT_END_PTR_EXTENSION
+   return f == (const fde *) obj->fde_end || f->length == 0;
+ #else

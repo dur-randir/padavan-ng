@@ -31,9 +31,14 @@ CT_LOG_LEVEL_MAX="WARN"
 # Compute the name of the sample directory
 case "${CT_TOOLCHAIN_TYPE}" in
     cross)      case "${CT_TARGET_VENDOR}" in
-                    ndms) CT_GetChoicePkgBuildVersion CC cc_ver
-                          CT_GetChoicePkgBuildVersion KERNEL kernel_ver
-                          CT_GetChoicePkgBuildVersion LIBC libc_ver
+                    ndms) CT_GetPkgBuildVersion CC "" package
+                          CT_GetPkgBuildVersion CC ${package^^} cc_ver
+
+                          CT_GetPkgBuildVersion KERNEL "" package
+                          CT_GetPkgBuildVersion KERNEL ${package^^} kernel_ver
+
+                          CT_GetPkgBuildVersion LIBC "" package
+                          CT_GetPkgBuildVersion LIBC ${package^^} libc_ver
 
                           def_samp_name="${CT_TARGET_ARCH}"
                           def_samp_name="${def_samp_name}${CT_TARGET_VENDOR:+-${CT_TARGET_VENDOR}}"
@@ -86,7 +91,8 @@ fi
 # Save the uClibc .config file
 if [ -n "${CT_LIBC_UCLIBC_CONFIG_FILE}" ]; then
     # We save the file, and then point the saved sample to this file
-    CT_GetChoicePkgBuildVersion LIBC libc_ver
+    CT_GetPkgBuildVersion LIBC "" package
+    CT_GetPkgBuildVersion LIBC ${package^^} libc_ver
     def_fname=${libc_ver}.config
 
     read -p "New uClibc config filename [${def_fname}]: " tmp_fname

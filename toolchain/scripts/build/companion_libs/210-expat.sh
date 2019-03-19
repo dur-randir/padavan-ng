@@ -95,6 +95,7 @@ do_expat_backend() {
         --host=${host}                                              \
         --prefix="${prefix}"                                        \
         --enable-static                                             \
+        --without-docbook                                           \
         "${extra_config[@]}"
 
     CT_DoLog EXTRA "Building expat"

@@ -125,7 +125,6 @@ uClibc_backend_once()
         fi
     done
     CT_DoLog DEBUG "Filtered multilib CFLAGS: ${extra_cflags}"
-    extra_cflags+=" ${CT_LIBC_UCLIBC_EXTRA_CFLAGS}"
     make_args+=( UCLIBC_EXTRA_CFLAGS="${extra_cflags}" )
 
     # uClibc does not have a way to select the installation subdirectory for headers,
@@ -238,6 +237,15 @@ manage_uClibc_config()
         CT_KconfigEnableOption "ARCH_USE_MMU" "${dst}"
     else
         CT_KconfigDisableOption "ARCH_USE_MMU" "${dst}"
+        CT_KconfigDisableOption "UCLIBC_FORMAT_FDPIC" "${dst}"
+        CT_KconfigDisableOption "UCLIBC_FORMAT_FLAT" "${dst}"
+        CT_KconfigDisableOption "UCLIBC_FORMAT_SHARED_FLAT" "${dst}"
+        case "${CT_ARCH_BINFMT_FLAT},${CT_ARCH_BINFMT_FDPIC},${CT_SHARED_LIBS}" in
+            y,,y) CT_KconfigEnableOption "UCLIBC_FORMAT_SHARED_FLAT" "${dst}";;
+            y,,) CT_KconfigEnableOption "UCLIBC_FORMAT_FLAT" "${dst}";;
+            ,y,*) CT_KconfigEnableOption "UCLIBC_FORMAT_FDPIC" "${dst}";;
+            *) CT_Abort "Unsupported binary format";;
+        esac
     fi
 
     if [ "${CT_SHARED_LIBS}" = "y" ]; then
@@ -405,6 +413,10 @@ manage_uClibc_config()
     # Now allow architecture to tweak as it wants
     CT_DoArchUClibcConfig "${dst}"
     CT_DoArchUClibcCflags "${dst}" "${flags}"
+
+    # Preserve the config we created (before uclibc's `make olddefconfig`
+    # overrides anything).
+    CT_DoExecLog ALL cp "${dst}" "${dst}.created-by-ct-ng"
 }
 
 uClibc_post_cc()

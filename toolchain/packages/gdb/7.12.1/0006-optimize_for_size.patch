@@ -1,0 +1,971 @@
+---
+ Makefile.in                                         |    2 +-
+ Makefile.tpl                                        |    2 +-
+ bfd/configure                                       |    4 ++--
+ config/acinclude.m4                                 |    4 ++--
+ configure                                           |    8 ++++----
+ configure.ac                                        |    4 ++--
+ gdb/ChangeLog-2002                                  |    2 +-
+ gdb/configure                                       |    4 ++--
+ gdb/gdbserver/configure                             |    4 ++--
+ gdb/gnulib/configure                                |    4 ++--
+ gdb/testsuite/configure                             |    2 +-
+ gdb/testsuite/gdb.arch/amd64-entry-value-inline.S   |    4 ++--
+ gdb/testsuite/gdb.arch/amd64-entry-value-paramref.S |    4 ++--
+ gdb/testsuite/gdb.arch/amd64-optimout-repeat.S      |    4 ++--
+ gdb/testsuite/gdb.arch/amd64-tailcall-cxx1.S        |    4 ++--
+ gdb/testsuite/gdb.arch/amd64-tailcall-cxx2.S        |    4 ++--
+ gdb/testsuite/gdb.base/disasm-optim.S               |    4 ++--
+ gdb/testsuite/gdb.btrace/i686-tailcall-only.S       |    4 ++--
+ gdb/testsuite/gdb.btrace/i686-tailcall.S            |    4 ++--
+ gdb/testsuite/gdb.btrace/x86_64-tailcall-only.S     |    4 ++--
+ gdb/testsuite/gdb.btrace/x86_64-tailcall.S          |    4 ++--
+ gdb/testsuite/gdb.dwarf2/clztest.S                  |    2 +-
+ gdb/testsuite/gdb.dwarf2/dw2-inline-break.S         |    2 +-
+ gdb/testsuite/gdb.dwarf2/typeddwarf-amd64.S         |    2 +-
+ gdb/testsuite/gdb.dwarf2/typeddwarf.S               |    2 +-
+ gdb/testsuite/gdb.dwarf2/watch-notconst2.S          |    2 +-
+ intl/configure                                      |    2 +-
+ libdecnumber/configure                              |    2 +-
+ libiberty/configure                                 |    2 +-
+ libtool.m4                                          |    2 +-
+ opcodes/configure                                   |    4 ++--
+ readline/configure                                  |    2 +-
+ readline/examples/rlfe/configure                    |    2 +-
+ sim/aarch64/configure                               |    2 +-
+ sim/arm/configure                                   |    2 +-
+ sim/avr/configure                                   |    2 +-
+ sim/bfin/configure                                  |    2 +-
+ sim/common/configure                                |    2 +-
+ sim/configure                                       |    4 ++--
+ sim/cr16/configure                                  |    2 +-
+ sim/cris/configure                                  |    2 +-
+ sim/d10v/configure                                  |    2 +-
+ sim/erc32/configure                                 |    2 +-
+ sim/frv/configure                                   |    2 +-
+ sim/ft32/configure                                  |    2 +-
+ sim/h8300/configure                                 |    2 +-
+ sim/igen/configure                                  |    2 +-
+ sim/iq2000/configure                                |    2 +-
+ sim/lm32/configure                                  |    2 +-
+ sim/m32c/configure                                  |    2 +-
+ sim/m32r/configure                                  |    2 +-
+ sim/m68hc11/configure                               |    2 +-
+ sim/mcore/configure                                 |    2 +-
+ sim/microblaze/configure                            |    2 +-
+ sim/mips/configure                                  |    2 +-
+ sim/mn10300/configure                               |    2 +-
+ sim/moxie/configure                                 |    2 +-
+ sim/msp430/configure                                |    2 +-
+ sim/ppc/configure                                   |    2 +-
+ sim/rl78/configure                                  |    2 +-
+ sim/rx/configure                                    |    2 +-
+ sim/sh/configure                                    |    2 +-
+ sim/sh64/configure                                  |    2 +-
+ sim/v850/configure                                  |    2 +-
+ zlib/configure                                      |    2 +-
+ 65 files changed, 86 insertions(+), 86 deletions(-)
+
+--- a/bfd/configure
++++ b/bfd/configure
+@@ -3329,7 +3329,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+@@ -4814,7 +4814,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/config/acinclude.m4
++++ b/config/acinclude.m4
+@@ -24,7 +24,7 @@
+   if test "$ac_test_CXXFLAGS" = set; then
+     CXXFLAGS="$ac_save_CXXFLAGS"
+   elif test $ac_cv_prog_cxx_g = yes; then
+-    CXXFLAGS="-g -O2"
++    CXXFLAGS="-Os"
+   else
+     CXXFLAGS="-O2"
+   fi
+@@ -121,7 +121,7 @@
+   if test "$ac_test_CFLAGS" = set; then
+     CFLAGS="$ac_save_CFLAGS"
+   elif test $ac_cv_prog_cc_g = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-O2"
+   fi
+--- a/configure
++++ b/configure
+@@ -4724,7 +4724,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+@@ -5072,7 +5072,7 @@
+   CXXFLAGS=$ac_save_CXXFLAGS
+ elif test $ac_cv_prog_cxx_g = yes; then
+   if test "$GXX" = yes; then
+-    CXXFLAGS="-g -O2"
++    CXXFLAGS="-Os"
+   else
+     CXXFLAGS="-g"
+   fi
+@@ -6785,7 +6785,7 @@
+ # CFLAGS_FOR_TARGET and CXXFLAGS_FOR_TARGET.
+ if test "x$CFLAGS_FOR_TARGET" = x; then
+   if test "x${is_cross_compiler}" = xyes; then
+-    CFLAGS_FOR_TARGET="-g -O2"
++    CFLAGS_FOR_TARGET="-Os"
+   else
+     CFLAGS_FOR_TARGET=$CFLAGS
+     case " $CFLAGS " in
+@@ -6802,7 +6802,7 @@
+ 
+ if test "x$CXXFLAGS_FOR_TARGET" = x; then
+   if test "x${is_cross_compiler}" = xyes; then
+-    CXXFLAGS_FOR_TARGET="-g -O2"
++    CXXFLAGS_FOR_TARGET="-Os"
+   else
+     CXXFLAGS_FOR_TARGET=$CXXFLAGS
+     case " $CXXFLAGS " in
+--- a/configure.ac
++++ b/configure.ac
+@@ -2389,7 +2389,7 @@
+ # CFLAGS_FOR_TARGET and CXXFLAGS_FOR_TARGET.
+ if test "x$CFLAGS_FOR_TARGET" = x; then
+   if test "x${is_cross_compiler}" = xyes; then
+-    CFLAGS_FOR_TARGET="-g -O2"
++    CFLAGS_FOR_TARGET="-Os"
+   else
+     CFLAGS_FOR_TARGET=$CFLAGS
+     case " $CFLAGS " in
+@@ -2406,7 +2406,7 @@
+ 
+ if test "x$CXXFLAGS_FOR_TARGET" = x; then
+   if test "x${is_cross_compiler}" = xyes; then
+-    CXXFLAGS_FOR_TARGET="-g -O2"
++    CXXFLAGS_FOR_TARGET="-Os"
+   else
+     CXXFLAGS_FOR_TARGET=$CXXFLAGS
+     case " $CXXFLAGS " in
+--- a/gdb/ChangeLog-2002
++++ b/gdb/ChangeLog-2002
+@@ -12304,7 +12304,7 @@
+ 
+ 2002-02-25  Eli Zaretskii  <eliz@is.elta.co.il>
+ 
+-	* config/djgpp/djconfig.sh: Set NM=nm and CFLAGS="-g -O2" in the
++	* config/djgpp/djconfig.sh: Set NM=nm and CFLAGS="-Os" in the
+ 	 list of exported variables.
+ 
+ 2002-02-24  Daniel Jacobowitz  <drow@mvista.com>
+--- a/gdb/configure
++++ b/gdb/configure
+@@ -3443,7 +3443,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+@@ -3791,7 +3791,7 @@
+   CXXFLAGS=$ac_save_CXXFLAGS
+ elif test $ac_cv_prog_cxx_g = yes; then
+   if test "$GXX" = yes; then
+-    CXXFLAGS="-g -O2"
++    CXXFLAGS="-Os"
+   else
+     CXXFLAGS="-g"
+   fi
+--- a/gdb/gdbserver/configure
++++ b/gdb/gdbserver/configure
+@@ -3212,7 +3212,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+@@ -3560,7 +3560,7 @@
+   CXXFLAGS=$ac_save_CXXFLAGS
+ elif test $ac_cv_prog_cxx_g = yes; then
+   if test "$GXX" = yes; then
+-    CXXFLAGS="-g -O2"
++    CXXFLAGS="-Os"
+   else
+     CXXFLAGS="-g"
+   fi
+--- a/gdb/gnulib/configure
++++ b/gdb/gnulib/configure
+@@ -4081,7 +4081,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+@@ -5786,7 +5786,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/gdb/testsuite/configure
++++ b/gdb/testsuite/configure
+@@ -2934,7 +2934,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/gdb/testsuite/gdb.arch/amd64-entry-value-inline.S
++++ b/gdb/testsuite/gdb.arch/amd64-entry-value-inline.S
+@@ -150,7 +150,7 @@
+ 	.long	.Ldebug_abbrev0	# Offset Into Abbrev. Section
+ 	.byte	0x8	# Pointer Size (in bytes)
+ 	.uleb128 0x1	# (DIE (0xb) DW_TAG_compile_unit)
+-	.long	.LASF0	# DW_AT_producer: "GNU C 4.8.0 20121005 (experimental) -mtune=generic -march=x86-64 -g -O2"
++	.long	.LASF0	# DW_AT_producer: "GNU C 4.8.0 20121005 (experimental) -mtune=generic -march=x86-64 -Os"
+ 	.byte	0x1	# DW_AT_language
+ 	.long	.LASF1	# DW_AT_name: "gdb.arch/amd64-entry-value-inline.c"
+ 	.long	.LASF2	# DW_AT_comp_dir: ""
+@@ -661,7 +661,7 @@
+ .Ldebug_line0:
+ 	.section	.debug_str,"MS",@progbits,1
+ .LASF0:
+-	.string	"GNU C 4.8.0 20121005+patches (experimental) -mtune=generic -march=x86-64 -g -O2"
++	.string	"GNU C 4.8.0 20121005+patches (experimental) -mtune=generic -march=x86-64 -Os"
+ .LASF1:
+ 	.string	"gdb.arch/amd64-entry-value-inline.c"
+ .LASF2:
+--- a/gdb/testsuite/gdb.arch/amd64-entry-value-paramref.S
++++ b/gdb/testsuite/gdb.arch/amd64-entry-value-paramref.S
+@@ -110,7 +110,7 @@
+ 	.long	.Ldebug_abbrev0	# Offset Into Abbrev. Section
+ 	.byte	0x8	# Pointer Size (in bytes)
+ 	.uleb128 0x1	# (DIE (0xb) DW_TAG_compile_unit)
+-	.long	.LASF0	# DW_AT_producer: "GNU C++ 4.8.2 20131212 (Red Hat 4.8.2-7) -mtune=generic -march=x86-64 -g -O2"
++	.long	.LASF0	# DW_AT_producer: "GNU C++ 4.8.2 20131212 (Red Hat 4.8.2-7) -mtune=generic -march=x86-64 -Os"
+ 	.byte	0x4	# DW_AT_language
+ 	.long	.LASF1	# DW_AT_name: "gdb.arch/amd64-entry-value-paramref.cc"
+ 	.long	.LASF2	# DW_AT_comp_dir: ""
+@@ -452,7 +452,7 @@
+ .LASF2:
+ 	.string	""
+ .LASF0:
+-	.string	"GNU C++ 4.8.2 20131212 (Red Hat 4.8.2-7) -mtune=generic -march=x86-64 -g -O2"
++	.string	"GNU C++ 4.8.2 20131212 (Red Hat 4.8.2-7) -mtune=generic -march=x86-64 -Os"
+ .LASF3:
+ 	.string	"main"
+ 	.ident	"GCC: (GNU) 4.8.2 20131212 (Red Hat 4.8.2-7)"
+--- a/gdb/testsuite/gdb.arch/amd64-optimout-repeat.S
++++ b/gdb/testsuite/gdb.arch/amd64-optimout-repeat.S
+@@ -63,7 +63,7 @@
+ 	.long	.Ldebug_abbrev0	# Offset Into Abbrev. Section
+ 	.byte	0x8	# Pointer Size (in bytes)
+ 	.uleb128 0x1	# (DIE (0xb) DW_TAG_compile_unit)
+-	.long	.LASF1	# DW_AT_producer: "GNU C 4.9.1 20140709 (prerelease) -mtune=generic -march=x86-64 -g -O2"
++	.long	.LASF1	# DW_AT_producer: "GNU C 4.9.1 20140709 (prerelease) -mtune=generic -march=x86-64 -Os"
+ 	.byte	0x1	# DW_AT_language
+ 	.long	.LASF2	# DW_AT_name: "gdb.arch/amd64-optimout-repeat.c"
+ 	.long	.LASF3	# DW_AT_comp_dir: ""
+@@ -288,7 +288,7 @@
+ .LASF2:
+ 	.string	"gdb.arch/amd64-optimout-repeat.c"
+ .LASF1:
+-	.string	"GNU C 4.9.1 20140709 (prerelease) -mtune=generic -march=x86-64 -g -O2"
++	.string	"GNU C 4.9.1 20140709 (prerelease) -mtune=generic -march=x86-64 -Os"
+ .LASF3:
+ 	.string	""
+ .LASF4:
+--- a/gdb/testsuite/gdb.arch/amd64-tailcall-cxx1.S
++++ b/gdb/testsuite/gdb.arch/amd64-tailcall-cxx1.S
+@@ -87,7 +87,7 @@
+ 	.long	.Ldebug_abbrev0	# Offset Into Abbrev. Section
+ 	.byte	0x8	# Pointer Size (in bytes)
+ 	.uleb128 0x1	# (DIE (0xb) DW_TAG_compile_unit)
+-	.long	.LASF1	# DW_AT_producer: "GNU C++ 4.8.0 20130220 (Red Hat 4.8.0-0.14) -mtune=generic -march=x86-64 -g -O2"
++	.long	.LASF1	# DW_AT_producer: "GNU C++ 4.8.0 20130220 (Red Hat 4.8.0-0.14) -mtune=generic -march=x86-64 -Os"
+ 	.byte	0x4	# DW_AT_language
+ 	.long	.LASF2	# DW_AT_name: "gdb.arch/amd64-tailcall-cxx1.cc"
+ 	.long	.LASF3	# DW_AT_comp_dir: ""
+@@ -358,7 +358,7 @@
+ .LASF2:
+ 	.string	"gdb.arch/amd64-tailcall-cxx1.cc"
+ .LASF1:
+-	.string	"GNU C++ 4.8.0 20130220 (Red Hat 4.8.0-0.14) -mtune=generic -march=x86-64 -g -O2"
++	.string	"GNU C++ 4.8.0 20130220 (Red Hat 4.8.0-0.14) -mtune=generic -march=x86-64 -Os"
+ .LASF0:
+ 	.string	"main"
+ .LASF5:
+--- a/gdb/testsuite/gdb.arch/amd64-tailcall-cxx2.S
++++ b/gdb/testsuite/gdb.arch/amd64-tailcall-cxx2.S
+@@ -53,7 +53,7 @@
+ 	.long	.Ldebug_abbrev0	# Offset Into Abbrev. Section
+ 	.byte	0x8	# Pointer Size (in bytes)
+ 	.uleb128 0x1	# (DIE (0xb) DW_TAG_compile_unit)
+-	.long	.LASF0	# DW_AT_producer: "GNU C++ 4.8.0 20130220 (Red Hat 4.8.0-0.14) -mtune=generic -march=x86-64 -g -O2"
++	.long	.LASF0	# DW_AT_producer: "GNU C++ 4.8.0 20130220 (Red Hat 4.8.0-0.14) -mtune=generic -march=x86-64 -Os"
+ 	.byte	0x4	# DW_AT_language
+ 	.long	.LASF1	# DW_AT_name: "gdb.arch/amd64-tailcall-cxx2.cc"
+ 	.long	.LASF2	# DW_AT_comp_dir: ""
+@@ -263,7 +263,7 @@
+ .Ldebug_line0:
+ 	.section	.debug_str,"MS",@progbits,1
+ .LASF0:
+-	.string	"GNU C++ 4.8.0 20130220 (Red Hat 4.8.0-0.14) -mtune=generic -march=x86-64 -g -O2"
++	.string	"GNU C++ 4.8.0 20130220 (Red Hat 4.8.0-0.14) -mtune=generic -march=x86-64 -Os"
+ .LASF2:
+ 	.string	""
+ .LASF3:
+--- a/gdb/testsuite/gdb.base/disasm-optim.S
++++ b/gdb/testsuite/gdb.base/disasm-optim.S
+@@ -84,7 +84,7 @@
+ 	.long	.Ldebug_abbrev0	# Offset Into Abbrev. Section
+ 	.byte	0x8	# Pointer Size (in bytes)
+ 	.uleb128 0x1	# (DIE (0xb) DW_TAG_compile_unit)
+-	.long	.LASF0	# DW_AT_producer: "GNU C 4.9.2 20150212 (Red Hat 4.9.2-6) -mtune=generic -march=x86-64 -g -O2"
++	.long	.LASF0	# DW_AT_producer: "GNU C 4.9.2 20150212 (Red Hat 4.9.2-6) -mtune=generic -march=x86-64 -Os"
+ 	.byte	0x1	# DW_AT_language
+ 	.long	.LASF1	# DW_AT_name: "disasm-optim.c"
+ 	.long	.LASF2	# DW_AT_comp_dir: "/main/disassemble3/gdb/testsuite/gdb.base"
+@@ -347,6 +347,6 @@
+ .LASF3:
+ 	.string	"main"
+ .LASF0:
+-	.string	"GNU C 4.9.2 20150212 (Red Hat 4.9.2-6) -mtune=generic -march=x86-64 -g -O2"
++	.string	"GNU C 4.9.2 20150212 (Red Hat 4.9.2-6) -mtune=generic -march=x86-64 -Os"
+ 	.ident	"GCC: (GNU) 4.9.2 20150212 (Red Hat 4.9.2-6)"
+ 	.section	.note.GNU-stack,"",@progbits
+--- a/gdb/testsuite/gdb.btrace/i686-tailcall-only.S
++++ b/gdb/testsuite/gdb.btrace/i686-tailcall-only.S
+@@ -127,7 +127,7 @@
+ 	.long	.Ldebug_abbrev0	# Offset Into Abbrev. Section
+ 	.byte	0x4	# Pointer Size (in bytes)
+ 	.uleb128 0x1	# (DIE (0xb) DW_TAG_compile_unit)
+-	.long	.LASF1	# DW_AT_producer: "GNU C 4.8.3 20140911 (Red Hat 4.8.3-9) -m32 -march=i686 -g -O2"
++	.long	.LASF1	# DW_AT_producer: "GNU C 4.8.3 20140911 (Red Hat 4.8.3-9) -m32 -march=i686 -Os"
+ 	.byte	0x1	# DW_AT_language
+ 	.long	.LASF2	# DW_AT_name: "tailcall-only.c"
+ 	.long	.LASF3	# DW_AT_comp_dir: ""
+@@ -434,7 +434,7 @@
+ .LASF2:
+ 	.string	"tailcall-only.c"
+ .LASF1:
+-	.string	"GNU C 4.8.3 20140911 (Red Hat 4.8.3-9) -m32 -march=i686 -g -O2"
++	.string	"GNU C 4.8.3 20140911 (Red Hat 4.8.3-9) -m32 -march=i686 -Os"
+ .LASF6:
+ 	.string	"answer"
+ .LASF5:
+--- a/gdb/testsuite/gdb.btrace/i686-tailcall.S
++++ b/gdb/testsuite/gdb.btrace/i686-tailcall.S
+@@ -94,7 +94,7 @@
+ 	.long	.Ldebug_abbrev0	# Offset Into Abbrev. Section
+ 	.byte	0x4	# Pointer Size (in bytes)
+ 	.uleb128 0x1	# (DIE (0xb) DW_TAG_compile_unit)
+-	.long	.LASF0	# DW_AT_producer: "GNU C 4.8.3 20140911 (Red Hat 4.8.3-7) -mtune=generic -march=i686 -g -O2"
++	.long	.LASF0	# DW_AT_producer: "GNU C 4.8.3 20140911 (Red Hat 4.8.3-7) -mtune=generic -march=i686 -Os"
+ 	.byte	0x1	# DW_AT_language
+ 	.long	.LASF1	# DW_AT_name: "tailcall.c"
+ 	.long	.LASF2	# DW_AT_comp_dir: ""
+@@ -342,7 +342,7 @@
+ .LASF3:
+ 	.string	"main"
+ .LASF0:
+-	.string	"GNU C 4.8.3 20140911 (Red Hat 4.8.3-7) -mtune=generic -march=i686 -g -O2"
++	.string	"GNU C 4.8.3 20140911 (Red Hat 4.8.3-7) -mtune=generic -march=i686 -Os"
+ .LASF4:
+ 	.string	"answer"
+ .LASF2:
+--- a/gdb/testsuite/gdb.btrace/x86_64-tailcall-only.S
++++ b/gdb/testsuite/gdb.btrace/x86_64-tailcall-only.S
+@@ -126,7 +126,7 @@
+ 	.long	.Ldebug_abbrev0	# Offset Into Abbrev. Section
+ 	.byte	0x8	# Pointer Size (in bytes)
+ 	.uleb128 0x1	# (DIE (0xb) DW_TAG_compile_unit)
+-	.long	.LASF1	# DW_AT_producer: "GNU C 4.8.3 20140911 (Red Hat 4.8.3-9) -mtune=generic -march=x86-64 -g -O2"
++	.long	.LASF1	# DW_AT_producer: "GNU C 4.8.3 20140911 (Red Hat 4.8.3-9) -mtune=generic -march=x86-64 -Os"
+ 	.byte	0x1	# DW_AT_language
+ 	.long	.LASF2	# DW_AT_name: "tailcall-only.c"
+ 	.long	.LASF3	# DW_AT_comp_dir: ""
+@@ -433,7 +433,7 @@
+ .LASF2:
+ 	.string	"tailcall-only.c"
+ .LASF1:
+-	.string	"GNU C 4.8.3 20140911 (Red Hat 4.8.3-9) -mtune=generic -march=x86-64 -g -O2"
++	.string	"GNU C 4.8.3 20140911 (Red Hat 4.8.3-9) -mtune=generic -march=x86-64 -Os"
+ .LASF6:
+ 	.string	"answer"
+ .LASF5:
+--- a/gdb/testsuite/gdb.btrace/x86_64-tailcall.S
++++ b/gdb/testsuite/gdb.btrace/x86_64-tailcall.S
+@@ -94,7 +94,7 @@
+ 	.long	.Ldebug_abbrev0	# Offset Into Abbrev. Section
+ 	.byte	0x8	# Pointer Size (in bytes)
+ 	.uleb128 0x1	# (DIE (0xb) DW_TAG_compile_unit)
+-	.long	.LASF0	# DW_AT_producer: "GNU C 4.8.3 20140911 (Red Hat 4.8.3-7) -mtune=generic -march=x86-64 -g -O2"
++	.long	.LASF0	# DW_AT_producer: "GNU C 4.8.3 20140911 (Red Hat 4.8.3-7) -mtune=generic -march=x86-64 -Os"
+ 	.byte	0x1	# DW_AT_language
+ 	.long	.LASF1	# DW_AT_name: "tailcall.c"
+ 	.long	.LASF2	# DW_AT_comp_dir: ""
+@@ -342,7 +342,7 @@
+ .LASF1:
+ 	.string	"tailcall.c"
+ .LASF0:
+-	.string	"GNU C 4.8.3 20140911 (Red Hat 4.8.3-7) -mtune=generic -march=x86-64 -g -O2"
++	.string	"GNU C 4.8.3 20140911 (Red Hat 4.8.3-7) -mtune=generic -march=x86-64 -Os"
+ .LASF4:
+ 	.string	"answer"
+ .LASF2:
+--- a/gdb/testsuite/gdb.dwarf2/clztest.S
++++ b/gdb/testsuite/gdb.dwarf2/clztest.S
+@@ -18,7 +18,7 @@
+ /* This source file was generated from clztest.c using the following
+    command line:
+ 
+-   gcc -dA -S -g -O2 clztest.c -o clztest.S
++   gcc -dA -S -Os clztest.c -o clztest.S
+ 
+ */
+ 
+--- a/gdb/testsuite/gdb.dwarf2/dw2-inline-break.S
++++ b/gdb/testsuite/gdb.dwarf2/dw2-inline-break.S
+@@ -17,7 +17,7 @@
+ 
+ /* This source file was generated using the following command line:
+ 
+-   gcc -S -dA -g -O2 ../gdb.opt/inline-break.c -o inline-break.S
++   gcc -S -dA -Os ../gdb.opt/inline-break.c -o inline-break.S
+ 
+ */
+ 	.file	"inline-break.c"
+--- a/gdb/testsuite/gdb.dwarf2/typeddwarf-amd64.S
++++ b/gdb/testsuite/gdb.dwarf2/typeddwarf-amd64.S
+@@ -18,7 +18,7 @@
+ /* This source file was generated from typeddwarf.c using the following
+    command line:
+ 
+-   gcc -S -g -O2 typeddwarf.c -o typeddwarf-amd64.S
++   gcc -S -Os typeddwarf.c -o typeddwarf-amd64.S
+ 
+ */
+ 
+--- a/gdb/testsuite/gdb.dwarf2/typeddwarf.S
++++ b/gdb/testsuite/gdb.dwarf2/typeddwarf.S
+@@ -18,7 +18,7 @@
+ /* This source file was generated from typeddwarf.c using the following
+    command line:
+ 
+-   gcc -m32 -dA -S -g -O2 typeddwarf.c -o typeddwarf.S
++   gcc -m32 -dA -S -Os typeddwarf.c -o typeddwarf.S
+ 
+ */
+ 
+--- a/gdb/testsuite/gdb.dwarf2/watch-notconst2.S
++++ b/gdb/testsuite/gdb.dwarf2/watch-notconst2.S
+@@ -18,7 +18,7 @@
+ /* This source file was generated from watch-notconst2.c using the following
+    command line:
+ 
+-   gcc -m32 -dA -S -g -O2 watch-notconst2.c -o watch-notconst2.S
++   gcc -m32 -dA -S -Os watch-notconst2.c -o watch-notconst2.S
+ 
+ */
+ 
+--- a/intl/configure
++++ b/intl/configure
+@@ -3288,7 +3288,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/libdecnumber/configure
++++ b/libdecnumber/configure
+@@ -2936,7 +2936,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/libiberty/configure
++++ b/libiberty/configure
+@@ -3619,7 +3619,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/libtool.m4
++++ b/libtool.m4
+@@ -7052,7 +7052,7 @@
+ [m4_ifdef([AC_PROG_GCJ], [AC_PROG_GCJ],
+   [m4_ifdef([A][M_PROG_GCJ], [A][M_PROG_GCJ],
+     [AC_CHECK_TOOL(GCJ, gcj,)
+-      test "x${GCJFLAGS+set}" = xset || GCJFLAGS="-g -O2"
++      test "x${GCJFLAGS+set}" = xset || GCJFLAGS="-Os"
+       AC_SUBST(GCJFLAGS)])])[]dnl
+ ])
+ 
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -365,7 +365,7 @@
+ 
+ # Flags to pass to stage2 and later makes.  They are defined
+ # here so that they can be overridden by Makefile fragments.
+-BOOT_CFLAGS= -g -O2
++BOOT_CFLAGS= -Os
+ BOOT_LDFLAGS=
+ BOOT_ADAFLAGS= -gnatpg
+ 
+--- a/Makefile.tpl
++++ b/Makefile.tpl
+@@ -368,7 +368,7 @@
+ 
+ # Flags to pass to stage2 and later makes.  They are defined
+ # here so that they can be overridden by Makefile fragments.
+-BOOT_CFLAGS= -g -O2
++BOOT_CFLAGS= -Os
+ BOOT_LDFLAGS=
+ BOOT_ADAFLAGS= -gnatpg
+ 
+--- a/opcodes/configure
++++ b/opcodes/configure
+@@ -3051,7 +3051,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+@@ -4319,7 +4319,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/readline/configure
++++ b/readline/configure
+@@ -3053,7 +3053,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/readline/examples/rlfe/configure
++++ b/readline/examples/rlfe/configure
+@@ -2580,7 +2580,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/aarch64/configure
++++ b/sim/aarch64/configure
+@@ -4802,7 +4802,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/arm/configure
++++ b/sim/arm/configure
+@@ -4802,7 +4802,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/avr/configure
++++ b/sim/avr/configure
+@@ -4802,7 +4802,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/bfin/configure
++++ b/sim/bfin/configure
+@@ -4825,7 +4825,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/common/configure
++++ b/sim/common/configure
+@@ -2367,7 +2367,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/configure
++++ b/sim/configure
+@@ -2421,7 +2421,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+@@ -3383,7 +3383,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/cr16/configure
++++ b/sim/cr16/configure
+@@ -4802,7 +4802,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/cris/configure
++++ b/sim/cris/configure
+@@ -4816,7 +4816,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/d10v/configure
++++ b/sim/d10v/configure
+@@ -4802,7 +4802,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/erc32/configure
++++ b/sim/erc32/configure
+@@ -4789,7 +4789,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/frv/configure
++++ b/sim/frv/configure
+@@ -4811,7 +4811,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/ft32/configure
++++ b/sim/ft32/configure
+@@ -4802,7 +4802,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/h8300/configure
++++ b/sim/h8300/configure
+@@ -4794,7 +4794,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/igen/configure
++++ b/sim/igen/configure
+@@ -4631,7 +4631,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/iq2000/configure
++++ b/sim/iq2000/configure
+@@ -4808,7 +4808,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/lm32/configure
++++ b/sim/lm32/configure
+@@ -4808,7 +4808,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/m32c/configure
++++ b/sim/m32c/configure
+@@ -4795,7 +4795,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/m32r/configure
++++ b/sim/m32r/configure
+@@ -4810,7 +4810,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/m68hc11/configure
++++ b/sim/m68hc11/configure
+@@ -4805,7 +4805,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/mcore/configure
++++ b/sim/mcore/configure
+@@ -4802,7 +4802,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/microblaze/configure
++++ b/sim/microblaze/configure
+@@ -4802,7 +4802,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/mips/configure
++++ b/sim/mips/configure
+@@ -4835,7 +4835,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/mn10300/configure
++++ b/sim/mn10300/configure
+@@ -4811,7 +4811,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/moxie/configure
++++ b/sim/moxie/configure
+@@ -4803,7 +4803,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/msp430/configure
++++ b/sim/msp430/configure
+@@ -4802,7 +4802,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/ppc/configure
++++ b/sim/ppc/configure
+@@ -4964,7 +4964,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/rl78/configure
++++ b/sim/rl78/configure
+@@ -4787,7 +4787,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/rx/configure
++++ b/sim/rx/configure
+@@ -4792,7 +4792,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/sh/configure
++++ b/sim/sh/configure
+@@ -4802,7 +4802,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/sh64/configure
++++ b/sim/sh64/configure
+@@ -4808,7 +4808,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/sim/v850/configure
++++ b/sim/v850/configure
+@@ -4808,7 +4808,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+--- a/zlib/configure
++++ b/zlib/configure
+@@ -3599,7 +3599,7 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi

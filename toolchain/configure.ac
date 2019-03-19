@@ -25,21 +25,6 @@ AM_MAINTAINER_MODE([enable])
 # Safety check per autoconf best practices
 AC_CONFIG_SRCDIR([ct-ng.in])
 
-# Check if install(1) supports --strip-program=...
-AC_DEFUN(
-    [ACX_INSTALL_STRIP_PROGRAM],
-    [touch conftest
-     mkdir conftest.dir
-     AC_MSG_CHECKING([if install takes --strip-program option])
-     AS_IF([$INSTALL --strip-program=true -s conftest conftest.dir/conftest 2>/dev/null],
-        [install_with_strip_program=y
-         AC_MSG_RESULT([yes])],
-        [AC_MSG_RESULT([no])])
-     ACX_SET_KCONFIG_OPTION([install_with_strip_program])
-     rm -rf conftest.dir
-     rm -f conftest
-    ])
-
 #--------------------------------------------------------------------
 # Allow dummy --{en,dis}able-{static,shared}
 AC_ARG_ENABLE([local],
@@ -142,6 +127,18 @@ CTNG_CHECK_PROGS_REQ([unzip], [unzip])
 CTNG_CHECK_PROGS_REQ([help2man], [help2man])
 CTNG_CHECK_PROGS_REQ([file], [file])
 CTNG_CHECK_PROGS_REQ([which], [which])
+
+# Lzip is optional; all the packages that provide tarballs in .tar.lz format
+# also provide them in some other format. All other formats are currently
+# mandatory as there is at least one package that has no fallback for each
+# of them.
+# FIXME: this configure.ac should be only used for detecting the dependencies
+# of the ct-ng framework itself; anything needed at build time should be
+# determined by crosstool-NG.sh - perhaps, through another 'configure' that
+# runs during `ct-ng build`.
+AC_CHECK_PROGS([lzip], [lzip])
+CTNG_SET_KCONFIG_OPTION([lzip])
+AC_SUBST([lzip])
 
 # Not a fatal failure even if we have neither - the tarballs may
 # be provided in a local directory.

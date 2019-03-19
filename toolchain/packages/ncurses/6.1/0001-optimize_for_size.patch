@@ -1,0 +1,172 @@
+---
+ Ada95/configure                   |    4 ++--
+ Ada95/package/debian/rules        |    2 +-
+ Ada95/src/library.gpr             |    2 +-
+ configure                         |    8 ++++----
+ package/debian-mingw/rules        |    2 +-
+ package/debian-mingw64/rules      |    2 +-
+ package/debian/rules              |    2 +-
+ test/configure                    |    4 ++--
+ test/package/debian-mingw/rules   |    2 +-
+ test/package/debian-mingw64/rules |    2 +-
+ test/package/debian/rules         |    2 +-
+ 11 files changed, 16 insertions(+), 16 deletions(-)
+
+--- a/Ada95/configure
++++ b/Ada95/configure
+@@ -1603,13 +1603,13 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+ else
+   if test "$GCC" = yes; then
+-    CFLAGS="-O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS=
+   fi
+--- a/Ada95/package/debian/rules
++++ b/Ada95/package/debian/rules
+@@ -21,7 +21,7 @@
+ ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+         CFLAGS += -O0
+ else
+-        CFLAGS += -O2
++        CFLAGS += -Os
+ endif
+ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+         INSTALL_PROGRAM += -s
+--- a/Ada95/src/library.gpr
++++ b/Ada95/src/library.gpr
+@@ -47,7 +47,7 @@
+   package Compiler is
+      for Default_Switches ("Ada") use
+        ("-g",
+-        "-O2",
++        "-Os",
+         "-gnatafno",
+         "-gnatVa",   -- All validity checks
+         "-gnatwa");  -- Activate all optional errors
+--- a/configure
++++ b/configure
+@@ -1961,13 +1961,13 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+ else
+   if test "$GCC" = yes; then
+-    CFLAGS="-O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS=
+   fi
+@@ -2878,13 +2878,13 @@
+   CXXFLAGS=$ac_save_CXXFLAGS
+ elif test $ac_cv_prog_cxx_g = yes; then
+   if test "$GXX" = yes; then
+-    CXXFLAGS="-g -O2"
++    CXXFLAGS="-Os"
+   else
+     CXXFLAGS="-g"
+   fi
+ else
+   if test "$GXX" = yes; then
+-    CXXFLAGS="-O2"
++    CXXFLAGS="-Os"
+   else
+     CXXFLAGS=
+   fi
+--- a/package/debian/rules
++++ b/package/debian/rules
+@@ -40,7 +40,7 @@
+ ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+         CFLAGS += -O0
+ else
+-        CFLAGS += -O2
++        CFLAGS += -Os
+ endif
+ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+         INSTALL_PROGRAM += -s
+--- a/package/debian-mingw/rules
++++ b/package/debian-mingw/rules
+@@ -60,7 +60,7 @@
+ ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+         CFLAGS += -O0
+ else
+-        CFLAGS += -O2
++        CFLAGS += -Os
+ endif
+ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+         INSTALL_PROGRAM += -s
+--- a/package/debian-mingw64/rules
++++ b/package/debian-mingw64/rules
+@@ -60,7 +60,7 @@
+ ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+         CFLAGS += -O0
+ else
+-        CFLAGS += -O2
++        CFLAGS += -Os
+ endif
+ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+         INSTALL_PROGRAM += -s
+--- a/test/configure
++++ b/test/configure
+@@ -1712,13 +1712,13 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS="-g"
+   fi
+ else
+   if test "$GCC" = yes; then
+-    CFLAGS="-O2"
++    CFLAGS="-Os"
+   else
+     CFLAGS=
+   fi
+--- a/test/package/debian/rules
++++ b/test/package/debian/rules
+@@ -25,7 +25,7 @@
+ ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+         CFLAGS += -O0
+ else
+-        CFLAGS += -O2
++        CFLAGS += -Os
+ endif
+ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+         INSTALL_PROGRAM += -s
+--- a/test/package/debian-mingw/rules
++++ b/test/package/debian-mingw/rules
+@@ -26,7 +26,7 @@
+ ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+         CFLAGS += -O0
+ else
+-        CFLAGS += -O2
++        CFLAGS += -Os
+ endif
+ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+         INSTALL_PROGRAM += -s
+--- a/test/package/debian-mingw64/rules
++++ b/test/package/debian-mingw64/rules
+@@ -26,7 +26,7 @@
+ ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+         CFLAGS += -O0
+ else
+-        CFLAGS += -O2
++        CFLAGS += -Os
+ endif
+ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+         INSTALL_PROGRAM += -s
