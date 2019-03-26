@@ -247,7 +247,11 @@ init_gpio_leds_buttons(void)
 	/* hide USB soft-led  */
 #if defined (BOARD_GPIO_LED_USB)
 	cpu_gpio_set_pin_direction(BOARD_GPIO_LED_USB, 1);
+#if defined (BOARD_GPIO_LED_USB_INVERTED)
+	cpu_gpio_set_pin(BOARD_GPIO_LED_USB, LED_ON);
+#else
 	cpu_gpio_set_pin(BOARD_GPIO_LED_USB, LED_OFF);
+#endif
 	cpu_gpio_led_set(BOARD_GPIO_LED_USB, LED_BLINK_STAY_HIDE);
 #if defined (BOARD_GPIO_LED_USB2)
 	cpu_gpio_set_pin_direction(BOARD_GPIO_LED_USB2, 1);
@@ -753,6 +757,9 @@ LED_CONTROL(int gpio_led, int flag)
 #endif
 #if defined (BOARD_GPIO_LED_USB)
 	case BOARD_GPIO_LED_USB:
+#if defined (BOARD_GPIO_LED_USB_INVERTED)
+		flag = !flag;
+#endif
 #if defined (BOARD_GPIO_LED_USB2)
 	case BOARD_GPIO_LED_USB2:
 #endif
