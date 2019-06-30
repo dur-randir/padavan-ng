@@ -63,7 +63,7 @@ func_disable_busybox_param()
 }
 
 if [ ! -f "$ROOTDIR/.config" ] ; then
-	cp -fv "$ROOTDIR/configs/templates/n56u_dlna.config" "$ROOTDIR/.config"
+	cp -fv "$ROOTDIR/configs/templates/n56u_mini.config" "$ROOTDIR/.config"
 fi
 
 if [ ! -f "$ROOTDIR/.config" ] ; then
