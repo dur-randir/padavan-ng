@@ -140,7 +140,7 @@ get_eeprom_params(void)
 	char regspec_code[8];
 	char wps_pin[12];
 	char productid[16];
-	char fwver[10], fwver_sub[36];
+	char fwver[10], fwver_sub[36], conf_templ[8];
 
 	memset(buffer, 0xff, ETHER_ADDR_LEN);
 #if defined (VENDOR_TPLINK)
@@ -351,9 +351,16 @@ get_eeprom_params(void)
 		strncat(fwver_sub, "_"FWREVSTR, 8);
 	}
 #endif
+#if defined(CONFTMPL)
+	if (strlen(CONFTMPL) > 0 && strlen(CONFTMPL) <= 8) {
+		strcpy(conf_templ, "none");
+		strcpy(conf_templ, CONFTMPL);
+	}
+#endif
 	nvram_set_temp("productid", trim_r(productid));
 	nvram_set_temp("firmver", trim_r(fwver));
 	nvram_set_temp("firmver_sub", trim_r(fwver_sub));
+	nvram_set_temp("config_template", trim_r(conf_templ));
 
 #if 0
 #if defined (VENDOR_ASUS)

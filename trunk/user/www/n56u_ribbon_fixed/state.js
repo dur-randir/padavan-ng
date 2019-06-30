@@ -353,8 +353,11 @@ function show_banner(L3){
 	bc += '    <td><a href="/Advanced_FirmwareUpgrade_Content.asp"><span id="firmver" class="time"></span></a></td>\n';
 	bc += '  </tr>\n';
 	bc += '  <tr>\n';
-	bc += '    <td><button type="button" id="commit_btn" class="btn btn-mini" style="width: 114px; height: 21px; outline:0; '+enabledBtnCommit+'" onclick="commit();"><i class="icon icon-fire"></i>&nbsp;<#CTL_Commit#></button></td>\n';
+	bc += '    <td><#General_x_ConfigTemplate_itemname#> <span id="conftempl"></span></td>\n';
 	bc += '    <td><button type="button" id="logout_btn" class="btn btn-mini" style="width: 114px; height: 21px; outline:0;" onclick="logout();"><#t1Logout#></button> <button type="button" id="reboto_btn" class="btn btn-mini" style="height: 21px; outline:0;" title="<#BTN_REBOOT#>" onclick="reboot();"><i class="icon icon-off"></i></button></td>\n';
+	bc += '  </tr>\n';
+	bc += '  <tr>\n';
+	bc += '    <td><button type="button" id="commit_btn" class="btn btn-mini" style="width: 114px; height: 21px; outline:0; '+enabledBtnCommit+'" onclick="commit();"><i class="icon icon-fire"></i>&nbsp;<#CTL_Commit#></button></td>\n';
 	bc += '  </tr>\n';
 	bc += '</table>\n';
 	bc += '</div>\n';
@@ -573,6 +576,8 @@ function show_top_status(){
 	showSystemInfo({busy: 0, user: 0, nice: 0, system: 0, idle: 0, iowait: 0, irq: 0, sirq: 0}, 0);
 
 	showtext($("firmver"), '<% nvram_get_x("",  "firmver_sub"); %>');
+
+	showtext($("conftempl"), '<% nvram_get_x("",  "config_template"); %>');
 
 	/*if(sw_mode == "3")
 		$("sw_mode_span").innerHTML = "AP";

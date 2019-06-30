@@ -1224,6 +1224,7 @@ General_x_SystemTime_itemname=System Time
 General_x_SystemUpTime_itemname=Uptime:
 General_x_SystemUpTime_itemdesc=Elapsed time since system boot
 General_x_FirmwareVersion_itemname=Firmware:
+General_x_ConfigTemplate_itemname=Build:
 Layer3Forwarding_x_ConnectionType_sectiondesc=ZVMODELVZ supports several connection types to WAN. These types are selected from the dropdown menu beside WAN Connection Type. The setting fields differ depending on the connection type you selected.
 Layer3Forwarding_x_ConnectionType_itemname=WAN Connection Type:
 Layer3Forwarding_x_STB_itemname=Choose IPTV STB Port:

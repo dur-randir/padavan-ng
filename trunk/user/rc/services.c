@@ -528,7 +528,7 @@ start_logger(int showinfo)
 		logmessage(LOGNAME, "bootloader version: %s", nvram_safe_get("blver"));
 #endif
 #endif
-		logmessage(LOGNAME, "firmware version: %s", nvram_safe_get("firmver_sub"));
+		logmessage(LOGNAME, "firmware version: %s (%s)", nvram_safe_get("firmver_sub"), nvram_safe_get("config_template"));
 	}
 
 	start_klogd();
