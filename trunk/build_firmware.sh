@@ -13,6 +13,23 @@ board_h=""
 board_mk=""
 paragon_hfsplus=0
 
+# start time for compile counter
+START=$(date +%s)
+
+# compile time counter
+endtime ()
+{
+	END=$(date +%s)
+	ELAPSED=$((END - START))
+	E_MIN=$((ELAPSED / 60))
+	E_SEC=$((ELAPSED - E_MIN * 60))
+	echo -e $COLOR_ORANGE
+	printf "Image Build time: "
+	echo -e $COLOR_NEUTRAL
+	[ $E_MIN != 0 ] && printf "%d min(s) " $E_MIN
+	printf "%d sec(s)\n" $E_SEC
+}
+
 func_enable_kernel_param()
 {
 	DEFPARAM="y"
@@ -502,3 +519,4 @@ echo --------------------------MAKE-DEP--------------------------------
 make dep
 echo --------------------------MAKE-ALL--------------------------------
 make
+endtime
