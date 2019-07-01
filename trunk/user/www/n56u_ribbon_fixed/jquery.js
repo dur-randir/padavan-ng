@@ -1441,18 +1441,21 @@ function addAriaWebControlLink() {
 // IXBT Community: http://forum.ixbt.com/topic.cgi?id=14:63903:l#l
 // Prometheus: http://4pda.ru/forum/index.php?showtopic=714487&view=getnewpost
 // Copyright: http://prometheus.freize.net/distribution.html
+// Unofficial Fork: https://github.com/zanezam/padawan-ng
 function appendCopyright() {
     var subFooter = jQuery('<div id="subFooter"></div>');
     var copyright1 = jQuery('<div align="center" class="copyright"></div>');
     var copyright2 = jQuery('<div align="center" class="copyright"></div>');
     var copyright3 = jQuery('<div align="center" class="copyright"></div>');
+    var copyright4 = jQuery('<div align="center" class="copyright"></div>');
     
     var date = new Date();
-    copyright1.append('<a href="https://bitbucket.org/padavan/rt-n56u" target="blank">© 2011-' + date.getFullYear() + ' Padavan &amp; N56U project community</a>');
+    copyright1.append('<a href="https://bitbucket.org/padavan/rt-n56u" target="blank">© 2011-' + date.getFullYear() + ' Padavan &amp; N56U project community &amp; Linaro</a>');
     copyright2.append('<a href="http://4pda.ru/forum/index.php?showtopic=686221&st=240&view=findpost&p=42644113" target="blank">Skins by Dave Medissn for 4PDA</a>');
-    copyright3.append('<a href="http://prometheus.freize.net/distribution.html" target="blank">Compiled by Prometheus. Firmware distribution is prohibited</a>');
-    
-    subFooter.append(copyright1, copyright3, copyright2);
+    copyright3.append('<a href="http://prometheus.freize.net/distribution.html" target="blank">Skins provided by Prometheus project. Firmware distribution is prohibited</a>');
+    copyright4.append('<a href="https://github.com/zanezam/" target="blank">This unofficial version was softly refreshed and compiled by ZaneZam</a>');
+
+    subFooter.append(copyright1, copyright4, copyright3, copyright2);
     jQuery('#footer').after(subFooter);
 
     // hide original copyright
