@@ -1,14 +1,17 @@
-    ASUS RT-N11P/N14U/N56U/N65U/AC51U/AC54U/AC1200/AC1200HP custom firmware by Padavan
+    ASUS RT-N11P/N14U/N56U/AC51U/AC54U/AC1200/AC1200HP custom firmware by Padavan
 
 
-Project sources:
-git clone https://bitbucket.org/padavan/rt-n56u.git
+Original Project Sources:
+https://bitbucket.org/padavan/rt-n56u.git
 
-Mirror Git:
-git clone https://github.com/andy-padavan/rt-n56u.git
+Original Mirror Git:
+https://github.com/andy-padavan/rt-n56u.git
 
-Git HTTP frontend:
-https://bitbucket.org/padavan/rt-n56u/commits/all
+Linaro's fork (based on original sources and highly updated till 2019, meanwhile archived since 27 june 2019):
+https://gitlab.com/padavan-ng/padavan-ng
+
+ZaneZam's fork (based on Linaro's fork and modified/updated by ZaneZam):
+https://github.com/zanezam/padavan-ng
 
 ATTENTION:
  - After the first upgrade from official firmware, all settings will be erased. Do not load
@@ -33,6 +36,74 @@ After manual NVRAM reset:
 
 
                               LIST OF CHANGES
+
+
+3.4.4.0z-001 (changes by ZaneZam):
+----------------------------------------------------------
+[RT-N56U]
+- Project config: introduced new project config 'mini' for the RT-N56U device which aims a 'network only' setup
+  with no multimedia and USB support based on original dlna config template
+  (see https://github.com/zanezam/padavan-ng/blob/custom/doc/FirmwareBuilds.md for details).
+- Project config: fix kernel config not found error in default config.
+- Project config: remove transmission from dlna template to reduce image size, so to be able to flash again on 8mb devices.
+- Project config: adjust aria and transmission config template to reduce image size, so to be able to flash again on 8mb devices.
+- Project config: switch from RU to DE for second language as the default setting in all RT-N56U config templates.
+[Common changes]
+- Toolchain: change toolchain string from 'UNKNOWN' to 'MIPS32' and removed revision detection as the toolchain dir is no git dir.
+- Change build system info to clearly differentiate from original/other firmware builds.
+- Linux kernel: fix SACK vulnerabilities and excess resource consumption due to low MSS values
+  (fixes CVE-2019-5599, CVE-2019-11477, CVE-2019-11478, CVE-2019-11479).
+- Documentation: modified for usage in this repo with respect of the original and the based fork.
+- Project config: bring in again build templates of original project.
+- Project config: merge new features and changes into old configs.
+- Project config: added build info to all config templates.
+- Project config: switch to RT-N56U mini config as default config.
+- Syslog: add config build to firmware version info in syslog.
+- Added config build info to image filename.
+- Updated xl2tpd to v1.3.14.
+- Updated util-linux to v2.34.
+- Updated strongswan to v5.8.0.
+- Updated radvd to v2.18.
+- Updated openssh to v8.0p1.
+- Updated mtd-utils to v2.1.0.
+- Updated iptables to v1.6.2.
+- Updated ipset to v7.2.
+- Updated inadyn to v2.5.
+- Added libconfuse v3.2.2 (inadyn v2.5 dependency).
+- Updated igmpproxy to v0.2.1.
+- Updated e2fsprogs to v1.45.2.
+- Updated dropbear to v2019.78.
+- Added the possibility to change the LAN port on which the sshd/dropbear service is listening.
+- Updated libsqlite to v3.29.0.
+- Updated libcurl to v7.65.3.
+- Updated busybox to 1.31.0.
+- Switch to optimization for size in vsftpd build.
+- Switch to optimization for size in ntfsprogs build.
+- WebUI: added new 'Build' aka config template information to firmware block.
+- WebUI: added unofficial version infos to 'Copyright' footer.
+- WebUI: changed naming of original and added unofficial project version links in firmware update page.
+- WebUI: add back exchange of project urls in translations and in addition add url of this fork to ENG and DEU translation (only them for now).
+- WebUI: fix HTTP negative content length buffer overflow vulnerability.
+- WebUI: updated/completed available german translations.
+- WebUI: add new SSH lan port translation to UK/RU language files.
+- WebUI: Advanced_Console_Content: fix 'ReferenceError: event is not defined'.
+- Build script: add md5 checksum file creation of firmware image file after build.
+- Build script: add compile time counter.
+- Build script: make 'mini' config the default if none is available.
+- Build script: added a 'build with log' script which logs to build.log and added this file to cleanup script.
+- Dropbear: add missing GatewayPort option also to dropbear start script.
+- Add required packages, `module-init-tools` and `sudo`, for build environment in Docker.
+- Dnsmasq: enable authoritative name server Advanced DHCP.
+- Dnsmasq.conf: maxlength of textarea increased from 4 to 16K.
+- Added some minor fixes and improvements taken from pull requests and issues of original project repo.
+  (see commits for details: https://github.com/zanezam/padavan-ng/commits/custom)
+
+
+3.4.3.9L-100 (changes by Linaro1985)
+---------------------------------------------------------
+Changelog:
+https://gitlab.com/padavan-ng/padavan-ng/commits/master
+
 
 3.X.3.9-099:
 ----------------------------------------------------------
