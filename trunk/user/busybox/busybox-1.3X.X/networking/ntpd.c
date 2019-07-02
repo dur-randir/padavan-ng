@@ -73,7 +73,7 @@
 //kbuild:lib-$(CONFIG_NTPD) += ntpd.o
 
 //usage:#define ntpd_trivial_usage
-//usage:	"[-dnqNwt"IF_FEATURE_NTPD_SERVER("l] [-I IFACE")"] [-S PROG]"
+//usage:	"[-dnqNw"IF_FEATURE_NTPD_SERVER("l] [-I IFACE")"] [-S PROG]"
 //usage:	IF_NOT_FEATURE_NTP_AUTH(" [-p PEER]...")
 //usage:	IF_FEATURE_NTP_AUTH(" [-k KEYFILE] [-p [keyno:N:]PEER]...")
 //usage:#define ntpd_full_usage "\n\n"
@@ -83,7 +83,6 @@
 //usage:     "\n	-q	Quit after clock is set"
 //usage:     "\n	-N	Run at high priority"
 //usage:     "\n	-w	Do not set time (only query peers), implies -n"
-//usage:     "\n	-t	Trust network and server, no RFC-4330 cross-checks"
 //usage:     "\n	-S PROG	Run PROG after stepping time, stratum change, and every 11 min"
 //usage:	IF_NOT_FEATURE_NTP_AUTH(
 //usage:     "\n	-p PEER	Obtain time from PEER (may be repeated)"
@@ -164,7 +163,7 @@
  *   datapoints after the step.
  */
 
-#define INITIAL_SAMPLES    2    /* how many samples do we want for init */
+#define INITIAL_SAMPLES    4    /* how many samples do we want for init */
 #define MIN_FREQHOLD      12    /* adjust offset, but not freq in this many first adjustments */
 #define BAD_DELAY_GROWTH   4    /* drop packet if its delay grew by more than this factor */
 
@@ -178,12 +177,11 @@
  */
 #define STEP_THRESHOLD     1
 /* Slew threshold (sec): adjtimex() won't accept offsets larger than this.
- * Using exact power of 2 (1/8) results in smaller code
+ * Using exact power of 2 (1/8, 1/2 etc) results in smaller code
  */
-#define SLEW_THRESHOLD 0.125
-//^^^^^^^^^^^^^^^^^^^^^^^^^^ TODO: man adjtimex about tmx.offset:
-// "Since Linux 2.6.26, the supplied value is clamped to the range (-0.5s, +0.5s)"
-// - can use this larger value instead?
+#define SLEW_THRESHOLD   0.5
+// ^^^^ used to be 0.125.
+// Since Linux 2.6.26 (circa 2006), kernel accepts (-0.5s, +0.5s) range
 
 /* Stepout threshold (sec). std ntpd uses 900 (11 mins (!)) */
 //UNUSED: #define WATCH_THRESHOLD  128
@@ -205,7 +203,7 @@
  * then it is decreased _at once_. (If <= 2^BIGPOLL, it will be decreased _eventually_).
  */
 #define BIGPOLL         9       /* 2^9 sec ~= 8.5 min */
-#define MAXPOLL         16      /* maximum poll interval (12: 1.1h, 17: 36.4h). std ntpd uses 17 */
+#define MAXPOLL         12      /* maximum poll interval (12: 1.1h, 17: 36.4h). std ntpd uses 17 */
 /*
  * Actively lower poll when we see such big offsets.
  * With SLEW_THRESHOLD = 0.125, it means we try to sync more aggressively
@@ -378,11 +376,10 @@ enum {
 	/* Insert new options above this line. */
 	/* Non-compat options: */
 	OPT_w = (1 << (4+ENABLE_FEATURE_NTP_AUTH)),
-	OPT_t = (1 << 5),
-	OPT_p = (1 << (6+ENABLE_FEATURE_NTP_AUTH)),
-	OPT_S = (1 << (7+ENABLE_FEATURE_NTP_AUTH)),
-	OPT_l = (1 << (8+ENABLE_FEATURE_NTP_AUTH)) * ENABLE_FEATURE_NTPD_SERVER,
-	OPT_I = (1 << (9+ENABLE_FEATURE_NTP_AUTH)) * ENABLE_FEATURE_NTPD_SERVER,
+	OPT_p = (1 << (5+ENABLE_FEATURE_NTP_AUTH)),
+	OPT_S = (1 << (6+ENABLE_FEATURE_NTP_AUTH)),
+	OPT_l = (1 << (7+ENABLE_FEATURE_NTP_AUTH)) * ENABLE_FEATURE_NTPD_SERVER,
+	OPT_I = (1 << (8+ENABLE_FEATURE_NTP_AUTH)) * ENABLE_FEATURE_NTPD_SERVER,
 	/* We hijack some bits for other purposes */
 	OPT_qq = (1 << 31),
 };
@@ -1133,7 +1130,7 @@ step_time(double offset)
 	}
 	tval = tvn.tv_sec;
 	strftime_YYYYMMDDHHMMSS(buf, sizeof(buf), &tval);
-	bb_error_msg("setting time to %s.%06u (offset %+fs)", buf, (unsigned)tvn.tv_usec, offset);
+	bb_info_msg("setting time to %s.%06u (offset %+fs)", buf, (unsigned)tvn.tv_usec, offset);
 	//maybe? G.FREQHOLD_cnt = 0;
 
 	/* Correct various fields which contain time-relative values: */
@@ -1215,9 +1212,6 @@ fit(peer_t *p, double rd)
 				"unreachable", p->p_dotted);
 		return 0;
 	}
-	if (option_mask32 & OPT_t) /* RFC-4330 check disabled */
-		return 1;
-
 #if 0 /* we filter out such packets earlier */
 	if ((p->lastpkt_status & LI_ALARM) == LI_ALARM
 	 || p->lastpkt_stratum >= MAXSTRAT
@@ -1657,7 +1651,6 @@ update_local_clock(peer_t *p)
 		VERB4 bb_error_msg("stepping time by %+f; poll_exp=MINPOLL", offset);
 		step_time(offset);
 		if (option_mask32 & OPT_q) {
-			run_script("step", offset);
 			/* We were only asked to set time once. Done. */
 			exit(0);
 		}
@@ -1698,7 +1691,6 @@ update_local_clock(peer_t *p)
 				/* We were only asked to set time once.
 				 * The clock is precise enough, no need to step.
 				 */
-				run_script("step", offset);
 				exit(0);
 			}
 #if USING_INITIAL_FREQ_ESTIMATION
@@ -2054,10 +2046,9 @@ recv_and_process_peer_pkt(peer_t *p)
 	close(p->p_fd);
 	p->p_fd = -1;
 
-	if (!(option_mask32 & OPT_t) /* RFC-4330 check enabled by default */
-	 && ((msg.m_status & LI_ALARM) == LI_ALARM
+	if ((msg.m_status & LI_ALARM) == LI_ALARM
 	 || msg.m_stratum == 0
-	 || msg.m_stratum > NTP_MAXSTRATUM)
+	 || msg.m_stratum > NTP_MAXSTRATUM
 	) {
 		bb_error_msg("reply from %s: peer is unsynced", p->p_dotted);
 		/*
@@ -2141,7 +2132,7 @@ recv_and_process_peer_pkt(peer_t *p)
 
 	p->reachable_bits |= 1;
 	if ((MAX_VERBOSE && G.verbose) || (option_mask32 & OPT_w)) {
-		bb_error_msg("reply from %s: offset:%+f delay:%f status:0x%02x strat:%d refid:0x%08x rootdelay:%f reach:0x%02x",
+		bb_info_msg("reply from %s: offset:%+f delay:%f status:0x%02x strat:%d refid:0x%08x rootdelay:%f reach:0x%02x",
 			p->p_dotted,
 			offset,
 			p->p_raw_delay,
@@ -2440,7 +2431,7 @@ static NOINLINE void ntp_init(char **argv)
 	opts = getopt32(argv, "^"
 			"nqNx" /* compat */
 			IF_FEATURE_NTP_AUTH("k:")  /* compat */
-			"wtp:*S:"IF_FEATURE_NTPD_SERVER("l") /* NOT compat */
+			"wp:*S:"IF_FEATURE_NTPD_SERVER("l") /* NOT compat */
 			IF_FEATURE_NTPD_SERVER("I:") /* compat */
 			"d" /* compat */
 			"46aAbgL" /* compat, ignored */
@@ -2594,6 +2585,10 @@ static NOINLINE void ntp_init(char **argv)
 		/* -l but no peers: "stratum 1 server" mode */
 		G.stratum = 1;
 	}
+
+	if (!(opts & OPT_n)) /* only if backgrounded: */
+		write_pidfile_std_path_and_ext("ntpd");
+
 	/* If network is up, syncronization occurs in ~10 seconds.
 	 * We give "ntpd -q" 10 seconds to get first reply,
 	 * then another 50 seconds to finish syncing.
@@ -2649,8 +2644,6 @@ int ntpd_main(int argc UNUSED_PARAM, char **argv)
 	 * since last reply does not come back instantaneously.
 	 */
 	cnt = G.peer_cnt * (INITIAL_SAMPLES + 1);
-
-	write_pidfile(CONFIG_PID_FILE_PATH "/ntpd.pid");
 
 	while (!bb_got_signal) {
 		llist_t *item;
@@ -2823,7 +2816,7 @@ int ntpd_main(int argc UNUSED_PARAM, char **argv)
 		}
 	} /* while (!bb_got_signal) */
 
-	remove_pidfile(CONFIG_PID_FILE_PATH "/ntpd.pid");
+	remove_pidfile_std_path_and_ext("ntpd");
 	kill_myself_with_sig(bb_got_signal);
 }
 

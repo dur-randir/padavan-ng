@@ -1,6 +1,6 @@
 VERSION = 1
-PATCHLEVEL = 30
-SUBLEVEL = 1
+PATCHLEVEL = 31
+SUBLEVEL = 0
 EXTRAVERSION =
 NAME = Unnamed
 
@@ -278,8 +278,8 @@ HOSTCXXFLAGS	:=
 # We need some generic definitions
 include $(srctree)/scripts/Kbuild.include
 
-HOSTCFLAGS	+= $(call hostcc-option,-Wall -Wstrict-prototypes -Os -fomit-frame-pointer,)
-HOSTCXXFLAGS	+= -Os
+HOSTCFLAGS	+= $(call hostcc-option,-Wall -Wstrict-prototypes -O2 -fomit-frame-pointer,)
+HOSTCXXFLAGS	+= -O2
 
 # For maximum performance (+ possibly random breakage, uncomment
 # the following)
@@ -981,11 +981,6 @@ MRPROPER_FILES += .config .config.old include/asm .version .old_version \
 		  include/usage_compressed.h \
 		  include/applet_tables.h \
 		  include/applets.h \
-		  docs/busybox.1 \
-		  docs/BusyBox.html \
-		  docs/busybox.net/BusyBox.html \
-		  docs/busybox.pod \
-		  docs/BusyBox.txt \
 		  include/usage.h \
 		  applets/usage \
 		  .kernelrelease Module.symvers tags TAGS cscope* \
