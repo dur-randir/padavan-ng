@@ -1438,7 +1438,7 @@ int udhcpc_main(int argc UNUSED_PARAM, char **argv)
 		 * member interfaces were added/removed or if the status of the
 		 * bridge changed).
 		 * Workaround: refresh it here before processing the next packet */
-		udhcp_read_interface(client_data.interface, &client_data.ifindex, NULL, client_data.client_mac);
+		udhcp_read_interface(client_data.interface, &client_data.ifindex, NULL, client_data.client_mac, NULL);
 
 		//bb_error_msg("sockfd:%d, listen_mode:%d", client_data.sockfd, client_data.listen_mode);
 
