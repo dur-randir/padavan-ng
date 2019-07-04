@@ -26,13 +26,13 @@
 #ifndef LINUX
 # include <sys/uio.h>
 #endif
-#include <sys/resource.h>
 #include "l2tp.h"
 #include "ipsecmast.h"
 #include "misc.h"    /* for IPADDY macro */
 
 char hostname[256];
-int server_socket = -1;         /* Server socket */
+struct sockaddr_in server, from;        /* Server and transmitter structs */
+int server_socket;              /* Server socket */
 #ifdef USE_KERNEL
 int kernel_support;             /* Kernel Support there or not? */
 #endif
@@ -40,39 +40,37 @@ int kernel_support;             /* Kernel Support there or not? */
 int init_network (void)
 {
     long arg;
-    struct sockaddr_in server;
     unsigned int length = sizeof (server);
-
     gethostname (hostname, sizeof (hostname));
-
-    /* create server socket only has lns */
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = gconfig.listenaddr;
     server.sin_port = htons (gconfig.port);
-
+    int flags;
     if ((server_socket = socket (PF_INET, SOCK_DGRAM, 0)) < 0)
     {
-        l2tp_log (LOG_CRIT, "%s: Unable to allocate socket. Terminating.\n", __FUNCTION__);
+        l2tp_log (LOG_CRIT, "%s: Unable to allocate socket. Terminating.\n",
+             __FUNCTION__);
         return -EINVAL;
-    }
+    };
 
-    arg=1;
-    setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &arg, sizeof(arg));
+    flags = 1;
+    setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &flags, sizeof(flags));
 #ifdef SO_NO_CHECK
-    setsockopt(server_socket, SOL_SOCKET, SO_NO_CHECK, &arg, sizeof(arg));
+    setsockopt(server_socket, SOL_SOCKET, SO_NO_CHECK, &flags, sizeof(flags));
 #endif
 
     if (bind (server_socket, (struct sockaddr *) &server, sizeof (server)))
     {
         close (server_socket);
-        l2tp_log (LOG_CRIT, "%s: Unable to bind socket: %s. Terminating.\n", __FUNCTION__, strerror(errno), errno);
+        l2tp_log (LOG_CRIT, "%s: Unable to bind socket: %s. Terminating.\n",
+             __FUNCTION__, strerror(errno), errno);
         return -EINVAL;
-    }
-
+    };
     if (getsockname (server_socket, (struct sockaddr *) &server, &length))
     {
         close (server_socket);
-        l2tp_log (LOG_CRIT, "%s: Unable to read socket name.Terminating.\n", __FUNCTION__);
+        l2tp_log (LOG_CRIT, "%s: Unable to read socket name.Terminating.\n",
+             __FUNCTION__);
         return -EINVAL;
     }
 
@@ -89,9 +87,7 @@ int init_network (void)
     {
         arg=1;
         if(setsockopt(server_socket, IPPROTO_IP, gconfig.sarefnum,  &arg, sizeof(arg)) != 0) {
-#ifdef DEBUG_MORE
             l2tp_log(LOG_CRIT, "setsockopt recvref[%d]: %s\n", gconfig.sarefnum, strerror(errno));
-#endif
             gconfig.ipsecsaref=0;
         }
         else
@@ -117,7 +113,8 @@ int init_network (void)
         int kernel_fd = socket(AF_PPPOX, SOCK_DGRAM, PX_PROTO_OL2TP);
         if (kernel_fd < 0)
         {
-            l2tp_log (LOG_INFO, "L2TP kernel support not detected.\n");
+            close(kernel_fd);
+            l2tp_log (LOG_INFO, "L2TP kernel support not detected (try modprobing l2tp_ppp and pppol2tp)\n");
             kernel_support = 0;
         }
         else
@@ -130,12 +127,10 @@ int init_network (void)
 #else
     l2tp_log (LOG_INFO, "This binary does not support kernel L2TP.\n");
 #endif
-
     arg = fcntl (server_socket, F_GETFL);
     arg |= O_NONBLOCK;
     fcntl (server_socket, F_SETFL, arg);
     gconfig.port = ntohs (server.sin_port);
-
     return 0;
 }
 
@@ -202,9 +197,6 @@ void dethrottle (void *call)
 	} */
 }
 
-void foo (void *bar) {
-}
-
 void control_xmit (void *b)
 {
     struct buffer *buf = (struct buffer *) b;
@@ -218,15 +210,19 @@ void control_xmit (void *b)
         return;
     }
 
-    ns = ntohs (((struct control_hdr *) (buf->start))->Ns);
-
     t = buf->tunnel;
+#ifdef DEBUG_CONTROL_XMIT
+    if(t) {
+	    l2tp_log (LOG_DEBUG,
+		      "trying to send control packet to %d\n",
+		      t->ourtid);
+    }
+#endif
+
+    buf->retries++;
+    ns = ntohs (((struct control_hdr *) (buf->start))->Ns);
     if (t)
     {
-#ifdef DEBUG_CONTROL_XMIT
-	    l2tp_log (LOG_DEBUG,
-                    "trying to send control packet %d to %d\n", ns, t->ourtid);
-#endif
         if (ns < t->cLr)
         {
 #ifdef DEBUG_CONTROL_XMIT
@@ -237,7 +233,6 @@ void control_xmit (void *b)
             return;
         }
     }
-    buf->retries++;
     if (buf->retries > gconfig.max_retries)
     {
         /*
@@ -253,9 +248,6 @@ void control_xmit (void *b)
                      t->ourtid);
                 t->self->needclose = 0;
                 t->self->closing = -1;
-    		tv.tv_sec = 1;
-        	tv.tv_usec = 0;
-        	schedule (tv, foo, t);
             }
             else
             {
@@ -264,9 +256,6 @@ void control_xmit (void *b)
                      t->ourtid);
                 strcpy (t->self->errormsg, "Timeout");
                 t->self->needclose = -1;
-    		tv.tv_sec = 1;
-        	tv.tv_usec = 0;
-        	schedule (tv, foo, t);
             }
 	    call_close(t->self);
         }
@@ -274,16 +263,20 @@ void control_xmit (void *b)
     }
     else
     {
-        tv.tv_sec = 1;
+        /*
+         * Adaptive timeout with exponential backoff.  The delay grows
+         * exponentialy, unless it's capped by configuration.
+         */
+        unsigned shift_by = (buf->retries-1);
+        if (shift_by > 31)
+            shift_by = 31;
+
+        tv.tv_sec = 1LL << shift_by;
         tv.tv_usec = 0;
-
-        if (buf->retries > 1)
-            tv.tv_sec = 1LL << (buf->retries-1);
-
         schedule (tv, control_xmit, buf);
 #ifdef DEBUG_CONTROL_XMIT
-        l2tp_log (LOG_DEBUG, "%s: Scheduling and transmitting packet %d, retries: %d\n",
-             __FUNCTION__, ns, buf->retries);
+        l2tp_log (LOG_DEBUG, "%s: Scheduling and transmitting packet %d\n",
+             __FUNCTION__, ns);
 #endif
         udp_xmit (buf, t);
     }
@@ -311,7 +304,6 @@ void udp_xmit (struct buffer *buf, struct tunnel *t)
     struct msghdr msgh;
     int err;
     struct iovec iov;
-    struct in_pktinfo *pktinfo;
     int finallen = 0;
 
     /*
@@ -336,7 +328,9 @@ void udp_xmit (struct buffer *buf, struct tunnel *t)
 	finallen = cmsg->cmsg_len;
     }
 
+#ifdef LINUX
     if (t->my_addr.ipi_addr.s_addr){
+	struct in_pktinfo *pktinfo;
 
 	if ( ! cmsg) {
 		cmsg = CMSG_FIRSTHDR(&msgh);
@@ -354,6 +348,7 @@ void udp_xmit (struct buffer *buf, struct tunnel *t)
 
 	finallen += cmsg->cmsg_len;
     }
+#endif
 
     /*
      * Some OS don't like assigned buffer with zero length (e.g. OpenBSD),
@@ -375,6 +370,7 @@ void udp_xmit (struct buffer *buf, struct tunnel *t)
     msgh.msg_iov  = &iov;
     msgh.msg_iovlen = 1;
     msgh.msg_flags = 0;
+
 
     /* Receive one packet. */
     if ((err = sendmsg(server_socket, &msgh, 0)) < 0) {
@@ -473,12 +469,6 @@ void network_thread ()
     int * currentfd;
     int server_socket_processed;
 
-#ifdef HIGH_PRIO
-    /* set high priority */
-    if (setpriority(PRIO_PROCESS, 0, -20) < 0)
-	l2tp_log (LOG_INFO, "xl2tpd: can't set priority to high: %m");
-#endif
-
     /* This one buffer can be recycled for everything except control packets */
     buf = new_buf (MAX_RECV_SIZE);
 
@@ -492,10 +482,8 @@ void network_thread ()
         max = build_fdset (&readfds);
         ptv = process_schedule(&tv);
         ret = select (max + 1, &readfds, NULL, NULL, ptv);
-
         if (ret <= 0)
         {
-#ifdef DEBUG_MORE
             if (ret == 0)
             {
                 if (gconfig.debug_network)
@@ -514,10 +502,8 @@ void network_thread ()
                         __FUNCTION__, errno, strerror (errno));
                 }
             }
-#endif
             continue;
         }
-
         if (FD_ISSET (control_fd, &readfds))
         {
             do_control ();
@@ -525,7 +511,8 @@ void network_thread ()
         server_socket_processed = 0;
         currentfd = NULL;
         st = tunnels.head;
-        while (st || !server_socket_processed) {
+        while (st || !server_socket_processed)
+		{
             if (st && (st->udp_fd == -1)) {
                 st=st->next;
                 continue;
@@ -592,29 +579,31 @@ void network_thread ()
             }
 
 
-	    refme=refhim=0;
+        refme=refhim=0;
 
 
-		struct cmsghdr *cmsg;
-		/* Process auxiliary received data in msgh */
-		for (cmsg = CMSG_FIRSTHDR(&msgh);
-			cmsg != NULL;
-			cmsg = CMSG_NXTHDR(&msgh,cmsg)) {
-			/* extract destination(our) addr */
-			if (cmsg->cmsg_level == IPPROTO_IP && cmsg->cmsg_type == IP_PKTINFO) {
-				struct in_pktinfo* pktInfo = ((struct in_pktinfo*)CMSG_DATA(cmsg));
-				to = *pktInfo;
-			}
-			/* extract IPsec info out */
-			else if (gconfig.ipsecsaref && cmsg->cmsg_level == IPPROTO_IP
-			&& cmsg->cmsg_type == gconfig.sarefnum) {
-				unsigned int *refp;
+        struct cmsghdr *cmsg;
+        /* Process auxiliary received data in msgh */
+        for (cmsg = CMSG_FIRSTHDR(&msgh);
+            cmsg != NULL;
+            cmsg = CMSG_NXTHDR(&msgh,cmsg)) {
+#ifdef LINUX
+            /* extract destination(our) addr */
+            if (cmsg->cmsg_level == IPPROTO_IP && cmsg->cmsg_type == IP_PKTINFO) {
+                struct in_pktinfo* pktInfo = ((struct in_pktinfo*)CMSG_DATA(cmsg));
+                to = *pktInfo;
+            } else
+#endif
+            /* extract IPsec info out */
+            if (gconfig.ipsecsaref && cmsg->cmsg_level == IPPROTO_IP &&
+                cmsg->cmsg_type == gconfig.sarefnum) {
+                unsigned int *refp;
 
-				refp = (unsigned int *)CMSG_DATA(cmsg);
-				refme =refp[0];
-				refhim=refp[1];
-			}
-		}
+                refp = (unsigned int *)CMSG_DATA(cmsg);
+                refme =refp[0];
+                refhim=refp[1];
+            }
+        }
 
 	    /*
 	     * some logic could be added here to verify that we only
@@ -637,6 +626,7 @@ void network_thread ()
 	    {
 		do_packet_dump (buf);
 	    }
+
         if (!(c = get_call (tunnel, call, from.sin_addr,
                 from.sin_port, refme, refhim)))
         {
@@ -653,19 +643,16 @@ void network_thread ()
                 if (gconfig.debug_tunnel)
                 l2tp_log (LOG_DEBUG,
                     "%s: no such call %d on tunnel %d.  Sending special ZLB\n",
-				  __FUNCTION__, call, tunnel);
-		    if (handle_special (buf, c, call) == 0)
-			/* get a new buffer */
+                    __FUNCTION__);
+                if(1==handle_special (buf, c, call)) {
                     buf = new_buf (MAX_RECV_SIZE);
                 }
-#ifdef DEBUG_MORE
-		else{
+            }
+            else
                 l2tp_log (LOG_DEBUG,
                     "%s: unable to find call or tunnel to handle packet.  call = %d, tunnel = %d Dumping.\n",
                     __FUNCTION__, call, tunnel);
         }
-#endif
-	    }
         else
         {
             if (c->container) {
@@ -694,147 +681,140 @@ void network_thread ()
 	/*
 	 * finished obvious sources, look for data from PPP connections.
 	 */
-	st = tunnels.head;
-        while (st)
+        for (st = tunnels.head; st; st = st->next)
         {
-            sc = st->call_head;
-            while (sc)
+            for (sc = st->call_head; sc; sc = sc->next)
             {
-                if ((sc->fd >= 0) && FD_ISSET (sc->fd, &readfds))
+                if ((sc->fd < 0) || !FD_ISSET (sc->fd, &readfds))
+                    continue;
+
+                /* Got some payload to send */
+                int result;
+
+                while ((result = read_packet (sc)) > 0)
                 {
-                    /* Got some payload to send */
-                    int result;
-
-                    while ((result = read_packet (sc)) > 0)
+                    add_payload_hdr (sc->container, sc, sc->ppp_buf);
+                    if (gconfig.packet_dump)
                     {
-                        add_payload_hdr (sc->container, sc, sc->ppp_buf);
-                        if (gconfig.packet_dump)
-                        {
-                            do_packet_dump (sc->ppp_buf);
-                        }
-
-
-                        sc->prx = sc->data_rec_seq_num;
-                        if (sc->zlb_xmit)
-                        {
-                            deschedule (sc->zlb_xmit);
-                            sc->zlb_xmit = NULL;
-                        }
-                        sc->tx_bytes += sc->ppp_buf->len;
-                        sc->tx_pkts++;
-
-                        unsigned char* tosval = get_inner_tos_byte(sc->ppp_buf);
-                        unsigned char* typeval = get_inner_ppp_type(sc->ppp_buf);
-
-                        int tosval_dec = (int)*tosval;
-                        int typeval_dec = (int)*typeval;
-
-                        if (typeval_dec != 33 )
-                        	tosval_dec=atoi(gconfig.controltos);
-                        setsockopt(server_socket, IPPROTO_IP, IP_TOS, &tosval_dec, sizeof(tosval_dec));
-
-                        udp_xmit (sc->ppp_buf, st);
-                        recycle_payload (sc->ppp_buf, sc->container->peer);
+                        do_packet_dump (sc->ppp_buf);
                     }
-                    if (result != 0)
+
+                    sc->prx = sc->data_rec_seq_num;
+                    if (sc->zlb_xmit)
                     {
-                        l2tp_log (LOG_WARNING,
-                             "%s: tossing read packet, error = %s (%d).  Closing call.\n",
-                             __FUNCTION__, strerror (-result), -result);
-                        strcpy (sc->errormsg, strerror (-result));
-                        sc->needclose = -1;
+                        deschedule (sc->zlb_xmit);
+                        sc->zlb_xmit = NULL;
                     }
+                    sc->tx_bytes += sc->ppp_buf->len;
+                    sc->tx_pkts++;
+
+                    unsigned char* tosval = get_inner_tos_byte(sc->ppp_buf);
+                    unsigned char* typeval = get_inner_ppp_type(sc->ppp_buf);
+
+                    int tosval_dec = (int)*tosval;
+                    int typeval_dec = (int)*typeval;
+
+                    if (typeval_dec != 33 )
+                        tosval_dec=atoi(gconfig.controltos);
+                    setsockopt(server_socket, IPPROTO_IP, IP_TOS, &tosval_dec, sizeof(tosval_dec));
+
+                    udp_xmit (sc->ppp_buf, st);
+                    recycle_payload (sc->ppp_buf, sc->container->peer);
                 }
-                sc = sc->next;
-            }
-            st = st->next;
-        }
+                if (result != 0)
+                {
+                    l2tp_log (LOG_WARNING,
+                         "%s: tossing read packet, error = %s (%d).  Closing call.\n",
+                         __FUNCTION__, strerror (-result), -result);
+                    strcpy (sc->errormsg, strerror (-result));
+                    sc->needclose = -1;
+                }
+            } // for (sc..
+        } // for (st..
     }
 
 }
 
 #ifdef USE_KERNEL
 int connect_pppol2tp(struct tunnel *t) {
-        if (kernel_support) {
-            int ufd = -1, fd2 = -1;
-            int flags;
-            struct sockaddr_pppol2tp sax;
+    if (!kernel_support)
+        return 0;
 
-            struct sockaddr_in server;
+    int ufd = -1, fd2 = -1;
+    int flags;
+    struct sockaddr_pppol2tp sax;
 
-            memset(&server, 0, sizeof(struct sockaddr_in));
-            server.sin_family = AF_INET;
-            server.sin_addr.s_addr = gconfig.listenaddr;
-            server.sin_port = htons (gconfig.port);
-            if ((ufd = socket (PF_INET, SOCK_DGRAM, 0)) < 0)
-            {
-                l2tp_log (LOG_CRIT, "%s: Unable to allocate UDP socket. Terminating.\n",
-                    __FUNCTION__);
-                return -EINVAL;
-            }
+    struct sockaddr_in server;
 
-            flags=1;
-            setsockopt(ufd, SOL_SOCKET, SO_REUSEADDR, &flags, sizeof(flags));
+    memset(&server, 0, sizeof(struct sockaddr_in));
+    server.sin_family = AF_INET;
+    server.sin_addr.s_addr = gconfig.listenaddr;
+    server.sin_port = htons (gconfig.port);
+    if ((ufd = socket (PF_INET, SOCK_DGRAM, 0)) < 0)
+    {
+        l2tp_log (LOG_CRIT, "%s: Unable to allocate UDP socket. Terminating.\n",
+            __FUNCTION__);
+        return -EINVAL;
+    };
+
+    flags=1;
+    setsockopt(ufd, SOL_SOCKET, SO_REUSEADDR, &flags, sizeof(flags));
 #ifdef SO_NO_CHECK
-            setsockopt(ufd, SOL_SOCKET, SO_NO_CHECK, &flags, sizeof(flags));
+    setsockopt(ufd, SOL_SOCKET, SO_NO_CHECK, &flags, sizeof(flags));
 #endif
 
-            if (bind (ufd, (struct sockaddr *) &server, sizeof (server)))
-            {
-                l2tp_log (LOG_CRIT, "%s: Unable to bind UDP socket: %s. Terminating.\n",
-                     __FUNCTION__, strerror(errno), errno);
-                close (ufd);
-                return -EINVAL;
-            }
-            server = t->peer;
-            flags = fcntl(ufd, F_GETFL);
-            if (flags == -1 || fcntl(ufd, F_SETFL, flags | O_NONBLOCK) == -1) {
-                l2tp_log (LOG_WARNING, "%s: Unable to set UDP socket nonblock.\n",
-                     __FUNCTION__);
-                close (ufd);
-                return -EINVAL;
-            }
-            if (connect (ufd, (struct sockaddr *) &server, sizeof(server)) < 0) {
-                l2tp_log (LOG_CRIT, "%s: Unable to connect UDP peer. Terminating.\n",
-                 __FUNCTION__);
-                close(ufd);
-                return -EINVAL;
-            }
+    if (bind (ufd, (struct sockaddr *) &server, sizeof (server)))
+    {
+        close (ufd);
+        l2tp_log (LOG_CRIT, "%s: Unable to bind UDP socket: %s. Terminating.\n",
+             __FUNCTION__, strerror(errno), errno);
+        return -EINVAL;
+    };
+    server = t->peer;
+    flags = fcntl(ufd, F_GETFL);
+    if (flags == -1 || fcntl(ufd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        l2tp_log (LOG_WARNING, "%s: Unable to set UDP socket nonblock.\n",
+             __FUNCTION__);
+        return -EINVAL;
+    }
+    if (connect (ufd, (struct sockaddr *) &server, sizeof(server)) < 0) {
+        l2tp_log (LOG_CRIT, "%s: Unable to connect UDP peer. Terminating.\n",
+         __FUNCTION__);
+        close(ufd);
+        return -EINVAL;
+    }
 
-            t->udp_fd=ufd;
+    t->udp_fd=ufd;
 
-            fd2 = socket(AF_PPPOX, SOCK_DGRAM, PX_PROTO_OL2TP);
-            if (fd2 < 0) {
-                l2tp_log (LOG_WARNING, "%s: Unable to allocate PPPoL2TP socket.\n",
-                     __FUNCTION__);
-                return -EINVAL;
-            }
-            flags = fcntl(fd2, F_GETFL);
-            if (flags == -1 || fcntl(fd2, F_SETFL, flags | O_NONBLOCK) == -1) {
-                l2tp_log (LOG_WARNING, "%s: Unable to set PPPoL2TP socket nonblock.\n",
-                     __FUNCTION__);
-                close(fd2);
-                return -EINVAL;
-            }
-            memset(&sax, 0, sizeof(sax));
-            sax.sa_family = AF_PPPOX;
-            sax.sa_protocol = PX_PROTO_OL2TP;
-            sax.pppol2tp.fd = t->udp_fd;
-            sax.pppol2tp.addr.sin_addr.s_addr = t->peer.sin_addr.s_addr;
-            sax.pppol2tp.addr.sin_port = t->peer.sin_port;
-            sax.pppol2tp.addr.sin_family = AF_INET;
-            sax.pppol2tp.s_tunnel  = t->ourtid;
-            sax.pppol2tp.d_tunnel  = t->tid;
-            if ((connect(fd2, (struct sockaddr *)&sax, sizeof(sax))) < 0) {
-                l2tp_log (LOG_WARNING, "%s: Unable to connect PPPoL2TP socket. %d %s\n",
-                     __FUNCTION__, errno, strerror(errno));
-                close(fd2);
-                return -EINVAL;
-            }
-            t->pppox_fd = fd2;
-        }
-
+    fd2 = socket(AF_PPPOX, SOCK_DGRAM, PX_PROTO_OL2TP);
+    if (fd2 < 0) {
+        l2tp_log (LOG_WARNING, "%s: Unable to allocate PPPoL2TP socket.\n",
+             __FUNCTION__);
+        return -EINVAL;
+    }
+    flags = fcntl(fd2, F_GETFL);
+    if (flags == -1 || fcntl(fd2, F_SETFL, flags | O_NONBLOCK) == -1) {
+        l2tp_log (LOG_WARNING, "%s: Unable to set PPPoL2TP socket nonblock.\n",
+             __FUNCTION__);
+        close(fd2);
+        return -EINVAL;
+    }
+    memset(&sax, 0, sizeof(sax));
+    sax.sa_family = AF_PPPOX;
+    sax.sa_protocol = PX_PROTO_OL2TP;
+    sax.pppol2tp.fd = t->udp_fd;
+    sax.pppol2tp.addr.sin_addr.s_addr = t->peer.sin_addr.s_addr;
+    sax.pppol2tp.addr.sin_port = t->peer.sin_port;
+    sax.pppol2tp.addr.sin_family = AF_INET;
+    sax.pppol2tp.s_tunnel  = t->ourtid;
+    sax.pppol2tp.d_tunnel  = t->tid;
+    if ((connect(fd2, (struct sockaddr *)&sax, sizeof(sax))) < 0) {
+        l2tp_log (LOG_WARNING, "%s: Unable to connect PPPoL2TP socket. %d %s\n",
+             __FUNCTION__, errno, strerror(errno));
+        close(fd2);
+        return -EINVAL;
+    }
+    t->pppox_fd = fd2;
     return 0;
 }
 #endif
-

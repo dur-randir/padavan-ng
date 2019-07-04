@@ -7,9 +7,6 @@
 # This is free software.  You may distribute it under
 # the terms of the GNU General Public License,
 # version 2, or at your option any later version.
-
-include Makefile.ver
-
 #
 # Note on debugging flags:
 # -DDEBUG_ZLB shows all ZLB exchange traffic
@@ -117,7 +114,7 @@ SBINDIR?=$(DESTDIR)${PREFIX}/sbin
 BINDIR?=$(DESTDIR)${PREFIX}/bin
 MANDIR?=$(DESTDIR)${PREFIX}/share/man
 
-CFLAGS  += -ffunction-sections -fdata-sections -fvisibility=hidden
+CFLAGS  += -ffunction-sections -fdata-sections
 LDFLAGS += -Wl,--gc-sections
 
 all: $(EXEC) 
@@ -134,9 +131,6 @@ pfc:
 
 romfs:
 	$(ROMFSINST) /usr/sbin/$(EXEC)
-
-version:
-	@echo ${XL2TPDVERSION}
 
 TAGS:	${SRCS}
 	etags ${SRCS}
