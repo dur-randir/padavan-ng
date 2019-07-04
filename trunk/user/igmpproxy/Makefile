@@ -1,4 +1,4 @@
-SRC_NAME=igmpproxy-0.1
+SRC_NAME=igmpproxy-0.2.1
 
 CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
