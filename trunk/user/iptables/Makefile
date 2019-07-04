@@ -1,12 +1,12 @@
-SRC_NAME=iptables-1.4.16.3
+SRC_NAME=iptables-1.6.2
 
 CFLAGS  += -ffunction-sections -fdata-sections
 LDFLAGS += -Wl,--gc-sections
 
 THISDIR = $(shell pwd)
 
-all: config_test
-	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
+all:	config_test
+	$(MAKE) -C $(SRC_NAME)
 
 config_test:
 	( if [ -f ./config_done ]; then \
@@ -65,6 +65,8 @@ endif
 		--prefix= \
 		--enable-static \
 		--disable-shared \
+		--disable-nftables \
+		--disable-connlabel \
 		--with-xtlibdir=/usr/lib/xtables \
 		--with-kernel=$(ROOTDIR)/$(LINUXDIR) \
 		$(if $(CONFIG_IPV6),--enable-ipv6,--disable-ipv6) \
