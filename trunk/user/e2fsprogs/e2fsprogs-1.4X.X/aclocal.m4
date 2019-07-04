@@ -1,6 +1,6 @@
-# generated automatically by aclocal 1.15.1 -*- Autoconf -*-
+# generated automatically by aclocal 1.14.1 -*- Autoconf -*-
 
-# Copyright (C) 1996-2017 Free Software Foundation, Inc.
+# Copyright (C) 1996-2013 Free Software Foundation, Inc.
 
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -13,8 +13,7 @@
 
 m4_ifndef([AC_CONFIG_MACRO_DIRS], [m4_defun([_AM_CONFIG_MACRO_DIRS], [])m4_defun([AC_CONFIG_MACRO_DIRS], [_AM_CONFIG_MACRO_DIRS($@)])])
 # codeset.m4 serial 5 (gettext-0.18.2)
-dnl Copyright (C) 2000-2002, 2006, 2008-2014, 2016 Free Software Foundation,
-dnl Inc.
+dnl Copyright (C) 2000-2002, 2006, 2008-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -39,7 +38,7 @@ AC_DEFUN([AM_LANGINFO_CODESET],
 
 dnl 'extern inline' a la ISO C99.
 
-dnl Copyright 2012-2016 Free Software Foundation, Inc.
+dnl Copyright 2012-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -58,75 +57,43 @@ AC_DEFUN([gl_EXTERN_INLINE],
    'reference to static identifier "f" in extern inline function'.
    This bug was observed with Sun C 5.12 SunOS_i386 2011/11/16.
 
-   Suppress extern inline (with or without __attribute__ ((__gnu_inline__)))
-   on configurations that mistakenly use 'static inline' to implement
-   functions or macros in standard C headers like <ctype.h>.  For example,
-   if isdigit is mistakenly implemented via a static inline function,
-   a program containing an extern inline function that calls isdigit
-   may not work since the C standard prohibits extern inline functions
-   from calling static functions.  This bug is known to occur on:
-
-     OS X 10.8 and earlier; see:
-     http://lists.gnu.org/archive/html/bug-gnulib/2012-12/msg00023.html
-
-     DragonFly; see
-     http://muscles.dragonflybsd.org/bulk/bleeding-edge-potential/latest-per-pkg/ah-tty-0.3.12.log
-
-     FreeBSD; see:
-     http://lists.gnu.org/archive/html/bug-gnulib/2014-07/msg00104.html
-
-   OS X 10.9 has a macro __header_inline indicating the bug is fixed for C and
-   for clang but remains for g++; see <http://trac.macports.org/ticket/41033>.
-   Assume DragonFly and FreeBSD will be similar.  */
-#if (((defined __APPLE__ && defined __MACH__) \
-      || defined __DragonFly__ || defined __FreeBSD__) \
-     && (defined __header_inline \
-         ? (defined __cplusplus && defined __GNUC_STDC_INLINE__ \
-            && ! defined __clang__) \
-         : ((! defined _DONT_USE_CTYPE_INLINE_ \
-             && (defined __GNUC__ || defined __cplusplus)) \
-            || (defined _FORTIFY_SOURCE && 0 < _FORTIFY_SOURCE \
-                && defined __GNUC__ && ! defined __cplusplus))))
-# define _GL_EXTERN_INLINE_STDHEADER_BUG
-#endif
+   Suppress the use of extern inline on Apple's platforms, as Libc at least
+   through Libc-825.26 (2013-04-09) is incompatible with it; see, e.g.,
+   <http://lists.gnu.org/archive/html/bug-gnulib/2012-12/msg00023.html>.
+   Perhaps Apple will fix this some day.  */
 #if ((__GNUC__ \
       ? defined __GNUC_STDC_INLINE__ && __GNUC_STDC_INLINE__ \
       : (199901L <= __STDC_VERSION__ \
          && !defined __HP_cc \
-         && !defined __PGI \
          && !(defined __SUNPRO_C && __STDC__))) \
-     && !defined _GL_EXTERN_INLINE_STDHEADER_BUG)
+     && !defined __APPLE__)
 # define _GL_INLINE inline
 # define _GL_EXTERN_INLINE extern inline
-# define _GL_EXTERN_INLINE_IN_USE
 #elif (2 < __GNUC__ + (7 <= __GNUC_MINOR__) && !defined __STRICT_ANSI__ \
-       && !defined _GL_EXTERN_INLINE_STDHEADER_BUG)
-# if defined __GNUC_GNU_INLINE__ && __GNUC_GNU_INLINE__
+       && !defined __APPLE__)
+# if __GNUC_GNU_INLINE__
    /* __gnu_inline__ suppresses a GCC 4.2 diagnostic.  */
 #  define _GL_INLINE extern inline __attribute__ ((__gnu_inline__))
 # else
 #  define _GL_INLINE extern inline
 # endif
 # define _GL_EXTERN_INLINE extern
-# define _GL_EXTERN_INLINE_IN_USE
 #else
 # define _GL_INLINE static _GL_UNUSED
 # define _GL_EXTERN_INLINE static _GL_UNUSED
 #endif
 
-/* In GCC 4.6 (inclusive) to 5.1 (exclusive),
-   suppress bogus "no previous prototype for 'FOO'"
-   and "no previous declaration for 'FOO'" diagnostics,
-   when FOO is an inline function in the header; see
-   <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54113> and
-   <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63877>.  */
-#if __GNUC__ == 4 && 6 <= __GNUC_MINOR__
+#if 4 < __GNUC__ + (6 <= __GNUC_MINOR__)
 # if defined __GNUC_STDC_INLINE__ && __GNUC_STDC_INLINE__
 #  define _GL_INLINE_HEADER_CONST_PRAGMA
 # else
 #  define _GL_INLINE_HEADER_CONST_PRAGMA \
      _Pragma ("GCC diagnostic ignored \"-Wsuggest-attribute=const\"")
 # endif
+  /* Suppress GCC's bogus "no previous prototype for 'FOO'"
+     and "no previous declaration for 'FOO'"  diagnostics,
+     when FOO is an inline function in the header; see
+     <http://gcc.gnu.org/bugzilla/show_bug.cgi?id=54113>.  */
 # define _GL_INLINE_HEADER_BEGIN \
     _Pragma ("GCC diagnostic push") \
     _Pragma ("GCC diagnostic ignored \"-Wmissing-prototypes\"") \
@@ -141,7 +108,7 @@ AC_DEFUN([gl_EXTERN_INLINE],
 ])
 
 # fcntl-o.m4 serial 4
-dnl Copyright (C) 2006, 2009-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2006, 2009-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -275,19 +242,19 @@ AC_DEFUN([gl_FCNTL_O_FLAGS],
     [Define to 1 if O_NOFOLLOW works.])
 ])
 
-# gettext.m4 serial 68 (gettext-0.19.8)
-dnl Copyright (C) 1995-2014, 2016 Free Software Foundation, Inc.
+# gettext.m4 serial 66 (gettext-0.18.2)
+dnl Copyright (C) 1995-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
 dnl
-dnl This file can be used in projects which are not available under
+dnl This file can can be used in projects which are not available under
 dnl the GNU General Public License or the GNU Library General Public
 dnl License but which still want to provide support for the GNU gettext
 dnl functionality.
 dnl Please note that the actual code of the GNU gettext library is covered
 dnl by the GNU Library General Public License, and the rest of the GNU
-dnl gettext package is covered by the GNU General Public License.
+dnl gettext package package is covered by the GNU General Public License.
 dnl They are *not* in the public domain.
 
 dnl Authors:
@@ -438,18 +405,13 @@ changequote([,])dnl
             [AC_LANG_PROGRAM(
                [[
 #include <libintl.h>
-#ifndef __GNU_GETTEXT_SUPPORTED_REVISION
+$gt_revision_test_code
 extern int _nl_msg_cat_cntr;
 extern int *_nl_domain_bindings;
-#define __GNU_GETTEXT_SYMBOL_EXPRESSION (_nl_msg_cat_cntr + *_nl_domain_bindings)
-#else
-#define __GNU_GETTEXT_SYMBOL_EXPRESSION 0
-#endif
-$gt_revision_test_code
                ]],
                [[
 bindtextdomain ("", "");
-return * gettext ("")$gt_expression_test_code + __GNU_GETTEXT_SYMBOL_EXPRESSION
+return * gettext ("")$gt_expression_test_code + _nl_msg_cat_cntr + *_nl_domain_bindings
                ]])],
             [eval "$gt_func_gnugettext_libc=yes"],
             [eval "$gt_func_gnugettext_libc=no"])])
@@ -475,22 +437,17 @@ return * gettext ("")$gt_expression_test_code + __GNU_GETTEXT_SYMBOL_EXPRESSION
               [AC_LANG_PROGRAM(
                  [[
 #include <libintl.h>
-#ifndef __GNU_GETTEXT_SUPPORTED_REVISION
+$gt_revision_test_code
 extern int _nl_msg_cat_cntr;
 extern
 #ifdef __cplusplus
 "C"
 #endif
 const char *_nl_expand_alias (const char *);
-#define __GNU_GETTEXT_SYMBOL_EXPRESSION (_nl_msg_cat_cntr + *_nl_expand_alias (""))
-#else
-#define __GNU_GETTEXT_SYMBOL_EXPRESSION 0
-#endif
-$gt_revision_test_code
                  ]],
                  [[
 bindtextdomain ("", "");
-return * gettext ("")$gt_expression_test_code + __GNU_GETTEXT_SYMBOL_EXPRESSION
+return * gettext ("")$gt_expression_test_code + _nl_msg_cat_cntr + *_nl_expand_alias ("")
                  ]])],
               [eval "$gt_func_gnugettext_libintl=yes"],
               [eval "$gt_func_gnugettext_libintl=no"])
@@ -501,22 +458,17 @@ return * gettext ("")$gt_expression_test_code + __GNU_GETTEXT_SYMBOL_EXPRESSION
                 [AC_LANG_PROGRAM(
                    [[
 #include <libintl.h>
-#ifndef __GNU_GETTEXT_SUPPORTED_REVISION
+$gt_revision_test_code
 extern int _nl_msg_cat_cntr;
 extern
 #ifdef __cplusplus
 "C"
 #endif
 const char *_nl_expand_alias (const char *);
-#define __GNU_GETTEXT_SYMBOL_EXPRESSION (_nl_msg_cat_cntr + *_nl_expand_alias (""))
-#else
-#define __GNU_GETTEXT_SYMBOL_EXPRESSION 0
-#endif
-$gt_revision_test_code
                    ]],
                    [[
 bindtextdomain ("", "");
-return * gettext ("")$gt_expression_test_code + __GNU_GETTEXT_SYMBOL_EXPRESSION
+return * gettext ("")$gt_expression_test_code + _nl_msg_cat_cntr + *_nl_expand_alias ("")
                    ]])],
                 [LIBINTL="$LIBINTL $LIBICONV"
                  LTLIBINTL="$LTLIBINTL $LTLIBICONV"
@@ -692,12 +644,8 @@ AC_DEFUN([AM_GNU_GETTEXT_NEED],
 dnl Usage: AM_GNU_GETTEXT_VERSION([gettext-version])
 AC_DEFUN([AM_GNU_GETTEXT_VERSION], [])
 
-
-dnl Usage: AM_GNU_GETTEXT_REQUIRE_VERSION([gettext-version])
-AC_DEFUN([AM_GNU_GETTEXT_REQUIRE_VERSION], [])
-
 # glibc2.m4 serial 3
-dnl Copyright (C) 2000-2002, 2004, 2008, 2010-2016 Free Software Foundation,
+dnl Copyright (C) 2000-2002, 2004, 2008, 2010-2013 Free Software Foundation,
 dnl Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
@@ -729,7 +677,7 @@ AC_DEFUN([gt_GLIBC2],
 )
 
 # glibc21.m4 serial 5
-dnl Copyright (C) 2000-2002, 2004, 2008, 2010-2016 Free Software Foundation,
+dnl Copyright (C) 2000-2002, 2004, 2008, 2010-2013 Free Software Foundation,
 dnl Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
@@ -763,8 +711,8 @@ AC_DEFUN([gl_GLIBC21],
   ]
 )
 
-# iconv.m4 serial 19 (gettext-0.18.2)
-dnl Copyright (C) 2000-2002, 2007-2014, 2016 Free Software Foundation, Inc.
+# iconv.m4 serial 18 (gettext-0.18.2)
+dnl Copyright (C) 2000-2002, 2007-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -837,33 +785,27 @@ AC_DEFUN([AM_ICONV_LINK],
       if test $am_cv_lib_iconv = yes; then
         LIBS="$LIBS $LIBICONV"
       fi
-      am_cv_func_iconv_works=no
-      for ac_iconv_const in '' 'const'; do
-        AC_RUN_IFELSE(
-          [AC_LANG_PROGRAM(
-             [[
+      AC_RUN_IFELSE(
+        [AC_LANG_SOURCE([[
 #include <iconv.h>
 #include <string.h>
-
-#ifndef ICONV_CONST
-# define ICONV_CONST $ac_iconv_const
-#endif
-             ]],
-             [[int result = 0;
+int main ()
+{
+  int result = 0;
   /* Test against AIX 5.1 bug: Failures are not distinguishable from successful
      returns.  */
   {
     iconv_t cd_utf8_to_88591 = iconv_open ("ISO8859-1", "UTF-8");
     if (cd_utf8_to_88591 != (iconv_t)(-1))
       {
-        static ICONV_CONST char input[] = "\342\202\254"; /* EURO SIGN */
+        static const char input[] = "\342\202\254"; /* EURO SIGN */
         char buf[10];
-        ICONV_CONST char *inptr = input;
+        const char *inptr = input;
         size_t inbytesleft = strlen (input);
         char *outptr = buf;
         size_t outbytesleft = sizeof (buf);
         size_t res = iconv (cd_utf8_to_88591,
-                            &inptr, &inbytesleft,
+                            (char **) &inptr, &inbytesleft,
                             &outptr, &outbytesleft);
         if (res == 0)
           result |= 1;
@@ -876,14 +818,14 @@ AC_DEFUN([AM_ICONV_LINK],
     iconv_t cd_ascii_to_88591 = iconv_open ("ISO8859-1", "646");
     if (cd_ascii_to_88591 != (iconv_t)(-1))
       {
-        static ICONV_CONST char input[] = "\263";
+        static const char input[] = "\263";
         char buf[10];
-        ICONV_CONST char *inptr = input;
+        const char *inptr = input;
         size_t inbytesleft = strlen (input);
         char *outptr = buf;
         size_t outbytesleft = sizeof (buf);
         size_t res = iconv (cd_ascii_to_88591,
-                            &inptr, &inbytesleft,
+                            (char **) &inptr, &inbytesleft,
                             &outptr, &outbytesleft);
         if (res == 0)
           result |= 2;
@@ -895,14 +837,14 @@ AC_DEFUN([AM_ICONV_LINK],
     iconv_t cd_88591_to_utf8 = iconv_open ("UTF-8", "ISO-8859-1");
     if (cd_88591_to_utf8 != (iconv_t)(-1))
       {
-        static ICONV_CONST char input[] = "\304";
+        static const char input[] = "\304";
         static char buf[2] = { (char)0xDE, (char)0xAD };
-        ICONV_CONST char *inptr = input;
+        const char *inptr = input;
         size_t inbytesleft = 1;
         char *outptr = buf;
         size_t outbytesleft = 1;
         size_t res = iconv (cd_88591_to_utf8,
-                            &inptr, &inbytesleft,
+                            (char **) &inptr, &inbytesleft,
                             &outptr, &outbytesleft);
         if (res != (size_t)(-1) || outptr - buf > 1 || buf[1] != (char)0xAD)
           result |= 4;
@@ -915,14 +857,14 @@ AC_DEFUN([AM_ICONV_LINK],
     iconv_t cd_88591_to_utf8 = iconv_open ("utf8", "iso88591");
     if (cd_88591_to_utf8 != (iconv_t)(-1))
       {
-        static ICONV_CONST char input[] = "\304rger mit b\366sen B\374bchen ohne Augenma\337";
+        static const char input[] = "\304rger mit b\366sen B\374bchen ohne Augenma\337";
         char buf[50];
-        ICONV_CONST char *inptr = input;
+        const char *inptr = input;
         size_t inbytesleft = strlen (input);
         char *outptr = buf;
         size_t outbytesleft = sizeof (buf);
         size_t res = iconv (cd_88591_to_utf8,
-                            &inptr, &inbytesleft,
+                            (char **) &inptr, &inbytesleft,
                             &outptr, &outbytesleft);
         if ((int)res > 0)
           result |= 8;
@@ -942,14 +884,17 @@ AC_DEFUN([AM_ICONV_LINK],
       && iconv_open ("utf8", "eucJP") == (iconv_t)(-1))
     result |= 16;
   return result;
-]])],
-          [am_cv_func_iconv_works=yes], ,
-          [case "$host_os" in
-             aix* | hpux*) am_cv_func_iconv_works="guessing no" ;;
-             *)            am_cv_func_iconv_works="guessing yes" ;;
-           esac])
-        test "$am_cv_func_iconv_works" = no || break
-      done
+}]])],
+        [am_cv_func_iconv_works=yes],
+        [am_cv_func_iconv_works=no],
+        [
+changequote(,)dnl
+         case "$host_os" in
+           aix* | hpux*) am_cv_func_iconv_works="guessing no" ;;
+           *)            am_cv_func_iconv_works="guessing yes" ;;
+         esac
+changequote([,])dnl
+        ])
       LIBS="$am_save_LIBS"
     ])
     case "$am_cv_func_iconv_works" in
@@ -1036,7 +981,7 @@ size_t iconv();
 ])
 
 # intdiv0.m4 serial 6 (gettext-0.18.2)
-dnl Copyright (C) 2002, 2007-2008, 2010-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2002, 2007-2008, 2010-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -1075,7 +1020,7 @@ static void
 sigfpe_handler (int sig)
 {
   /* Exit with code 0 if SIGFPE, with code 1 if any other signal.  */
-  _exit (sig != SIGFPE);
+  exit (sig != SIGFPE);
 }
 
 int x = 1;
@@ -1123,19 +1068,19 @@ changequote([,])dnl
     [Define if integer division by zero raises signal SIGFPE.])
 ])
 
-# intl.m4 serial 29 (gettext-0.19)
-dnl Copyright (C) 1995-2014, 2016 Free Software Foundation, Inc.
+# intl.m4 serial 25 (gettext-0.18.3)
+dnl Copyright (C) 1995-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
 dnl
-dnl This file can be used in projects which are not available under
+dnl This file can can be used in projects which are not available under
 dnl the GNU General Public License or the GNU Library General Public
 dnl License but which still want to provide support for the GNU gettext
 dnl functionality.
 dnl Please note that the actual code of the GNU gettext library is covered
 dnl by the GNU Library General Public License, and the rest of the GNU
-dnl gettext package is covered by the GNU General Public License.
+dnl gettext package package is covered by the GNU General Public License.
 dnl They are *not* in the public domain.
 
 dnl Authors:
@@ -1168,7 +1113,6 @@ AC_DEFUN([AM_INTL_SUBDIR],
   AC_REQUIRE([gl_FCNTL_O_FLAGS])dnl
   AC_REQUIRE([gt_INTL_MACOSX])dnl
   AC_REQUIRE([gl_EXTERN_INLINE])dnl
-  AC_REQUIRE([gt_GL_ATTRIBUTE])dnl
 
   dnl Support for automake's --enable-silent-rules.
   case "$enable_silent_rules" in
@@ -1357,12 +1301,6 @@ AC_DEFUN([gt_INTL_SUBDIR_CORE],
     stpcpy strcasecmp strdup strtoul tsearch uselocale argz_count \
     argz_stringify argz_next __fsetlocking])
 
-  dnl Solaris 12 provides getlocalename_l, while Illumos doesn't have
-  dnl it nor the equivalent.
-  if test $ac_cv_func_uselocale = yes; then
-    AC_CHECK_FUNCS([getlocalename_l])
-  fi
-
   dnl Use the *_unlocked functions only if they are declared.
   dnl (because some of them were defined without being declared in Solaris
   dnl 2.5.1 but were removed in Solaris 2.6, whereas we want binaries built
@@ -1373,7 +1311,8 @@ AC_DEFUN([gt_INTL_SUBDIR_CORE],
 
   dnl intl/plural.c is generated from intl/plural.y. It requires bison,
   dnl because plural.y uses bison specific features. It requires at least
-  dnl bison-2.7 for %define api.pure.
+  dnl bison-1.26 because earlier versions generate a plural.c that doesn't
+  dnl compile.
   dnl bison is only needed for the maintainer (who touches plural.y). But in
   dnl order to avoid separate Makefiles or --enable-maintainer-mode, we put
   dnl the rule in general Makefile. Now, some people carelessly touch the
@@ -1390,7 +1329,7 @@ changequote(<<,>>)dnl
     ac_prog_version=`$INTLBISON --version 2>&1 | sed -n 's/^.*GNU Bison.* \([0-9]*\.[0-9.]*\).*$/\1/p'`
     case $ac_prog_version in
       '') ac_prog_version="v. ?.??, bad"; ac_verc_fail=yes;;
-      2.[7-9]* | [3-9].*)
+      1.2[6-9]* | 1.[3-9][0-9]* | [2-9].*)
 changequote([,])dnl
          ac_prog_version="$ac_prog_version, ok"; ac_verc_fail=no;;
       *) ac_prog_version="$ac_prog_version, bad"; ac_verc_fail=yes;;
@@ -1402,45 +1341,19 @@ changequote([,])dnl
   fi
 ])
 
-dnl Copies _GL_UNUSED and _GL_ATTRIBUTE_PURE definitions from
-dnl gnulib-common.m4 as a fallback, if the project isn't using Gnulib.
-AC_DEFUN([gt_GL_ATTRIBUTE], [
-  m4_ifndef([gl_[]COMMON],
-    AH_VERBATIM([gt_gl_attribute],
-[/* Define as a marker that can be attached to declarations that might not
-    be used.  This helps to reduce warnings, such as from
-    GCC -Wunused-parameter.  */
-#ifndef _GL_UNUSED
-# if __GNUC__ >= 3 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 7)
-#  define _GL_UNUSED __attribute__ ((__unused__))
-# else
-#  define _GL_UNUSED
-# endif
-#endif
-
-/* The __pure__ attribute was added in gcc 2.96.  */
-#ifndef _GL_ATTRIBUTE_PURE
-# if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96)
-#  define _GL_ATTRIBUTE_PURE __attribute__ ((__pure__))
-# else
-#  define _GL_ATTRIBUTE_PURE /* empty */
-# endif
-#endif
-]))])
-
 # intlmacosx.m4 serial 5 (gettext-0.18.2)
-dnl Copyright (C) 2004-2014, 2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2004-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
 dnl
-dnl This file can be used in projects which are not available under
+dnl This file can can be used in projects which are not available under
 dnl the GNU General Public License or the GNU Library General Public
 dnl License but which still want to provide support for the GNU gettext
 dnl functionality.
 dnl Please note that the actual code of the GNU gettext library is covered
 dnl by the GNU Library General Public License, and the rest of the GNU
-dnl gettext package is covered by the GNU General Public License.
+dnl gettext package package is covered by the GNU General Public License.
 dnl They are *not* in the public domain.
 
 dnl Checks for special options needed on Mac OS X.
@@ -1486,7 +1399,7 @@ AC_DEFUN([gt_INTL_MACOSX],
 ])
 
 # intmax.m4 serial 6 (gettext-0.18.2)
-dnl Copyright (C) 2002-2005, 2008-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2002-2005, 2008-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -1523,7 +1436,7 @@ AC_DEFUN([gt_TYPE_INTMAX_T],
 ])
 
 # inttypes-pri.m4 serial 7 (gettext-0.18.2)
-dnl Copyright (C) 1997-2002, 2006, 2008-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 1997-2002, 2006, 2008-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -1566,7 +1479,7 @@ char *p = PRId32;
 ])
 
 # inttypes_h.m4 serial 10
-dnl Copyright (C) 1997-2004, 2006, 2008-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 1997-2004, 2006, 2008-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -1596,19 +1509,19 @@ AC_DEFUN([gl_AC_HEADER_INTTYPES_H],
 ])
 
 # lcmessage.m4 serial 7 (gettext-0.18.2)
-dnl Copyright (C) 1995-2002, 2004-2005, 2008-2014, 2016 Free Software
-dnl Foundation, Inc.
+dnl Copyright (C) 1995-2002, 2004-2005, 2008-2013 Free Software Foundation,
+dnl Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
 dnl
-dnl This file can be used in projects which are not available under
+dnl This file can can be used in projects which are not available under
 dnl the GNU General Public License or the GNU Library General Public
 dnl License but which still want to provide support for the GNU gettext
 dnl functionality.
 dnl Please note that the actual code of the GNU gettext library is covered
 dnl by the GNU Library General Public License, and the rest of the GNU
-dnl gettext package is covered by the GNU General Public License.
+dnl gettext package package is covered by the GNU General Public License.
 dnl They are *not* in the public domain.
 
 dnl Authors:
@@ -1632,7 +1545,7 @@ AC_DEFUN([gt_LC_MESSAGES],
 ])
 
 # lib-ld.m4 serial 6
-dnl Copyright (C) 1996-2003, 2009-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 1996-2003, 2009-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -1752,7 +1665,7 @@ AC_LIB_PROG_LD_GNU
 ])
 
 # lib-link.m4 serial 26 (gettext-0.18.2)
-dnl Copyright (C) 2001-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2001-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -1971,7 +1884,7 @@ AC_DEFUN([AC_LIB_LINKFLAGS_BODY],
     fi
 ])
   dnl Search the library and its dependencies in $additional_libdir and
-  dnl $LDFLAGS. Using breadth-first-seach.
+  dnl $LDFLAGS. Using breadth-first-search.
   LIB[]NAME=
   LTLIB[]NAME=
   INC[]NAME=
@@ -2530,7 +2443,7 @@ AC_DEFUN([AC_LIB_LINKFLAGS_FROM_LIBS],
 ])
 
 # lib-prefix.m4 serial 7 (gettext-0.18)
-dnl Copyright (C) 2001-2005, 2008-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2001-2005, 2008-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -2755,7 +2668,7 @@ sixtyfour bits
 ])
 
 # lock.m4 serial 13 (gettext-0.18.2)
-dnl Copyright (C) 2005-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2005-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -2798,7 +2711,7 @@ return !x;
 AC_DEFUN([gl_PREREQ_LOCK], [:])
 
 # longlong.m4 serial 17
-dnl Copyright (C) 1999-2007, 2009-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 1999-2007, 2009-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -2912,19 +2825,19 @@ AC_DEFUN([_AC_TYPE_LONG_LONG_SNIPPET],
 ])
 
 # nls.m4 serial 5 (gettext-0.18)
-dnl Copyright (C) 1995-2003, 2005-2006, 2008-2014, 2016 Free Software
-dnl Foundation, Inc.
+dnl Copyright (C) 1995-2003, 2005-2006, 2008-2013 Free Software Foundation,
+dnl Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
 dnl
-dnl This file can be used in projects which are not available under
+dnl This file can can be used in projects which are not available under
 dnl the GNU General Public License or the GNU Library General Public
 dnl License but which still want to provide support for the GNU gettext
 dnl functionality.
 dnl Please note that the actual code of the GNU gettext library is covered
 dnl by the GNU Library General Public License, and the rest of the GNU
-dnl gettext package is covered by the GNU General Public License.
+dnl gettext package package is covered by the GNU General Public License.
 dnl They are *not* in the public domain.
 
 dnl Authors:
@@ -2944,63 +2857,32 @@ AC_DEFUN([AM_NLS],
   AC_SUBST([USE_NLS])
 ])
 
-dnl pkg.m4 - Macros to locate and utilise pkg-config.   -*- Autoconf -*-
-dnl serial 11 (pkg-config-0.29.1)
-dnl
-dnl Copyright © 2004 Scott James Remnant <scott@netsplit.com>.
-dnl Copyright © 2012-2015 Dan Nicholson <dbn.lists@gmail.com>
-dnl
-dnl This program is free software; you can redistribute it and/or modify
-dnl it under the terms of the GNU General Public License as published by
-dnl the Free Software Foundation; either version 2 of the License, or
-dnl (at your option) any later version.
-dnl
-dnl This program is distributed in the hope that it will be useful, but
-dnl WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-dnl General Public License for more details.
-dnl
-dnl You should have received a copy of the GNU General Public License
-dnl along with this program; if not, write to the Free Software
-dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-dnl 02111-1307, USA.
-dnl
-dnl As a special exception to the GNU General Public License, if you
-dnl distribute this file as part of a program that contains a
-dnl configuration script generated by Autoconf, you may include it under
-dnl the same distribution terms that you use for the rest of that
-dnl program.
+# pkg.m4 - Macros to locate and utilise pkg-config.            -*- Autoconf -*-
+# serial 1 (pkg-config-0.24)
+# 
+# Copyright © 2004 Scott James Remnant <scott@netsplit.com>.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# As a special exception to the GNU General Public License, if you
+# distribute this file as part of a program that contains a
+# configuration script generated by Autoconf, you may include it under
+# the same distribution terms that you use for the rest of that program.
 
-dnl PKG_PREREQ(MIN-VERSION)
-dnl -----------------------
-dnl Since: 0.29
-dnl
-dnl Verify that the version of the pkg-config macros are at least
-dnl MIN-VERSION. Unlike PKG_PROG_PKG_CONFIG, which checks the user's
-dnl installed version of pkg-config, this checks the developer's version
-dnl of pkg.m4 when generating configure.
-dnl
-dnl To ensure that this macro is defined, also add:
-dnl m4_ifndef([PKG_PREREQ],
-dnl     [m4_fatal([must install pkg-config 0.29 or later before running autoconf/autogen])])
-dnl
-dnl See the "Since" comment for each macro you use to see what version
-dnl of the macros you require.
-m4_defun([PKG_PREREQ],
-[m4_define([PKG_MACROS_VERSION], [0.29.1])
-m4_if(m4_version_compare(PKG_MACROS_VERSION, [$1]), -1,
-    [m4_fatal([pkg.m4 version $1 or higher is required but ]PKG_MACROS_VERSION[ found])])
-])dnl PKG_PREREQ
-
-dnl PKG_PROG_PKG_CONFIG([MIN-VERSION])
-dnl ----------------------------------
-dnl Since: 0.16
-dnl
-dnl Search for the pkg-config tool and set the PKG_CONFIG variable to
-dnl first found in the path. Checks that the version of pkg-config found
-dnl is at least MIN-VERSION. If MIN-VERSION is not specified, 0.9.0 is
-dnl used since that's the first version where most current features of
-dnl pkg-config existed.
+# PKG_PROG_PKG_CONFIG([MIN-VERSION])
+# ----------------------------------
 AC_DEFUN([PKG_PROG_PKG_CONFIG],
 [m4_pattern_forbid([^_?PKG_[A-Z_]+$])
 m4_pattern_allow([^PKG_CONFIG(_(PATH|LIBDIR|SYSROOT_DIR|ALLOW_SYSTEM_(CFLAGS|LIBS)))?$])
@@ -3022,19 +2904,18 @@ if test -n "$PKG_CONFIG"; then
 		PKG_CONFIG=""
 	fi
 fi[]dnl
-])dnl PKG_PROG_PKG_CONFIG
+])# PKG_PROG_PKG_CONFIG
 
-dnl PKG_CHECK_EXISTS(MODULES, [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
-dnl -------------------------------------------------------------------
-dnl Since: 0.18
-dnl
-dnl Check to see whether a particular set of modules exists. Similar to
-dnl PKG_CHECK_MODULES(), but does not set variables or print errors.
-dnl
-dnl Please remember that m4 expands AC_REQUIRE([PKG_PROG_PKG_CONFIG])
-dnl only at the first occurence in configure.ac, so if the first place
-dnl it's called might be skipped (such as if it is within an "if", you
-dnl have to call PKG_CHECK_EXISTS manually
+# PKG_CHECK_EXISTS(MODULES, [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+#
+# Check to see whether a particular set of modules exists.  Similar
+# to PKG_CHECK_MODULES(), but does not set variables or print errors.
+#
+# Please remember that m4 expands AC_REQUIRE([PKG_PROG_PKG_CONFIG])
+# only at the first occurrence in configure.ac, so if the first place
+# it's called might be skipped (such as if it is within an "if", you
+# have to call PKG_CHECK_EXISTS manually
+# --------------------------------------------------------------
 AC_DEFUN([PKG_CHECK_EXISTS],
 [AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
 if test -n "$PKG_CONFIG" && \
@@ -3044,10 +2925,8 @@ m4_ifvaln([$3], [else
   $3])dnl
 fi])
 
-dnl _PKG_CONFIG([VARIABLE], [COMMAND], [MODULES])
-dnl ---------------------------------------------
-dnl Internal wrapper calling pkg-config via PKG_CONFIG and setting
-dnl pkg_failed based on the result.
+# _PKG_CONFIG([VARIABLE], [COMMAND], [MODULES])
+# ---------------------------------------------
 m4_define([_PKG_CONFIG],
 [if test -n "$$1"; then
     pkg_cv_[]$1="$$1"
@@ -3059,11 +2938,10 @@ m4_define([_PKG_CONFIG],
  else
     pkg_failed=untried
 fi[]dnl
-])dnl _PKG_CONFIG
+])# _PKG_CONFIG
 
-dnl _PKG_SHORT_ERRORS_SUPPORTED
-dnl ---------------------------
-dnl Internal check to see if pkg-config supports short errors.
+# _PKG_SHORT_ERRORS_SUPPORTED
+# -----------------------------
 AC_DEFUN([_PKG_SHORT_ERRORS_SUPPORTED],
 [AC_REQUIRE([PKG_PROG_PKG_CONFIG])
 if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
@@ -3071,17 +2949,19 @@ if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
 else
         _pkg_short_errors_supported=no
 fi[]dnl
-])dnl _PKG_SHORT_ERRORS_SUPPORTED
+])# _PKG_SHORT_ERRORS_SUPPORTED
 
 
-dnl PKG_CHECK_MODULES(VARIABLE-PREFIX, MODULES, [ACTION-IF-FOUND],
-dnl   [ACTION-IF-NOT-FOUND])
-dnl --------------------------------------------------------------
-dnl Since: 0.4.0
-dnl
-dnl Note that if there is a possibility the first call to
-dnl PKG_CHECK_MODULES might not happen, you should be sure to include an
-dnl explicit call to PKG_PROG_PKG_CONFIG in your configure.ac
+# PKG_CHECK_MODULES(VARIABLE-PREFIX, MODULES, [ACTION-IF-FOUND],
+# [ACTION-IF-NOT-FOUND])
+#
+#
+# Note that if there is a possibility the first call to
+# PKG_CHECK_MODULES might not happen, you should be sure to include an
+# explicit call to PKG_PROG_PKG_CONFIG in your configure.ac
+#
+#
+# --------------------------------------------------------------
 AC_DEFUN([PKG_CHECK_MODULES],
 [AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
 AC_ARG_VAR([$1][_CFLAGS], [C compiler flags for $1, overriding pkg-config])dnl
@@ -3135,40 +3015,16 @@ else
         AC_MSG_RESULT([yes])
 	$3
 fi[]dnl
-])dnl PKG_CHECK_MODULES
+])# PKG_CHECK_MODULES
 
 
-dnl PKG_CHECK_MODULES_STATIC(VARIABLE-PREFIX, MODULES, [ACTION-IF-FOUND],
-dnl   [ACTION-IF-NOT-FOUND])
-dnl ---------------------------------------------------------------------
-dnl Since: 0.29
-dnl
-dnl Checks for existence of MODULES and gathers its build flags with
-dnl static libraries enabled. Sets VARIABLE-PREFIX_CFLAGS from --cflags
-dnl and VARIABLE-PREFIX_LIBS from --libs.
-dnl
-dnl Note that if there is a possibility the first call to
-dnl PKG_CHECK_MODULES_STATIC might not happen, you should be sure to
-dnl include an explicit call to PKG_PROG_PKG_CONFIG in your
-dnl configure.ac.
-AC_DEFUN([PKG_CHECK_MODULES_STATIC],
-[AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
-_save_PKG_CONFIG=$PKG_CONFIG
-PKG_CONFIG="$PKG_CONFIG --static"
-PKG_CHECK_MODULES($@)
-PKG_CONFIG=$_save_PKG_CONFIG[]dnl
-])dnl PKG_CHECK_MODULES_STATIC
-
-
-dnl PKG_INSTALLDIR([DIRECTORY])
-dnl -------------------------
-dnl Since: 0.27
-dnl
-dnl Substitutes the variable pkgconfigdir as the location where a module
-dnl should install pkg-config .pc files. By default the directory is
-dnl $libdir/pkgconfig, but the default can be changed by passing
-dnl DIRECTORY. The user can override through the --with-pkgconfigdir
-dnl parameter.
+# PKG_INSTALLDIR(DIRECTORY)
+# -------------------------
+# Substitutes the variable pkgconfigdir as the location where a module
+# should install pkg-config .pc files. By default the directory is
+# $libdir/pkgconfig, but the default can be changed by passing
+# DIRECTORY. The user can override through the --with-pkgconfigdir
+# parameter.
 AC_DEFUN([PKG_INSTALLDIR],
 [m4_pushdef([pkg_default], [m4_default([$1], ['${libdir}/pkgconfig'])])
 m4_pushdef([pkg_description],
@@ -3179,18 +3035,16 @@ AC_ARG_WITH([pkgconfigdir],
 AC_SUBST([pkgconfigdir], [$with_pkgconfigdir])
 m4_popdef([pkg_default])
 m4_popdef([pkg_description])
-])dnl PKG_INSTALLDIR
+]) dnl PKG_INSTALLDIR
 
 
-dnl PKG_NOARCH_INSTALLDIR([DIRECTORY])
-dnl --------------------------------
-dnl Since: 0.27
-dnl
-dnl Substitutes the variable noarch_pkgconfigdir as the location where a
-dnl module should install arch-independent pkg-config .pc files. By
-dnl default the directory is $datadir/pkgconfig, but the default can be
-dnl changed by passing DIRECTORY. The user can override through the
-dnl --with-noarch-pkgconfigdir parameter.
+# PKG_NOARCH_INSTALLDIR(DIRECTORY)
+# -------------------------
+# Substitutes the variable noarch_pkgconfigdir as the location where a
+# module should install arch-independent pkg-config .pc files. By
+# default the directory is $datadir/pkgconfig, but the default can be
+# changed by passing DIRECTORY. The user can override through the
+# --with-noarch-pkgconfigdir parameter.
 AC_DEFUN([PKG_NOARCH_INSTALLDIR],
 [m4_pushdef([pkg_default], [m4_default([$1], ['${datadir}/pkgconfig'])])
 m4_pushdef([pkg_description],
@@ -3201,15 +3055,13 @@ AC_ARG_WITH([noarch-pkgconfigdir],
 AC_SUBST([noarch_pkgconfigdir], [$with_noarch_pkgconfigdir])
 m4_popdef([pkg_default])
 m4_popdef([pkg_description])
-])dnl PKG_NOARCH_INSTALLDIR
+]) dnl PKG_NOARCH_INSTALLDIR
 
 
-dnl PKG_CHECK_VAR(VARIABLE, MODULE, CONFIG-VARIABLE,
-dnl [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
-dnl -------------------------------------------
-dnl Since: 0.28
-dnl
-dnl Retrieves the value of the pkg-config variable for the given module.
+# PKG_CHECK_VAR(VARIABLE, MODULE, CONFIG-VARIABLE,
+# [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+# -------------------------------------------
+# Retrieves the value of the pkg-config variable for the given module.
 AC_DEFUN([PKG_CHECK_VAR],
 [AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
 AC_ARG_VAR([$1], [value of $3 for $2, overriding pkg-config])dnl
@@ -3218,21 +3070,21 @@ _PKG_CONFIG([$1], [variable="][$3]["], [$2])
 AS_VAR_COPY([$1], [pkg_cv_][$1])
 
 AS_VAR_IF([$1], [""], [$5], [$4])dnl
-])dnl PKG_CHECK_VAR
+])# PKG_CHECK_VAR
 
-# po.m4 serial 24 (gettext-0.19)
-dnl Copyright (C) 1995-2014, 2016 Free Software Foundation, Inc.
+# po.m4 serial 21 (gettext-0.18.3)
+dnl Copyright (C) 1995-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
 dnl
-dnl This file can be used in projects which are not available under
+dnl This file can can be used in projects which are not available under
 dnl the GNU General Public License or the GNU Library General Public
 dnl License but which still want to provide support for the GNU gettext
 dnl functionality.
 dnl Please note that the actual code of the GNU gettext library is covered
 dnl by the GNU Library General Public License, and the rest of the GNU
-dnl gettext package is covered by the GNU General Public License.
+dnl gettext package package is covered by the GNU General Public License.
 dnl They are *not* in the public domain.
 
 dnl Authors:
@@ -3252,7 +3104,7 @@ AC_DEFUN([AM_PO_SUBDIRS],
 
   dnl Release version of the gettext macros. This is used to ensure that
   dnl the gettext macros and po/Makefile.in.in are in sync.
-  AC_SUBST([GETTEXT_MACRO_VERSION], [0.19])
+  AC_SUBST([GETTEXT_MACRO_VERSION], [0.18])
 
   dnl Perform the following tests also if --disable-nls has been given,
   dnl because they are needed for "make dist" to work.
@@ -3675,7 +3527,7 @@ AC_DEFUN([AM_XGETTEXT_OPTION],
 ])
 
 # printf-posix.m4 serial 6 (gettext-0.18.2)
-dnl Copyright (C) 2003, 2007, 2009-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2003, 2007, 2009-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -3724,18 +3576,18 @@ int main ()
 ])
 
 # progtest.m4 serial 7 (gettext-0.18.2)
-dnl Copyright (C) 1996-2003, 2005, 2008-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 1996-2003, 2005, 2008-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
 dnl
-dnl This file can be used in projects which are not available under
+dnl This file can can be used in projects which are not available under
 dnl the GNU General Public License or the GNU Library General Public
 dnl License but which still want to provide support for the GNU gettext
 dnl functionality.
 dnl Please note that the actual code of the GNU gettext library is covered
 dnl by the GNU Library General Public License, and the rest of the GNU
-dnl gettext package is covered by the GNU General Public License.
+dnl gettext package package is covered by the GNU General Public License.
 dnl They are *not* in the public domain.
 
 dnl Authors:
@@ -3816,7 +3668,7 @@ AC_SUBST([$1])dnl
 ])
 
 # size_max.m4 serial 10
-dnl Copyright (C) 2003, 2005-2006, 2008-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2003, 2005-2006, 2008-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -3896,7 +3748,7 @@ m4_ifdef([AC_COMPUTE_INT], [], [
 ])
 
 # stdint_h.m4 serial 9
-dnl Copyright (C) 1997-2004, 2006, 2008-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 1997-2004, 2006, 2008-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -3923,8 +3775,8 @@ AC_DEFUN([gl_AC_HEADER_STDINT_H],
   fi
 ])
 
-# threadlib.m4 serial 11 (gettext-0.18.2)
-dnl Copyright (C) 2005-2016 Free Software Foundation, Inc.
+# threadlib.m4 serial 10 (gettext-0.18.2)
+dnl Copyright (C) 2005-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -3947,7 +3799,7 @@ dnl libtool).
 dnl Sets the variables LIBMULTITHREAD and LTLIBMULTITHREAD similarly, for
 dnl programs that really need multithread functionality. The difference
 dnl between LIBTHREAD and LIBMULTITHREAD is that on platforms supporting weak
-dnl symbols, typically LIBTHREAD is empty whereas LIBMULTITHREAD is not.
+dnl symbols, typically LIBTHREAD="" whereas LIBMULTITHREAD="-lpthread".
 dnl Adds to CPPFLAGS the flag -D_REENTRANT or -D_THREAD_SAFE if needed for
 dnl multithread-safe programs.
 
@@ -4087,31 +3939,15 @@ int main ()
         # Test whether both pthread_mutex_lock and pthread_mutexattr_init exist
         # in libc. IRIX 6.5 has the first one in both libc and libpthread, but
         # the second one only in libpthread, and lock.c needs it.
-        #
-        # If -pthread works, prefer it to -lpthread, since Ubuntu 14.04
-        # needs -pthread for some reason.  See:
-        # http://lists.gnu.org/archive/html/bug-gnulib/2014-09/msg00023.html
-        save_LIBS=$LIBS
-        for gl_pthread in '' '-pthread'; do
-          LIBS="$LIBS $gl_pthread"
-          AC_LINK_IFELSE(
-            [AC_LANG_PROGRAM(
-               [[#include <pthread.h>
-                 pthread_mutex_t m;
-                 pthread_mutexattr_t ma;
-               ]],
-               [[pthread_mutex_lock (&m);
-                 pthread_mutexattr_init (&ma);]])],
-            [gl_have_pthread=yes
-             LIBTHREAD=$gl_pthread LTLIBTHREAD=$gl_pthread
-             LIBMULTITHREAD=$gl_pthread LTLIBMULTITHREAD=$gl_pthread])
-          LIBS=$save_LIBS
-          test -n "$gl_have_pthread" && break
-        done
-
+        AC_LINK_IFELSE(
+          [AC_LANG_PROGRAM(
+             [[#include <pthread.h>]],
+             [[pthread_mutex_lock((pthread_mutex_t*)0);
+               pthread_mutexattr_init((pthread_mutexattr_t*)0);]])],
+          [gl_have_pthread=yes])
         # Test for libpthread by looking for pthread_kill. (Not pthread_self,
         # since it is defined as a macro on OSF/1.)
-        if test -n "$gl_have_pthread" && test -z "$LIBTHREAD"; then
+        if test -n "$gl_have_pthread"; then
           # The program links fine without libpthread. But it may actually
           # need to link with libpthread in order to create multiple threads.
           AC_CHECK_LIB([pthread], [pthread_kill],
@@ -4126,7 +3962,7 @@ int main ()
                    [Define if the pthread_in_use() detection is hard.])
              esac
             ])
-        elif test -z "$gl_have_pthread"; then
+        else
           # Some library is needed. Try libpthread and libc_r.
           AC_CHECK_LIB([pthread], [pthread_kill],
             [gl_have_pthread=yes
@@ -4267,8 +4103,6 @@ dnl Linux 2.4/glibc    posix      -lpthread       Y      OK
 dnl
 dnl GNU Hurd/glibc     posix
 dnl
-dnl Ubuntu 14.04       posix      -pthread        Y      OK
-dnl
 dnl FreeBSD 5.3        posix      -lc_r           Y
 dnl                    posix      -lkse ?         Y
 dnl                    posix      -lpthread ?     Y
@@ -4314,7 +4148,7 @@ dnl   0.5 if the first test terminates OK but the second one loops endlessly,
 dnl   0.0 if the first test already loops endlessly.
 
 # uintmax_t.m4 serial 12
-dnl Copyright (C) 1997-2004, 2007-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 1997-2004, 2007-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -4345,7 +4179,7 @@ AC_DEFUN([gl_AC_TYPE_UINTMAX_T],
 ])
 
 # visibility.m4 serial 5 (gettext-0.18.2)
-dnl Copyright (C) 2005, 2008, 2010-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2005, 2008, 2010-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -4423,7 +4257,7 @@ AC_DEFUN([gl_VISIBILITY],
 ])
 
 # wchar_t.m4 serial 4 (gettext-0.18.2)
-dnl Copyright (C) 2002-2003, 2008-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2002-2003, 2008-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -4448,7 +4282,7 @@ AC_DEFUN([gt_TYPE_WCHAR_T],
 ])
 
 # wint_t.m4 serial 5 (gettext-0.18.2)
-dnl Copyright (C) 2003, 2007-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2003, 2007-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -4481,7 +4315,7 @@ AC_DEFUN([gt_TYPE_WINT_T],
 ])
 
 # xsize.m4 serial 5
-dnl Copyright (C) 2003-2004, 2008-2016 Free Software Foundation, Inc.
+dnl Copyright (C) 2003-2004, 2008-2013 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.

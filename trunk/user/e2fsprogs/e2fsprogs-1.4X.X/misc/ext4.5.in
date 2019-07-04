@@ -151,6 +151,14 @@ can be specified using the
 .B \-G
 option.
 .TP
+.B casefold
+.br
+This ext4 feature provides file system level character encoding support
+for directories with the casefold (+F) flag enabled.  This feature is
+name-preserving on the disk, but it allows applications to lookup for a
+file in the file system using an encoding equivalent version of the file
+name.
+.TP
 .B has_journal
 .br
 Create a journal to ensure filesystem consistency even across unclean
