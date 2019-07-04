@@ -1,42 +1,17 @@
-SRC_NAME=mtd-utils-2.0.x
+SRC_NAME=mtd-utils-2.1.0
 
-CFLAGS+=$(COPT) -ffunction-sections -fdata-sections -fvisibility=hidden
-LDFLAGS += -Wl,--gc-sections
+THISDIR = $(shell pwd)
 
-all: config_test
-	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
-
-config_test:
-	( if [ -f ./config_done ]; then \
-		echo "the same configuration"; \
-	else \
-		make configure && touch config_done; \
-	fi )
-
-configure:
-	( cd $(SRC_NAME) ; \
-	./configure \
-		--prefix= \
-		--enable-static \
-		--disable-shared \
-		--disable-tests \
-		--without-jffs \
-		--without-xattr \
-		--without-ubifs \
-		--without-lzo \
-		--host=$(HOST_TARGET) \
-		--build=$(HOST_BUILD) ; \
-	)
+all:
+	$(MAKE) -C $(SRC_NAME) WITHOUT_XATTR=1 BUILDDIR=$(THISDIR)/build
 
 clean:
-	if [ -f $(SRC_NAME)/Makefile ] ; then \
-		$(MAKE) -C $(SRC_NAME) distclean; \
-	fi ; \
-	rm -f config_done
+	$(MAKE) -C $(SRC_NAME) clean
+	rm -rf $(THISDIR)/build
 
 romfs:
-	$(ROMFSINST) $(SRC_NAME)/ubiattach /sbin/ubiattach
-	$(ROMFSINST) $(SRC_NAME)/ubidetach /sbin/ubidetach
-	$(ROMFSINST) $(SRC_NAME)/ubiformat /sbin/ubiformat
-	$(ROMFSINST) $(SRC_NAME)/ubimkvol /sbin/ubimkvol
-	$(ROMFSINST) $(SRC_NAME)/ubinfo /sbin/ubinfo
+	$(ROMFSINST) $(THISDIR)/build/ubi-utils/ubiattach /sbin/ubiattach
+	$(ROMFSINST) $(THISDIR)/build/ubi-utils/ubidetach /sbin/ubidetach
+	$(ROMFSINST) $(THISDIR)/build/ubi-utils/ubiformat /sbin/ubiformat
+	$(ROMFSINST) $(THISDIR)/build/ubi-utils/ubimkvol /sbin/ubimkvol
+	$(ROMFSINST) $(THISDIR)/build/ubi-utils/ubinfo /sbin/ubinfo
