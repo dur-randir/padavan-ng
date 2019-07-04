@@ -1,12 +1,12 @@
-SRC_NAME=radvd-2.X
+SRC_NAME=radvd-2.18-rc1
 
 SHAREDIR = $(ROOTDIR)/user/shared
 
-CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden
+CFLAGS += -ffunction-sections -fdata-sections
 LDFLAGS += -Wl,--gc-sections
 
 all: config_test
-	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
+	$(MAKE) -C $(SRC_NAME)
 
 config_test:
 	( if [ -f ./config_done ]; then \
