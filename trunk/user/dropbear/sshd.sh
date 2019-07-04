@@ -22,10 +22,11 @@ func_createkeys()
 
 func_start()
 {
-	key_a=""
 	key_s=""
 	key_4=""
-
+	key_po=""
+	key_p=""
+	
 	[ ! -d "$dir_storage" ] && mkdir -p -m 755 $dir_storage
 
 	old_pattern="/etc/storage/dropbear_"
@@ -48,15 +49,24 @@ func_start()
 
 	ip6_service=`nvram get ip6_service`
 	if [ -z "$ip6_service" ] && [ -d /proc/sys/net/ipv6 ] ; then
-		key_4="-4"
+		ip4_address=`nvram get lan_ipaddr`
+		if [ ! -z "$ip4_address" ]; then
+			key_4="$ip4_address:"
+		else
+			exit 1
+		fi
 	fi
 
-	gateway_ports=`nvram get sshd_enable_gp`
-	if [ "$gateway_ports" != "0" ]; then
-		key_a="-a"
+	lan_port=`nvram get sshd_lport`
+	if [ ! -z "$lan_port" ]; then
+		key_po="-p"
+		key_p="$lan_port"
+	else
+		key_po="-p"
+		key_p="22"
 	fi
 
-	/usr/sbin/dropbear $key_4 $key_s $key_a
+	/usr/sbin/dropbear -r $rsa_key -r $dss_key -r $ecdsa_key $key_po $key_4$key_p $key_s
 }
 
 func_stop()
