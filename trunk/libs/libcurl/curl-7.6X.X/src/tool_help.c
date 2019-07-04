@@ -20,6 +20,9 @@
  *
  ***************************************************************************/
 #include "tool_setup.h"
+#ifdef HAVE_STRCASECMP
+#include <strings.h>
+#endif
 
 #include "tool_panykey.h"
 #include "tool_help.h"
@@ -48,6 +51,8 @@ struct helptxt {
 static const struct helptxt helptext[] = {
   {"    --abstract-unix-socket <path>",
    "Connect via abstract Unix domain socket"},
+  {"    --alt-svc <file name>",
+   "Enable alt-svc with this cache file"},
   {"    --anyauth",
    "Pick any authentication method"},
   {"-a, --append",
@@ -78,7 +83,7 @@ static const struct helptxt helptext[] = {
    "Connect to host"},
   {"-C, --continue-at <offset>",
    "Resumed transfer offset"},
-  {"-b, --cookie <data>",
+  {"-b, --cookie <data|filename>",
    "Send cookies from string/file"},
   {"-c, --cookie-jar <filename>",
    "Write cookies to <filename> after operation"},
@@ -330,8 +335,8 @@ static const struct helptxt helptext[] = {
    "SPNEGO proxy service name"},
   {"    --proxy-ssl-allow-beast",
    "Allow security flaw for interop for HTTPS proxy"},
-  {"    --proxy-tls13-ciphers <ciphersuite list>",
-   "TLS 1.3 proxy cipher suites"},
+  {"    --proxy-tls13-ciphers <list>",
+   "TLS 1.3 ciphersuites for proxy (OpenSSL)"},
   {"    --proxy-tlsauthtype <type>",
    "TLS authentication type for HTTPS proxy"},
   {"    --proxy-tlspassword <string>",
@@ -440,8 +445,8 @@ static const struct helptxt helptext[] = {
    "Transfer based on a time condition"},
   {"    --tls-max <VERSION>",
    "Set maximum allowed TLS version"},
-  {"    --tls13-ciphers <list of TLS 1.3 ciphersuites>",
-   "TLS 1.3 cipher suites to use"},
+  {"    --tls13-ciphers <list>",
+   "TLS 1.3 ciphersuites (OpenSSL)"},
   {"    --tlsauthtype <type>",
    "TLS authentication type"},
   {"    --tlspassword",
@@ -525,6 +530,7 @@ static const struct feat feats[] = {
   {"HTTPS-proxy",    CURL_VERSION_HTTPS_PROXY},
   {"MultiSSL",       CURL_VERSION_MULTI_SSL},
   {"PSL",            CURL_VERSION_PSL},
+  {"alt-svc",        CURL_VERSION_ALTSVC},
 };
 
 void tool_help(void)
@@ -538,6 +544,21 @@ void tool_help(void)
       tool_pressanykey();
 #endif
   }
+}
+
+static int
+featcomp(const void *p1, const void *p2)
+{
+  /* The arguments to this function are "pointers to pointers to char", but
+     the comparison arguments are "pointers to char", hence the following cast
+     plus dereference */
+#ifdef HAVE_STRCASECMP
+  return strcasecmp(* (char * const *) p1, * (char * const *) p2);
+#elif defined(HAVE_STRCMPI)
+  return strcmpi(* (char * const *) p1, * (char * const *) p2);
+#else
+  return strcmp(* (char * const *) p1, * (char * const *) p2);
+#endif
 }
 
 void tool_version_info(void)
@@ -559,16 +580,25 @@ void tool_version_info(void)
     puts(""); /* newline */
   }
   if(curlinfo->features) {
+    char *featp[ sizeof(feats) / sizeof(feats[0]) + 1];
+    size_t numfeat = 0;
     unsigned int i;
-    printf("Features: ");
+    printf("Features:");
     for(i = 0; i < sizeof(feats)/sizeof(feats[0]); i++) {
       if(curlinfo->features & feats[i].bitmask)
-        printf("%s ", feats[i].name);
+        featp[numfeat++] = (char *)feats[i].name;
     }
 #ifdef USE_METALINK
-    printf("Metalink ");
+    featp[numfeat++] = (char *)"Metalink";
 #endif
+    qsort(&featp[0], numfeat, sizeof(char *), featcomp);
+    for(i = 0; i< numfeat; i++)
+      printf(" %s", featp[i]);
     puts(""); /* newline */
+  }
+  if(strcmp(CURL_VERSION, curlinfo->version)) {
+    printf("WARNING: curl and libcurl versions do not match. "
+           "Functionality may be affected.\n");
   }
 }
 

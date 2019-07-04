@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2017, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2019, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -146,29 +146,20 @@ static void mcode_or_die(const char *where, CURLMcode code)
 static int multi_timer_cb(CURLM *multi _Unused, long timeout_ms, GlobalInfo *g)
 {
   struct timeval timeout;
-  CURLMcode rc;
 
   timeout.tv_sec = timeout_ms/1000;
   timeout.tv_usec = (timeout_ms%1000)*1000;
   fprintf(MSG_OUT, "multi_timer_cb: Setting timeout to %ld ms\n", timeout_ms);
 
-  /* TODO
-   *
-   * if timeout_ms is 0, call curl_multi_socket_action() at once!
-   *
+  /*
    * if timeout_ms is -1, just delete the timer
    *
-   * for all other values of timeout_ms, this should set or *update*
-   * the timer to the new value
+   * For all other values of timeout_ms, this should set or *update* the timer
+   * to the new value
    */
-  if(timeout_ms == 0) {
-    rc = curl_multi_socket_action(g->multi,
-                                  CURL_SOCKET_TIMEOUT, 0, &g->still_running);
-    mcode_or_die("multi_timer_cb: curl_multi_socket_action", rc);
-  }
-  else if(timeout_ms == -1)
+  if(timeout_ms == -1)
     evtimer_del(&g->timer_event);
-  else
+  else /* includes timeout zero */
     evtimer_add(&g->timer_event, &timeout);
   return 0;
 }
@@ -211,8 +202,8 @@ static void event_cb(int fd, short kind, void *userp)
   CURLMcode rc;
 
   int action =
-    (kind & EV_READ ? CURL_CSELECT_IN : 0) |
-    (kind & EV_WRITE ? CURL_CSELECT_OUT : 0);
+    ((kind & EV_READ) ? CURL_CSELECT_IN : 0) |
+    ((kind & EV_WRITE) ? CURL_CSELECT_OUT : 0);
 
   rc = curl_multi_socket_action(g->multi, fd, action, &g->still_running);
   mcode_or_die("event_cb: curl_multi_socket_action", rc);
@@ -258,7 +249,8 @@ static void setsock(SockInfo *f, curl_socket_t s, CURL *e, int act,
                     GlobalInfo *g)
 {
   int kind =
-     (act&CURL_POLL_IN?EV_READ:0)|(act&CURL_POLL_OUT?EV_WRITE:0)|EV_PERSIST;
+     ((act & CURL_POLL_IN) ? EV_READ : 0) |
+     ((act & CURL_POLL_OUT) ? EV_WRITE : 0) | EV_PERSIST;
 
   f->sockfd = s;
   f->action = act;
@@ -315,7 +307,8 @@ static size_t write_cb(void *ptr _Unused, size_t size, size_t nmemb,
                        void *data)
 {
   size_t realsize = size * nmemb;
-  ConnInfo *conn _Unused = (ConnInfo*) data;
+  (void)_Unused;
+  (void)data;
 
   return realsize;
 }

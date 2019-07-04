@@ -33,6 +33,10 @@
 #  include <fabdef.h>
 #endif
 
+#ifdef __AMIGA__
+#  include <proto/dos.h>
+#endif
+
 #include "strcase.h"
 
 #define ENABLE_CURLX_PRINTF
@@ -97,7 +101,6 @@ CURLcode curl_easy_perform_ev(CURL *easy);
 static bool is_fatal_error(CURLcode code)
 {
   switch(code) {
-  /* TODO: Should CURLE_PEER_FAILED_VERIFICATION be a critical error? */
   case CURLE_FAILED_INIT:
   case CURLE_OUT_OF_MEMORY:
   case CURLE_UNKNOWN_OPTION:
@@ -822,7 +825,9 @@ static CURLcode operate_do(struct GlobalConfig *global,
 
         /* where to store */
         my_setopt(curl, CURLOPT_WRITEDATA, &outs);
+#ifndef CURL_DISABLE_RTSP
         my_setopt(curl, CURLOPT_INTERLEAVEDATA, &outs);
+#endif
         if(metalink || !config->use_metalink)
           /* what call to write */
           my_setopt(curl, CURLOPT_WRITEFUNCTION, tool_write_cb);
@@ -872,8 +877,6 @@ static CURLcode operate_do(struct GlobalConfig *global,
 
 #if !defined(CURL_DISABLE_PROXY)
         {
-          /* TODO: Make this a run-time check instead of compile-time one. */
-
           my_setopt_str(curl, CURLOPT_PROXY, config->proxy);
           /* new in libcurl 7.5 */
           if(config->proxy)
@@ -945,6 +948,9 @@ static CURLcode operate_do(struct GlobalConfig *global,
                     config->postfieldsize);
           break;
         case HTTPREQ_MIMEPOST:
+          result = tool2curlmime(curl, config->mimeroot, &config->mimepost);
+          if(result)
+            goto show_error;
           my_setopt_mimepost(curl, CURLOPT_MIMEPOST, config->mimepost);
           break;
         default:
@@ -1006,11 +1012,14 @@ static CURLcode operate_do(struct GlobalConfig *global,
           if(config->tr_encoding)
             my_setopt(curl, CURLOPT_TRANSFER_ENCODING, 1L);
           /* new in libcurl 7.64.0 */
-          my_setopt(curl, CURLOPT_HTTP09_ALLOWED, config->http09_allowed);
+          my_setopt(curl, CURLOPT_HTTP09_ALLOWED,
+                    config->http09_allowed ? 1L : 0L);
 
         } /* (built_in_protos & CURLPROTO_HTTP) */
 
+#ifndef CURL_DISABLE_FTP
         my_setopt_str(curl, CURLOPT_FTPPORT, config->ftpport);
+#endif
         my_setopt(curl, CURLOPT_LOW_SPEED_LIMIT,
                   config->low_speed_limit);
         my_setopt(curl, CURLOPT_LOW_SPEED_TIME, config->low_speed_time);
@@ -1025,8 +1034,9 @@ static CURLcode operate_do(struct GlobalConfig *global,
           my_setopt(curl, CURLOPT_RESUME_FROM_LARGE, CURL_OFF_T_C(0));
 
         my_setopt_str(curl, CURLOPT_KEYPASSWD, config->key_passwd);
+#ifndef CURL_DISABLE_PROXY
         my_setopt_str(curl, CURLOPT_PROXY_KEYPASSWD, config->proxy_key_passwd);
-
+#endif
         if(built_in_protos & (CURLPROTO_SCP|CURLPROTO_SFTP)) {
 
           /* SSH and SSL private key uses same command-line option */
@@ -1232,8 +1242,9 @@ static CURLcode operate_do(struct GlobalConfig *global,
 
         /* three new ones in libcurl 7.3: */
         my_setopt_str(curl, CURLOPT_INTERFACE, config->iface);
+#ifndef CURL_DISABLE_FTP
         my_setopt_str(curl, CURLOPT_KRBLEVEL, config->krblevel);
-
+#endif
         progressbarinit(&progressbar, config);
         if((global->progressmode == CURL_PROGRESS_BAR) &&
            !global->noprogress && !global->mute) {
@@ -1255,9 +1266,10 @@ static CURLcode operate_do(struct GlobalConfig *global,
         if(config->dns_ipv6_addr)
         my_setopt_str(curl, CURLOPT_DNS_LOCAL_IP6, config->dns_ipv6_addr);
 
+#ifndef CURL_DISABLE_TELNET
         /* new in libcurl 7.6.2: */
         my_setopt_slist(curl, CURLOPT_TELNETOPTIONS, config->telnet_options);
-
+#endif
         /* new in libcurl 7.7: */
         my_setopt_str(curl, CURLOPT_RANDOM_FILE, config->random_file);
         my_setopt_str(curl, CURLOPT_EGDSOCKET, config->egd_file);
@@ -1360,27 +1372,30 @@ static CURLcode operate_do(struct GlobalConfig *global,
           my_setopt_str(curl, CURLOPT_SERVICE_NAME,
                         config->service_name);
 
+#ifndef CURL_DISABLE_FTP
         /* curl 7.13.0 */
         my_setopt_str(curl, CURLOPT_FTP_ACCOUNT, config->ftp_account);
-
+#endif
         my_setopt(curl, CURLOPT_IGNORE_CONTENT_LENGTH, config->ignorecl?1L:0L);
 
+#ifndef CURL_DISABLE_FTP
         /* curl 7.14.2 */
         my_setopt(curl, CURLOPT_FTP_SKIP_PASV_IP, config->ftp_skip_ip?1L:0L);
 
         /* curl 7.15.1 */
         my_setopt(curl, CURLOPT_FTP_FILEMETHOD, (long)config->ftp_filemethod);
-
+#endif
         /* curl 7.15.2 */
         if(config->localport) {
           my_setopt(curl, CURLOPT_LOCALPORT, config->localport);
           my_setopt_str(curl, CURLOPT_LOCALPORTRANGE, config->localportrange);
         }
 
+#ifndef CURL_DISABLE_FTP
         /* curl 7.15.5 */
         my_setopt_str(curl, CURLOPT_FTP_ALTERNATIVE_TO_USER,
                       config->ftp_alternative_to_user);
-
+#endif
         /* curl 7.16.0 */
         if(config->disable_sessionid)
           /* disable it */
@@ -1534,6 +1549,12 @@ static CURLcode operate_do(struct GlobalConfig *global,
         if(config->disallow_username_in_url)
           my_setopt(curl, CURLOPT_DISALLOW_USERNAME_IN_URL, 1L);
 
+#ifdef USE_ALTSVC
+        /* only if explicitly enabled in configure */
+        if(config->altsvc)
+          my_setopt_str(curl, CURLOPT_ALTSVC, config->altsvc);
+#endif
+
         /* initialize retry vars for loop below */
         retry_sleep_default = (config->retry_delay) ?
           config->retry_delay*1000L : RETRY_SLEEP_DEFAULT; /* ms */
@@ -1646,10 +1667,6 @@ static CURLcode operate_do(struct GlobalConfig *global,
                    * file (or terminal). If we write to a file, we must rewind
                    * or close/re-open the file so that the next attempt starts
                    * over from the beginning.
-                   *
-                   * TODO: similar action for the upload case. We might need
-                   * to start over reading from a previous point if we have
-                   * uploaded something when this was returned.
                    */
                   break;
                 }
@@ -1740,8 +1757,6 @@ static CURLcode operate_do(struct GlobalConfig *global,
                download was not successful. */
             long response;
             if(CURLE_OK == result) {
-              /* TODO We want to try next resource when download was
-                 not successful. How to know that? */
               char *effective_url = NULL;
               curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &effective_url);
               if(effective_url &&
@@ -1856,9 +1871,9 @@ static CURLcode operate_do(struct GlobalConfig *global,
 #ifdef __AMIGA__
         if(!result && outs.s_isreg && outs.filename) {
           /* Set the url (up to 80 chars) as comment for the file */
-          if(strlen(url) > 78)
-            url[79] = '\0';
-          SetComment(outs.filename, url);
+          if(strlen(urlnode->url) > 78)
+            urlnode->url[79] = '\0';
+          SetComment(outs.filename, urlnode->url);
         }
 #endif
 
@@ -1915,9 +1930,6 @@ static CURLcode operate_do(struct GlobalConfig *global,
             break;
           mlres = mlres->next;
           if(mlres == NULL)
-            /* TODO If metalink_next_res is 1 and mlres is NULL,
-             * set res to error code
-             */
             break;
         }
         else if(urlnum > 1) {

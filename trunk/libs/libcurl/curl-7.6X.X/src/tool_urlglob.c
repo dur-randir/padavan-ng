@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2018, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2019, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -553,8 +553,7 @@ CURLcode glob_next_url(char **globbed, URLGlob *glob)
       }
     }
     if(carry) {         /* first pattern ptr has run into overflow, done! */
-      /* TODO: verify if this should actually return CURLE_OK. */
-      return CURLE_OK; /* CURLE_OK to match previous behavior */
+      return CURLE_OK;
     }
   }
 
@@ -603,7 +602,7 @@ CURLcode glob_match_url(char **result, char *filename, URLGlob *glob)
   char *target;
   size_t allocsize;
   char numbuf[18];
-  char *appendthis = NULL;
+  char *appendthis = (char *)"";
   size_t appendlen = 0;
   size_t stringlen = 0;
 

@@ -17,6 +17,7 @@
  All bugs documented in the KNOWN_BUGS document are subject for fixing!
 
  1. libcurl
+ 1.1 TFO support on Windows
  1.2 More data sharing
  1.3 struct lifreq
  1.4 signal-based resolver timeouts
@@ -34,7 +35,6 @@
  1.16 Try to URL encode given URL
  1.17 Add support for IRIs
  1.18 try next proxy if one doesn't work
- 1.19 Timeout idle connections from the pool
  1.20 SRV and URI DNS records
  1.21 Have the URL API offer IDN decoding
  1.22 CURLINFO_PAUSE_STATE
@@ -44,6 +44,8 @@
  1.26 CURL_REFUSE_CLEARTEXT
  1.27 hardcode the "localhost" addresses
  1.28 FD_CLOEXEC
+ 1.29 Upgrade to websockets
+ 1.30 config file parsing
 
  2. libcurl - multi interface
  2.1 More non-blocking
@@ -70,6 +72,7 @@
  5.1 Better persistency for HTTP 1.0
  5.2 support FF3 sqlite cookie files
  5.3 Rearrange request header order
+ 5.4 Allow SAN names in HTTP/2 server push
  5.5 auth= in URLs
  5.6 Refuse "downgrade" redirects
  5.7 QUIC
@@ -146,8 +149,7 @@
  18.4 simultaneous parallel transfers
  18.5 UTF-8 filenames in Content-Disposition
  18.6 warning when setting an option
- 18.7 warning if curl version is not in sync with libcurl version
- 18.8 offer color-coded HTTP header output
+ 18.7 at least N milliseconds between requests
  18.9 Choose the name of file in braces for complex URLs
  18.10 improve how curl works in a windows console window
  18.11 Windows: set attribute 'archive' for completed downloads
@@ -164,6 +166,7 @@
  19. Build
  19.1 roffit
  19.2 Enable PIE and RELRO by default
+ 19.3 cmake test suite improvements
 
  20. Test suite
  20.1 SSL tunnel
@@ -191,6 +194,13 @@
 ==============================================================================
 
 1. libcurl
+
+1.1 TFO support on Windows
+
+ TCP Fast Open is supported on several platforms but not on Windows. Work on
+ this was once started but never finished.
+
+ See https://github.com/curl/curl/pull/3378
 
 1.2 More data sharing
 
@@ -248,6 +258,8 @@
 1.7 Support HTTP/2 for HTTP(S) proxies
 
  Support for doing HTTP/2 to HTTP and HTTPS proxies is still missing.
+
+ See https://github.com/curl/curl/issues/3570
 
 1.8 CURLOPT_RESOLVE for any port number
 
@@ -360,16 +372,6 @@
 
  https://github.com/curl/curl/issues/896
 
-1.19 Timeout idle connections from the pool
-
- libcurl currently keeps connections in its connection pool for an indefinite
- period of time, until it either gets reused, gets noticed that it has been
- closed by the server or gets pruned to make room for a new connection.
-
- To reduce overhead (especially for when we add monitoring of the connections
- in the pool), we should introduce a timeout so that connections that have
- been idle for N seconds get closed.
-
 1.20 SRV and URI DNS records
 
  Offer support for resolving SRV and URI DNS records for libcurl to know which
@@ -439,6 +441,22 @@
  exec-family functions succeed. Should probably be set by default?
 
  https://github.com/curl/curl/issues/2252
+
+1.29 Upgrade to websockets
+
+ libcurl could offer a smoother path to get to a websocket connection.
+ See https://github.com/curl/curl/issues/3523
+
+ Michael Kaufmann suggestion here:
+ https://curl.haxx.se/video/curlup-2017/2017-03-19_05_Michael_Kaufmann_Websocket_support_for_curl.mp4
+
+1.30 config file parsing
+
+ Consider providing an API, possibly in a separate companion library, for
+ parsing a config file like curl's -K/--config option to allow applications to
+ get the same ability to read curl options from files.
+
+ See https://github.com/curl/curl/issues/3698
 
 2. libcurl - multi interface
 
@@ -576,6 +594,15 @@
  sorts the headers based on that number. We could then have internally created
  headers use a default value so only headers that need to be moved have to be
  specified.
+
+5.4 Allow SAN names in HTTP/2 server push
+
+ curl only allows HTTP/2 push promise if the provided :authority header value
+ exactly matches the host name given in the URL. It could be extended to allow
+ any name that would match the Subject Alternative Names in the server's TLS
+ certificate.
+
+ See https://github.com/curl/curl/pull/3581
 
 5.5 auth= in URLs
 
@@ -988,18 +1015,16 @@ that doesn't exist on the server, just like --ftp-create-dirs.
  This can be useful to tell when support for a particular feature hasn't been
  compiled into the library.
 
-18.7 warning if curl version is not in sync with libcurl version
+18.7 at least N milliseconds between requests
 
- This is usually a sign of a funny, weird or unexpected install situations
- that aren't always quickly nor easily detected by users. curl and libcurl are
- always released in sync and should use the same version numbers unless very
- special situations.
+ Allow curl command lines issue a lot of request against services that limit
+ users to no more than N requests/second or similar. Could be implemented with
+ an option asking that at least a certain time has elapsed since the previous
+ request before the next one will be performed. Example:
 
-18.8 offer color-coded HTTP header output
+    $ curl "https://example.com/api?input=[1-1000]" -d yadayada --after 500
 
- By offering different color output on the header name and the header
- contents, they could be made more readable and thus help users working on
- HTTP services.
+ See https://github.com/curl/curl/issues/3920
 
 18.9 Choose the name of file in braces for complex URLs
 
@@ -1144,6 +1169,13 @@ that doesn't exist on the server, just like --ftp-create-dirs.
  to no impact, neither on the performance nor on the general functionality of
  curl.
 
+19.3 cmake test suite improvements
+
+ The cmake build doesn't support 'make show' so it doesn't know which tests
+ are in the makefile or not (making appveyor builds do many false warnings
+ about it) nor does it support running the test suite if building out-of-tree.
+
+ See https://github.com/curl/curl/issues/3109
 
 20. Test suite
 

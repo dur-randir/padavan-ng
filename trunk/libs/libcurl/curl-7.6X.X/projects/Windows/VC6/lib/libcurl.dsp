@@ -730,6 +730,10 @@ LIB32=link.exe -lib
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\..\..\lib\altsvc.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\lib\amigaos.c
 # End Source File
 # Begin Source File
@@ -783,6 +787,10 @@ SOURCE=..\..\..\..\lib\curl_fnmatch.c
 # Begin Source File
 
 SOURCE=..\..\..\..\lib\curl_gethostname.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\lib\curl_get_line.c
 # End Source File
 # Begin Source File
 
@@ -1022,10 +1030,6 @@ SOURCE=..\..\..\..\lib\pingpong.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\lib\pipeline.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\..\lib\pop3.c
 # End Source File
 # Begin Source File
@@ -1226,10 +1230,6 @@ SOURCE=..\..\..\..\lib\vtls\cyassl.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\lib\vtls\darwinssl.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\..\lib\vtls\gskit.c
 # End Source File
 # Begin Source File
@@ -1270,12 +1270,20 @@ SOURCE=..\..\..\..\lib\vtls\schannel_verify.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\lib\vtls\sectransp.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\lib\vtls\vtls.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\..\..\lib\altsvc.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\..\..\lib\amigaos.h
@@ -1335,6 +1343,10 @@ SOURCE=..\..\..\..\lib\curl_fnmatch.h
 # Begin Source File
 
 SOURCE=..\..\..\..\lib\curl_gethostname.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\lib\curl_get_line.h
 # End Source File
 # Begin Source File
 
@@ -1570,10 +1582,6 @@ SOURCE=..\..\..\..\lib\pingpong.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\lib\pipeline.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\..\lib\pop3.h
 # End Source File
 # Begin Source File
@@ -1730,10 +1738,6 @@ SOURCE=..\..\..\..\lib\vtls\cyassl.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\lib\vtls\darwinssl.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\..\lib\vtls\gskit.h
 # End Source File
 # Begin Source File
@@ -1767,6 +1771,10 @@ SOURCE=..\..\..\..\lib\vtls\polarssl_threadlock.h
 # Begin Source File
 
 SOURCE=..\..\..\..\lib\vtls\schannel.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\lib\vtls\sectransp.h
 # End Source File
 # Begin Source File
 
