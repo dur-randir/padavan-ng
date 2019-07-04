@@ -1,12 +1,10 @@
-SRC_NAME=ipset-6.x
+SRC_NAME=ipset-7.x
 
 THISDIR = $(shell pwd)
 
-CFLAGS += -fvisibility=hidden
-
 all: config_test
-	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
-	$(MAKE) modules -j$(HOST_NCPU) -C $(SRC_NAME)
+	$(MAKE) -C $(SRC_NAME)
+	$(MAKE) modules -C $(SRC_NAME)
 
 config_test:
 	( if [ -f ./config_done ]; then \
