@@ -1,62 +1,47 @@
-VERSION       = 1.99.15
-NAME          = inadyn
-EXEC          = src/$(NAME)
-RM           ?= rm -f
-SHAREDIR      = $(ROOTDIR)/user/shared
+SRC_NAME="inadyn-2.5"
 
-PLUGIN_OBJS   = src/plugin.o		plugins/common.o	\
-		plugins/asuscomm.o	plugins/duckdns.o	\
-		plugins/dyndns.o	plugins/changeip.o	\
-		plugins/dnsexit.o	plugins/easydns.o	\
-		plugins/freedns.o	plugins/generic.o	\
-		plugins/sitelutions.o				\
-		plugins/tzo.o		plugins/zoneedit.o	\
-		plugins/zerigo.o	plugins/dhis.o		\
-		plugins/dynv6.o		plugins/dynv6-ipv4.o	\
-		plugins/dtdns.o		plugins/giradns.o	\
-		plugins/duiadns.o	plugins/netassist.o	\
-		plugins/ddnss.o
-
-BASE_OBJS     = src/main.o	src/ddns.o	src/cache.o	\
-		src/cmd.o	src/os.o	src/error.o	\
-		src/http.o	src/ssl.o	src/tcp.o	\
-		src/ip.o	src/sha1.o	src/base64.o	\
-		src/md5.o
-
-OBJS          = $(BASE_OBJS) $(PLUGIN_OBJS)
-SRCS          = $(OBJS:.o=.c)
-DEPS          = $(SRCS:.c=.d)
-
-CFLAGS       += -W -Wall
-CFLAGS       += -D_BSD_SOURCE -D_GNU_SOURCE
-CFLAGS       += -Iinclude -DVERSION=\"$(VERSION)\"
-CFLAGS       += -Iinclude -I$(SHAREDIR)
-CFLAGS       += -ffunction-sections -fdata-sections -fvisibility=hidden
-
-LDFLAGS      += -L$(SHAREDIR) -lshared
-LDFLAGS      += -Wl,--gc-sections
-
-LDLIBS       += -ldl
+CFLAGS += -Os -ffunction-sections -fdata-sections
+LDFLAGS += -Wl,--gc-sections
 
 ifeq ($(CONFIG_FIRMWARE_INCLUDE_DDNS_SSL),y)
-CFLAGS       += -DENABLE_SSL -DCONFIG_OPENSSL
-LDLIBS       += -lssl -lcrypto
+SSLFLAG=--enable-openssl
+else
+SSLFLAG=--disable-openssl
 endif
 
-# Pattern rules
-.c.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+THISDIR = $(shell pwd)
 
-# Build rules
-all: $(EXEC)
+all: config_test
+	$(MAKE) -C $(SRC_NAME)
 
-$(EXEC): $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+config_test:
+	( if [ -f ./config_done ]; then \
+		echo "the same configuration"; \
+	else \
+		make configure && touch config_done; \
+	fi )
+
+configure:
+	( cd $(SRC_NAME) ; \
+	PKG_CONFIG_PATH=$(STAGEDIR)/lib/pkgconfig \
+	./configure \
+		$(SSLFLAG) \
+		confuse_CFLAGS="-I$(STAGEDIR)/include" \
+		confuse_LIBS="-L$(STAGEDIR)/lib" \
+		OpenSSL_CFLAGS="-I$(STAGEDIR)/include" \
+		OpenSSL_LIBS="-L$(STAGEDIR)/lib -lssl -lcrypto" \
+		--host=$(HOST_TARGET) \
+		--build=$(HOST_BUILD) ; \
+	)
 
 clean:
-	-@$(RM) $(OBJS) $(DEPS) $(EXEC)
+	if [ -f $(SRC_NAME)/Makefile ] ; then \
+		$(MAKE) -C $(SRC_NAME) distclean ; \
+	fi; \
+	rm -f config_done
+	rm -f inadyn
 
 romfs:
-	$(ROMFSINST) $(EXEC) /bin/inadyn
-
-
+	cp $(SRC_NAME)/src/inadyn .
+	$(STRIP) inadyn
+	$(ROMFSINST) /bin/inadyn
