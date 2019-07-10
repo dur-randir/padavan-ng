@@ -67,6 +67,7 @@ endif
 		--disable-shared \
 		--disable-nftables \
 		--disable-connlabel \
+		--with-xt-lock-name=/var/lock/xtables.lock \
 		--with-xtlibdir=/usr/lib/xtables \
 		--with-kernel=$(ROOTDIR)/$(LINUXDIR) \
 		$(if $(CONFIG_IPV6),--enable-ipv6,--disable-ipv6) \
