@@ -1,7 +1,9 @@
 SRC_NAME="inadyn-2.5"
 
-CFLAGS += -Os -ffunction-sections -fdata-sections
-LDFLAGS += -Wl,--gc-sections
+SHAREDIR = $(ROOTDIR)/user/shared
+CFLAGS += -Os -ffunction-sections -fdata-sections -I.
+CFLAGS	+= -I$(SHAREDIR)
+LDFLAGS	+= -Wl,--gc-sections -L. -L$(SHAREDIR) -lshared
 
 ifeq ($(CONFIG_FIRMWARE_INCLUDE_DDNS_SSL),y)
 SSLFLAG=--enable-openssl

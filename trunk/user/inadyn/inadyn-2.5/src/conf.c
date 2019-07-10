@@ -227,6 +227,7 @@ static int cfg_getserver(cfg_t *cfg, char *server, ddns_name_t *name)
 /* TODO: Move to a separate file */
 #define string_startswith(string, prefix) strncasecmp(string, prefix, strlen(prefix)) == 0
 
+/*
 static int parseproxy(const char *proxy, tcp_proxy_type_t *type, ddns_name_t *name)
 {
 	int ret = 0;
@@ -275,7 +276,7 @@ static int parseproxy(const char *proxy, tcp_proxy_type_t *type, ddns_name_t *na
 				break;
 			}
 		} else {
-			/* Currently we do not support http proxy. */
+// Currently we do not support http proxy.
 //			*type = PROXY_HTTP;
 //			logit(LOG_WARNING, "No proxy protocol is specified, use http proxy.");
 
@@ -288,7 +289,9 @@ static int parseproxy(const char *proxy, tcp_proxy_type_t *type, ddns_name_t *na
 	free(str);
 	return ret;
 }
+*/
 
+/*
 static int cfg_parseproxy(cfg_t *cfg, char *server, tcp_proxy_type_t *type, ddns_name_t *name)
 {
 	const char *str;
@@ -299,6 +302,7 @@ static int cfg_parseproxy(cfg_t *cfg, char *server, tcp_proxy_type_t *type, ddns
 
 	return parseproxy(str, type, name);
 }
+*/
 
 static int set_provider_opts(cfg_t *cfg, ddns_info_t *info, int custom)
 {

@@ -55,9 +55,15 @@ var ddns_list = [
 	[ 0x0f, "WWW.LOOPIA.COM",       "", "https://www.loopia.com/loopiadns/" ],
 	[ 0x0f, "WWW.DUIADNS.NET",      "", "https://www.duiadns.net/services" ],
 	[ 0x0f, "WWW.TUNNELBROKER.NET", "(HE)", "http://www.tunnelbroker.net/register.php" ],
+	[ 0x0f, "WWW.SELFHOST.DE",      "", "https://secure.selfhost.de/cgi-bin/selfhost?p=account" ],
+	[ 0x0f, "WWW.DYNU.COM",         "", "https://www.dynu.com/en-US/ControlPanel/CreateAccount" ],
+	[ 0x0f, "WWW.CLOUDXNS.NET",     "", "https://www.cloudxns.net/en/Sign/signin.html" ],
+	[ 0x0f, "WWW.DNSPOD.CN",        "", "https://www.dnspod.cn/Login?r=/console" ],
+	[ 0x0f, "FREEMYIP.COM",         "", "https://freemyip.com/main" ],
+	[ 0x0f, "SPDYN.DE",             "", "https://spdyn.de/profile/register/" ],
 	[ 0x0f, "DNS.HE.NET",           "(HE)", "http://ipv6.he.net/certification/register.php" ],
 	[ 0x0f, "DDNSS.DE",             "", "https://www.ddnss.de/user_new.php" ],
-	[ 0x0f, "HOMESERVER.GIRA.DE",   "", "https://homeserver.gira.de/en/registrierung/index.html" ],
+	[ 0x0f, "GIRADNS.COM",          "", "https://geraeteportal.gira.de/de/konto/registrieren.html" ],
 	[ 0x0f, "DOMAINS.GOOGLE.COM",   "", "https://domains.google.com/registrar" ],
 	[ 0x0f, "IPV4.DYNV6.COM",       "", "https://ipv4.dynv6.com/users/sign_up" ],
 	[ 0x0f, "DYNV6.COM",            "", "https://dynv6.com/users/sign_up" ],
@@ -655,9 +661,12 @@ function checkDDNSReturnCode(){
                                             <th><#DDNS_Verbose#></th>
                                             <td>
                                                 <select name="ddns_verbose" class="input" onchange="disable_update();">
-                                                    <option value="0" <% nvram_match_x("", "ddns_verbose", "0","selected"); %>>0 (Quiet)</option>
-                                                    <option value="1" <% nvram_match_x("", "ddns_verbose", "1","selected"); %>>1 (Default)</option>
-                                                    <option value="2" <% nvram_match_x("", "ddns_verbose", "2","selected"); %>>2 (Verbose)</option>
+                                                    <option value="0" <% nvram_match_x("", "ddns_verbose", "0","selected"); %>>0 Quiet</option>
+                                                    <option value="1" <% nvram_match_x("", "ddns_verbose", "1","selected"); %>>1 Error</option>
+                                                    <option value="2" <% nvram_match_x("", "ddns_verbose", "2","selected"); %>>2 Warning</option>
+                                                    <option value="3" <% nvram_match_x("", "ddns_verbose", "3","selected"); %>>3 Notice</option>
+                                                    <option value="4" <% nvram_match_x("", "ddns_verbose", "4","selected"); %>>4 Info (Default)</option>
+                                                    <option value="5" <% nvram_match_x("", "ddns_verbose", "5","selected"); %>>5 Debug</option>
                                                 </select>
                                             </td>
                                         </tr>

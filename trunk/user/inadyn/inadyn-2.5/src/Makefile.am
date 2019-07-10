@@ -24,7 +24,8 @@ endif
 ## Plugins are currently built-in, and built from this directory instead
 ## of where they reside.  They should be built by plugins/Makefile.am
 ## and be installed into $libdir/inadyn/plugins/ as *.so files
-inadyn_SOURCES  += ../plugins/common.c		../plugins/changeip.c	\
+inadyn_SOURCES  += ../plugins/common.c		../plugins/asuscomm.c	\
+		   ../plugins/changeip.c				\
 		   ../plugins/cloudxns.c	../plugins/ddnss.c	\
 		   ../plugins/dhis.c		../plugins/dnsexit.c	\
 		   ../plugins/dtdns.c		../plugins/duckdns.c	\
