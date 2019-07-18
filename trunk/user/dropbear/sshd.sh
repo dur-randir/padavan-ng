@@ -22,6 +22,7 @@ func_createkeys()
 
 func_start()
 {
+	key_a=""
 	key_s=""
 	key_4=""
 	key_po=""
@@ -47,6 +48,11 @@ func_start()
 		key_s="-s"
 	fi
 
+	gateway_ports=`nvram get sshd_enable_gp`
+	if [ "$gateway_ports" != "0" ]; then
+		key_a="-a"
+	fi
+
 	ip6_service=`nvram get ip6_service`
 	if [ -z "$ip6_service" ] && [ -d /proc/sys/net/ipv6 ] ; then
 		ip4_address=`nvram get lan_ipaddr`
@@ -66,7 +72,7 @@ func_start()
 		key_p="22"
 	fi
 
-	/usr/sbin/dropbear -r $rsa_key -r $dss_key -r $ecdsa_key $key_po $key_4$key_p $key_s
+	/usr/sbin/dropbear -r $rsa_key -r $dss_key -r $ecdsa_key $key_po $key_4$key_p $key_s $key_a
 }
 
 func_stop()
