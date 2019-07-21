@@ -210,7 +210,14 @@ stop_sshd(void)
 void
 start_sshd(void)
 {
+	int sshd_port;
 	int sshd_mode = nvram_get_int("sshd_enable");
+
+	sshd_port = nvram_get_int("sshd_lport");
+	if (sshd_port < 22 || sshd_port > 65535) {
+		sshd_port = 22;
+		nvram_set_int("sshd_lport", sshd_port);
+	}
 
 	if (sshd_mode == 2)
 		eval("/usr/bin/sshd.sh", "start", "-s");

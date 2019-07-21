@@ -25,7 +25,7 @@ func_start()
 	key_a=""
 	key_s=""
 	key_4=""
-	key_po=""
+	key_po="-p"
 	key_p=""
 	
 	[ ! -d "$dir_storage" ] && mkdir -p -m 755 $dir_storage
@@ -64,11 +64,9 @@ func_start()
 	fi
 
 	lan_port=`nvram get sshd_lport`
-	if [ ! -z "$lan_port" ]; then
-		key_po="-p"
+	if [ ! "$lan_port" -eq "22" ]; then
 		key_p="$lan_port"
 	else
-		key_po="-p"
 		key_p="22"
 	fi
 

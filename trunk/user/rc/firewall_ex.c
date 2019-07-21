@@ -909,7 +909,7 @@ ipt_filter_rules(char *man_if, char *wan_if, char *lan_if, char *lan_ip,
 		if (nvram_invmatch("sshd_enable", "0") && nvram_match("sshd_wopen", "1")) {
 			i_bfplimit_ref++;
 			wport = nvram_get_int("sshd_wport");
-			lport = 22;
+			lport = nvram_get_int("sshd_lport");
 			if (wport == lport || !is_nat_enabled)
 				fprintf(fp, "-A %s -p tcp --dport %d -j %s\n", dtype, lport, IPT_CHAIN_NAME_BFP_LIMIT);
 			else
@@ -1449,7 +1449,7 @@ ip6t_filter_rules(char *man_if, char *wan_if, char *lan_if,
 #endif
 #if defined (APP_SSHD)
 		wport = nvram_get_int("sshd_wport");
-		lport = 22;
+		lport = nvram_get_int("sshd_lport");
 		if (nvram_invmatch("sshd_enable", "0") && nvram_match("sshd_wopen", "1") && (wport == lport)) {
 			i_bfplimit_ref++;
 			fprintf(fp, "-A %s -p tcp --dport %d -j %s\n", dtype, lport, IPT_CHAIN_NAME_BFP_LIMIT);
@@ -1889,7 +1889,7 @@ ipt_nat_rules(char *man_if, char *man_ip,
 #if defined (APP_SSHD)
 			if (nvram_invmatch("sshd_enable", "0") && nvram_match("sshd_wopen", "1")) {
 				wport = nvram_get_int("sshd_wport");
-				lport = 22;
+				lport = nvram_get_int("sshd_lport");
 				if (wport < 22 || wport > 65535) {
 					wport = 10022;
 					nvram_set_int("sshd_wport", wport);

@@ -148,6 +148,9 @@ function validForm(){
 	if(!validate_range(document.form.http_lanport, 80, 65535))
 		return false;
 
+	if(!validate_range(document.form.sshd_lport, 22, 65535))
+		return false;
+
 	if (support_http_ssl()){
 		var mode = document.form.http_proto.value;
 		if (mode == "0" || mode == "2"){
@@ -280,6 +283,7 @@ function sshd_auth_change(){
 	var v = (auth != "0") ? 1 : 0;
 	showhide_div('row_ssh_gp', v);
 	showhide_div('row_ssh_keys', v);
+	showhide_div('row_ssh_lp', v);
 	if (!login_safe())
 		v = 0;
 	textarea_sshd_enabled(v);
@@ -518,6 +522,13 @@ function change_crond_enabled(){
                                                     <option value="1" <% nvram_match_x("", "sshd_enable", "1","selected"); %>><#checkbox_Yes#></option>
                                                     <option value="2" <% nvram_match_x("", "sshd_enable", "2","selected"); %>><#checkbox_Yes#> (authorized_keys only)</option>
                                                 </select>
+                                            </td>
+                                        </tr>
+                                        <tr id="row_ssh_lp">
+                                            <th><#Adm_System_sshd_lport#></th>
+                                            <td>
+                                                <input type="text" maxlength="5" size="15" name="sshd_lport" class="input" value="<% nvram_get_x("", "sshd_lport"); %>" onkeypress="return is_number(this,event);"/>
+                                                &nbsp;<span style="color:#888;">[22..65535]</span>
                                             </td>
                                         </tr>
                                         <tr id="row_ssh_gp">

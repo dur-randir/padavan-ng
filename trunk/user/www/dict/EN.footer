@@ -236,6 +236,7 @@ Adm_System_sshd=Enable SSH Server?
 Adm_System_sshd_gp=Allow SSH GatewayPorts?
 Adm_System_sshd_wopen=Access SSH Server from WAN?
 Adm_System_sshd_wport=SSH Server Port from WAN:
+Adm_System_sshd_lport=SSH Server Port from LAN:
 Adm_System_sshd_wbfp=SSH Server Brute Force Protection:
 Adm_System_sshd_keys=SSH Public Authorization Keys
 Adm_System_ftpd_wopen=Access FTP Server from WAN?

@@ -110,6 +110,11 @@ Subsystem	sftp	/usr/libexec/sftp-server
 
 EOF
 	chmod 644 "$sshd_config"
+
+	lan_port=`nvram get sshd_lport`
+	if [ ! "$lan_port" -eq "22" ]; then
+	    sed -i "s/#Port 22/Port $lan_port/g" $sshd_config
+	fi
 }
 
 func_start()
