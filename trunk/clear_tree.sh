@@ -30,3 +30,7 @@ make clean
 rm -rfv $ROOTDIR/romfs
 rm -rfv $ROOTDIR/images
 rm -rfv $ROOTDIR/stage
+
+if [ -f "$ROOTDIR/build.log" ] ; then
+    rm -rfv $ROOTDIR/build.log
+fi
