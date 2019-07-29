@@ -353,7 +353,7 @@ function show_banner(L3){
 	bc += '    <td><a href="/Advanced_FirmwareUpgrade_Content.asp"><span id="firmver" class="time"></span></a></td>\n';
 	bc += '  </tr>\n';
 	bc += '  <tr>\n';
-	bc += '    <td><#General_x_ConfigTemplate_itemname#> <a href="https://github.com/zanezam/rt-n56u-wiki/EN/FirmwareBuilds.md"><span id="conftempl"></span></td>\n';
+	bc += '    <td><#General_x_ConfigTemplate_itemname#> <a href="https://github.com/zanezam/padavan-ng/blob/custom/doc/FirmwareBuilds.md"><span id="conftempl"></span></td>\n';
 	bc += '    <td><button type="button" id="logout_btn" class="btn btn-mini" style="width: 114px; height: 21px; outline:0;" onclick="logout();"><#t1Logout#></button> <button type="button" id="reboto_btn" class="btn btn-mini" style="height: 21px; outline:0;" title="<#BTN_REBOOT#>" onclick="reboot();"><i class="icon icon-off"></i></button></td>\n';
 	bc += '  </tr>\n';
 	bc += '  <tr>\n';
@@ -550,7 +550,7 @@ function show_footer(){
 	footer_code = '<div align="center" class="bottom-image"></div>\n';
 	footer_code +='<div align="center" class="copyright"><#footer_copyright_desc#></div>\n';
 	footer_code +='<div align="center">\n';
-	footer_code +='  <span>This unofficial version was softly refreshed by <a href="https://github.com/zanezam/rt-n56u">ZaneZam</a></span></br>\n';
+	footer_code +='  <span>This unofficial version was softly refreshed by <a href="https://github.com/zanezam">ZaneZam</a></span></br>\n';
 	footer_code +='  <span>Highcharts by Torstein Hønsi & <a href="http://www.highcharts.com">Highsoft</a></span></br>\n';
 	footer_code +='  <span>Big icons designed by <a href="http://www.freepik.com">Freepik</a></br></span>\n';
 	footer_code +='  <span>Non-Commercial Use Only</span></br>\n';
