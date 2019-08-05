@@ -12,11 +12,14 @@ config_test:
 
 configure:
 	( cd $(SRC_NAME) ; \
+	aclocal ; \
+	autoconf ; \
 	./configure \
 		--prefix=$(STAGEDIR) \
 		$(if $(LIBS_BUILD_SHARED),--disable-static,--enable-static) \
 		$(if $(LIBS_BUILD_SHARED),--enable-shared,--disable-shared) \
 		--disable-readline \
+		--disable-dependency-tracking \
 		--disable-dynamic-extensions \
 		--disable-fts3 \
 		--disable-fts4 \
