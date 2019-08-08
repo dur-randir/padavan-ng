@@ -924,7 +924,7 @@ SSL_ENABLED
 NSS_LIBS
 USE_NSS
 USE_MESALINK
-USE_CYASSL
+USE_WOLFSSL
 USE_MBEDTLS
 HAVE_GNUTLS_SRP
 USE_GNUTLS_NETTLE
@@ -1199,6 +1199,13 @@ enable_ntlm_wb
 enable_tls_srp
 enable_unix_sockets
 enable_cookies
+enable_http_auth
+enable_doh
+enable_mime
+enable_dateparse
+enable_netrc
+enable_progress_meter
+enable_dnsshuffle
 enable_alt_svc
 '
       ac_precious_vars='build_alias
@@ -1943,6 +1950,21 @@ Optional Features:
   --disable-unix-sockets  Disable Unix domain sockets
   --enable-cookies        Enable cookies support
   --disable-cookies       Disable cookies support
+  --enable-http-auth      Enable HTTP authentication support
+  --disable-http-auth     Disable HTTP authentication support
+  --enable-doh            Enable DoH support
+  --disable-doh           Disable DoH support
+  --enable-mime           Enable mime API support
+  --disable-mime          Disable mime API support
+  --enable-dateparse      Enable date parsing
+  --disable-dateparse     Disable date parsing
+  --enable-netrc          Enable netrc parsing
+  --disable-netrc         Disable netrc parsing
+  --enable-progress-meter Enable progress-meter
+  --disable-progress-meter
+                          Disable progress-meter
+  --enable-dnsshuffle     Enable DNS shuffling
+  --disable-dnsshuffle    Disable DNS shufflinf
   --enable-alt-svc        Enable alt-svc support
   --disable-alt-svc       Disable alt-svc support
 
@@ -4976,9 +4998,7 @@ $as_echo_n "checking for code coverage support... " >&6; }
 
     # Check whether --enable-code-coverage was given.
 if test "${enable_code_coverage+set}" = set; then :
-  enableval=$enable_code_coverage; coverage="yes"
-else
-  coverage="no"
+  enableval=$enable_code_coverage; coverage="$enableval"
 fi
 
 
@@ -5794,7 +5814,7 @@ PKGADD_VENDOR="curl.haxx.se"
 
 
 
-    curl_ssl_msg="no      (--with-{ssl,gnutls,nss,mbedtls,cyassl,schannel,secure-transport,mesalink,amissl} )"
+    curl_ssl_msg="no      (--with-{ssl,gnutls,nss,mbedtls,wolfssl,schannel,secure-transport,mesalink,amissl} )"
     curl_ssh_msg="no      (--with-libssh2)"
    curl_zlib_msg="no      (--with-zlib)"
  curl_brotli_msg="no      (--with-brotli)"
@@ -22851,7 +22871,6 @@ done
   if test X"$OPENSSL_ENABLED" = X"1"; then
 
     for ac_func in RAND_egd \
-                    SSL_get_shutdown \
                     SSLv2_client_method \
                     OpenSSL_version
 do :
@@ -24416,37 +24435,37 @@ $as_echo "$as_me: Added $mbedtlslib to CURL_LIBRARY_PATH" >&6;}
 fi
 
 
-OPT_CYASSL=no
+OPT_WOLFSSL=no
 
 _cppflags=$CPPFLAGS
 _ldflags=$LDFLAGS
 
 # Check whether --with-cyassl was given.
 if test "${with_cyassl+set}" = set; then :
-  withval=$with_cyassl; OPT_CYASSL=$withval
+  withval=$with_cyassl; OPT_WOLFSSL=$withval
 fi
 
 
 
 # Check whether --with-wolfssl was given.
 if test "${with_wolfssl+set}" = set; then :
-  withval=$with_wolfssl; OPT_CYASSL=$withval
+  withval=$with_wolfssl; OPT_WOLFSSL=$withval
 fi
 
 
-if test -z "$ssl_backends" -o "x$OPT_CYASSL" != xno; then
+if test -z "$ssl_backends" -o "x$OPT_WOLFSSL" != xno; then
   ssl_msg=
 
-  if test X"$OPT_CYASSL" != Xno; then
+  if test X"$OPT_WOLFSSL" != Xno; then
 
-    if test "$OPT_CYASSL" = "yes"; then
-      OPT_CYASSL=""
+    if test "$OPT_WOLFSSL" = "yes"; then
+      OPT_WOLFSSL=""
     fi
 
 
     cyassllibname=cyassl
 
-    if test -z "$OPT_CYASSL" ; then
+    if test -z "$OPT_WOLFSSL" ; then
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for CyaSSL_Init in -lcyassl" >&5
 $as_echo_n "checking for CyaSSL_Init in -lcyassl... " >&6; }
@@ -24484,12 +24503,12 @@ $as_echo "$ac_cv_lib_cyassl_CyaSSL_Init" >&6; }
 if test "x$ac_cv_lib_cyassl_CyaSSL_Init" = xyes; then :
 
 
-$as_echo "#define USE_CYASSL 1" >>confdefs.h
+$as_echo "#define USE_WOLFSSL 1" >>confdefs.h
 
-         USE_CYASSL=1
+         USE_WOLFSSL=1
 
-         CYASSL_ENABLED=1
-         USE_CYASSL="yes"
+         WOLFSSL_ENABLED=1
+         USE_WOLFSSL="yes"
          ssl_msg="CyaSSL"
 	 test cyassl != "$DEFAULT_SSL_BACKEND" || VALID_DEFAULT_SSL_BACKEND=yes
 
@@ -24502,10 +24521,10 @@ fi
     addcflags=""
     cyassllib=""
 
-    if test "x$USE_CYASSL" != "xyes"; then
-            addld=-L$OPT_CYASSL/lib$libsuff
-      addcflags=-I$OPT_CYASSL/include
-      cyassllib=$OPT_CYASSL/lib$libsuff
+    if test "x$USE_WOLFSSL" != "xyes"; then
+            addld=-L$OPT_WOLFSSL/lib$libsuff
+      addcflags=-I$OPT_WOLFSSL/include
+      cyassllib=$OPT_WOLFSSL/lib$libsuff
 
       LDFLAGS="$LDFLAGS $addld"
       if test "$addcflags" != "-I/usr/include"; then
@@ -24548,12 +24567,12 @@ $as_echo "$ac_cv_lib_cyassl_CyaSSL_Init" >&6; }
 if test "x$ac_cv_lib_cyassl_CyaSSL_Init" = xyes; then :
 
 
-$as_echo "#define USE_CYASSL 1" >>confdefs.h
+$as_echo "#define USE_WOLFSSL 1" >>confdefs.h
 
-       USE_CYASSL=1
+       USE_WOLFSSL=1
 
-       CYASSL_ENABLED=1
-       USE_CYASSL="yes"
+       WOLFSSL_ENABLED=1
+       USE_WOLFSSL="yes"
        ssl_msg="CyaSSL"
        test cyassl != "$DEFAULT_SSL_BACKEND" || VALID_DEFAULT_SSL_BACKEND=yes
 
@@ -24571,10 +24590,10 @@ fi
     addlib=""
     addcflags=""
 
-    if test "x$USE_CYASSL" != "xyes"; then
-            addld=-L$OPT_CYASSL/lib$libsuff
-      addcflags=-I$OPT_CYASSL/include
-      cyassllib=$OPT_CYASSL/lib$libsuff
+    if test "x$USE_WOLFSSL" != "xyes"; then
+            addld=-L$OPT_WOLFSSL/lib$libsuff
+      addcflags=-I$OPT_WOLFSSL/include
+      cyassllib=$OPT_WOLFSSL/lib$libsuff
 
       LDFLAGS="$LDFLAGS $addld"
       if test "$addcflags" != "-I/usr/include"; then
@@ -24612,12 +24631,12 @@ if ac_fn_c_try_link "$LINENO"; then :
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
-$as_echo "#define USE_CYASSL 1" >>confdefs.h
+$as_echo "#define USE_WOLFSSL 1" >>confdefs.h
 
-         USE_CYASSL=1
+         USE_WOLFSSL=1
 
-         CYASSL_ENABLED=1
-         USE_CYASSL="yes"
+         WOLFSSL_ENABLED=1
+         USE_WOLFSSL="yes"
          ssl_msg="WolfSSL"
 	 test cyassl != "$DEFAULT_SSL_BACKEND" || VALID_DEFAULT_SSL_BACKEND=yes
 
@@ -24635,7 +24654,7 @@ rm -f core conftest.err conftest.$ac_objext \
       LIBS="$my_ac_save_LIBS"
     fi
 
-    if test "x$USE_CYASSL" = "xyes"; then
+    if test "x$USE_WOLFSSL" = "xyes"; then
       { $as_echo "$as_me:${as_lineno-$LINENO}: detected $cyassllibname" >&5
 $as_echo "$as_me: detected $cyassllibname" >&6;}
       check_for_ca_bundle=1
@@ -24680,38 +24699,11 @@ _ACEOF
 
 
 
-            for ac_header in cyassl/options.h
-do :
-  ac_fn_c_check_header_mongrel "$LINENO" "cyassl/options.h" "ac_cv_header_cyassl_options_h" "$ac_includes_default"
-if test "x$ac_cv_header_cyassl_options_h" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_CYASSL_OPTIONS_H 1
-_ACEOF
-
-fi
-
-done
-
-
-            for ac_header in cyassl/error-ssl.h
-do :
-  ac_fn_c_check_header_mongrel "$LINENO" "cyassl/error-ssl.h" "ac_cv_header_cyassl_error_ssl_h" "$ac_includes_default"
-if test "x$ac_cv_header_cyassl_error_ssl_h" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_CYASSL_ERROR_SSL_H 1
-_ACEOF
-
-fi
-
-done
-
-
       LIBS="-l$cyassllibname -lm $LIBS"
 
-      if test "x$cyassllibname" = "xwolfssl"; then
-                        for ac_func in wolfSSLv3_client_method \
-                       wolfSSL_get_peer_certificate \
-                       wolfSSL_UseALPN
+                  for ac_func in wolfSSLv3_client_method \
+                     wolfSSL_get_peer_certificate \
+                     wolfSSL_UseALPN
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -24723,21 +24715,6 @@ _ACEOF
 fi
 done
 
-      else
-                for ac_func in CyaSSL_CTX_UseSupportedCurve \
-                       CyaSSL_get_peer_certificate
-do :
-  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
-ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
-if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
-  cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
-_ACEOF
-
-fi
-done
-
-      fi
 
       if test -n "$cyassllib"; then
                                         if test "x$cross_compiling" != "xyes"; then
@@ -25352,12 +25329,12 @@ $as_echo "$as_me: Added $nssprefix/lib$libsuff to CURL_LIBRARY_PATH" >&6;}
   test -z "$ssl_msg" || ssl_backends="${ssl_backends:+$ssl_backends, }$ssl_msg"
 fi
 
-case "x$OPENSSL_ENABLED$GNUTLS_ENABLED$NSS_ENABLED$MBEDTLS_ENABLED$CYASSL_ENABLED$WINSSL_ENABLED$SECURETRANSPORT_ENABLED$MESALINK_ENABLED$AMISSL_ENABLED" in
+case "x$OPENSSL_ENABLED$GNUTLS_ENABLED$NSS_ENABLED$MBEDTLS_ENABLED$WOLFSSL_ENABLED$WINSSL_ENABLED$SECURETRANSPORT_ENABLED$MESALINK_ENABLED$AMISSL_ENABLED" in
 x)
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: SSL disabled, you will not be able to use HTTPS, FTPS, NTLM and more." >&5
 $as_echo "$as_me: WARNING: SSL disabled, you will not be able to use HTTPS, FTPS, NTLM and more." >&2;}
-  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Use --with-ssl, --with-gnutls, --with-cyassl, --with-nss, --with-schannel, --with-secure-transport, --with-mesalink or --with-amissl to address this." >&5
-$as_echo "$as_me: WARNING: Use --with-ssl, --with-gnutls, --with-cyassl, --with-nss, --with-schannel, --with-secure-transport, --with-mesalink or --with-amissl to address this." >&2;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Use --with-ssl, --with-gnutls, --with-wolfssl, --with-mbedtls, --with-nss, --with-schannel, --with-secure-transport, --with-mesalink or --with-amissl to address this." >&5
+$as_echo "$as_me: WARNING: Use --with-ssl, --with-gnutls, --with-wolfssl, --with-mbedtls, --with-nss, --with-schannel, --with-secure-transport, --with-mesalink or --with-amissl to address this." >&2;}
   ;;
 x1)
   # one SSL backend is enabled
@@ -26803,8 +26780,8 @@ $as_echo "yes" >&6; }
           versioned_symbols_flavour="GNUTLS_"
         elif test "x$NSS_ENABLED" = "x1"; then
           versioned_symbols_flavour="NSS_"
-        elif test "x$CYASSL_ENABLED" = "x1"; then
-          versioned_symbols_flavour="CYASSL_"
+        elif test "x$WOLFSSL_ENABLED" = "x1"; then
+          versioned_symbols_flavour="WOLFSSL_"
         elif test "x$WINSSL_ENABLED" = "x1"; then
           versioned_symbols_flavour="SCHANNEL_"
         elif test "x$SECURETRANSPORT_ENABLED" = "x1"; then
@@ -41285,9 +41262,6 @@ if test "${enable_tls_srp+set}" = set; then :
   no)
        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-
-$as_echo "#define CURL_DISABLE_TLS_SRP 1" >>confdefs.h
-
        want_tls_srp=no
        ;;
   *)   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
@@ -41358,8 +41332,8 @@ fi
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable support for cookies" >&5
-$as_echo_n "checking whether to enable support for cookies... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to support cookies" >&5
+$as_echo_n "checking whether to support cookies... " >&6; }
 # Check whether --enable-cookies was given.
 if test "${enable_cookies+set}" = set; then :
   enableval=$enable_cookies;  case "$enableval" in
@@ -41368,6 +41342,167 @@ if test "${enable_cookies+set}" = set; then :
 $as_echo "no" >&6; }
 
 $as_echo "#define CURL_DISABLE_COOKIES 1" >>confdefs.h
+
+       ;;
+  *)   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+       ;;
+  esac
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to support HTTP authentication" >&5
+$as_echo_n "checking whether to support HTTP authentication... " >&6; }
+# Check whether --enable-http-auth was given.
+if test "${enable_http_auth+set}" = set; then :
+  enableval=$enable_http_auth;  case "$enableval" in
+  no)
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+$as_echo "#define CURL_DISABLE_HTTP_AUTH 1" >>confdefs.h
+
+       ;;
+  *)   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+       ;;
+  esac
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to support DoH" >&5
+$as_echo_n "checking whether to support DoH... " >&6; }
+# Check whether --enable-doh was given.
+if test "${enable_doh+set}" = set; then :
+  enableval=$enable_doh;  case "$enableval" in
+  no)
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+$as_echo "#define CURL_DISABLE_DOH 1" >>confdefs.h
+
+       ;;
+  *)   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+       ;;
+  esac
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to support the MIME API" >&5
+$as_echo_n "checking whether to support the MIME API... " >&6; }
+# Check whether --enable-mime was given.
+if test "${enable_mime+set}" = set; then :
+  enableval=$enable_mime;  case "$enableval" in
+  no)
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+$as_echo "#define CURL_DISABLE_MIME 1" >>confdefs.h
+
+       ;;
+  *)   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+       ;;
+  esac
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to support date parsing" >&5
+$as_echo_n "checking whether to support date parsing... " >&6; }
+# Check whether --enable-dateparse was given.
+if test "${enable_dateparse+set}" = set; then :
+  enableval=$enable_dateparse;  case "$enableval" in
+  no)
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+$as_echo "#define CURL_DISABLE_PARSEDATE 1" >>confdefs.h
+
+       ;;
+  *)   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+       ;;
+  esac
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to support netrc parsing" >&5
+$as_echo_n "checking whether to support netrc parsing... " >&6; }
+# Check whether --enable-netrc was given.
+if test "${enable_netrc+set}" = set; then :
+  enableval=$enable_netrc;  case "$enableval" in
+  no)
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+$as_echo "#define CURL_DISABLE_NETRC 1" >>confdefs.h
+
+       ;;
+  *)   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+       ;;
+  esac
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to support progress-meter" >&5
+$as_echo_n "checking whether to support progress-meter... " >&6; }
+# Check whether --enable-progress-meter was given.
+if test "${enable_progress_meter+set}" = set; then :
+  enableval=$enable_progress_meter;  case "$enableval" in
+  no)
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+$as_echo "#define CURL_DISABLE_PROGRESS_METER 1" >>confdefs.h
+
+       ;;
+  *)   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+       ;;
+  esac
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to support DNS shuffling" >&5
+$as_echo_n "checking whether to support DNS shuffling... " >&6; }
+# Check whether --enable-dnsshuffle was given.
+if test "${enable_dnsshuffle+set}" = set; then :
+  enableval=$enable_dnsshuffle;  case "$enableval" in
+  no)
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+$as_echo "#define CURL_DISABLE_SHUFFLE_DNS 1" >>confdefs.h
 
        ;;
   *)   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
