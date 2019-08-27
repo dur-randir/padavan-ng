@@ -13,7 +13,7 @@ at least till my internet modem gets an upgrade to over 1 gigabit i recently fel
 and no changes have been done there since then.
 
 Modification: Sooo i forked the original repo from @Andy Padavan, followed the build instructions and eventually started to do my things... for some weeks... till i was ready and
-pleased so far with my 'refreshed' version. In one of my last changes i accidentally found [this repo](https://github.com/Linaro1985/padavan-ng) during investigating stuff which was a better and more up-to-date
+pleased so far with my 'refreshed' version. In one of my last changes i accidentally found [this repo](https://gitlab.com/padavan-ng/padavan-ng) during investigating stuff which was a better and more up-to-date
 version of my 'refresh'. No clue how i could miss that the whole time, but i did! Damn!! :-)
 
 Result: Ok so i made a new plan by going back to start and use this better repo from @Linaro1985 as a base for my refresh and instead carry THIS torch a bit further on.
