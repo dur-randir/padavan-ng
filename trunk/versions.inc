@@ -1,3 +1,3 @@
 FIRMWARE_ROOTFS_VER=4.0z
 FIRMWARE_BUILDS_VER=001
-#FIRMWARE_BUILDS_REV=$(shell git rev-parse --short HEAD 2>/dev/null)
+FIRMWARE_BUILDS_REV=$(shell git rev-parse --short HEAD 2>/dev/null)
