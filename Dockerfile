@@ -1,43 +1,34 @@
-FROM ubuntu:xenial
+FROM lsiobase/ubuntu:xenial
 
-MAINTAINER Andy Voigt <voigt-andy@hotmail.de>
+# env setting
+LABEL maintainer="Andy Voigt <voigt-andy@hotmail.de>"
 
+# update and upgrade all pkgs
 ENV DEBIAN_FRONTEND noninteractive
+RUN \
+  apt-get update && apt-get -yq dist-upgrade && \
+  apt-get install -yq apt-utils locales
 
-RUN apt-get update && apt-get install -qy apt-utils
-RUN apt-get -qy install locales
-RUN locale-gen --no-purge en_US.UTF-8
+# set right locale and use it
+RUN echo "en_US.UTF-8 UTF-8"> /etc/locale.gen && locale-gen
 ENV LC_ALL en_US.UTF-8
 
+# install all the required pkgs
+RUN apt-get install -yq \
+  unzip curl wget cmake gperf gawk flex bison nano help2man libtool-bin \
+  git python-docutils gettext automake autopoint texinfo build-essential \
+  pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev && \
+  rm -rf \
+    /tmp/* \
+    /var/lib/apt/lists/* \
+    /var/tmp/*
 
-RUN apt-get install -qy \
-	git \
-	build-essential \
-	gawk \
-	pkg-config \
-	gettext \
-	automake \
-	autoconf \
-	autopoint \
-	libtool \
-	bison \
-	flex \
-	zlib1g-dev \
-	libgmp3-dev \
-	libmpfr-dev \
-	libmpc-dev \
-	texinfo \
-	mc \
-	libncurses5-dev \
-	nano \
-	vim \
-  	autopoint \
-	gperf \
-	python-docutils \
-	module-init-tools \
-	sudo
+# clone repository
+RUN git clone --depth=1 https://github.com/zanezam/padavan-ng.git /opt/padavan-ng
 
+# fix permissions && build toolchain
+RUN cd /opt/padavan-ng/toolchain && chmod a+x clean_sources.sh build_toolchain.sh && \
+  ./clean_sources.sh && ./build_toolchain.sh
 
-RUN git clone https://bitbucket.org/padavan/rt-n56u.git /opt/rt-n56u
-
-RUN cd /opt/rt-n56u/toolchain-mipsel && ./clean_sources && ./build_toolchain_3.4.x
+# default dir
+WORKDIR /opt/padavan-ng
