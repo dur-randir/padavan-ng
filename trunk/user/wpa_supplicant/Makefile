@@ -1,5 +1,7 @@
 SRC_NAME=wpa_supplicant
 
+CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden -Os
+LDFLAGS += -Wl,--gc-sections
 
 all:
 	cp -f $(SRC_NAME)/.config.def $(SRC_NAME)/.config

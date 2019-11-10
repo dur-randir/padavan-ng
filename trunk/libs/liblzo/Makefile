@@ -1,7 +1,5 @@
 SRC_NAME=lzo-2.10
 
-CFLAGS += -O2
-
 all: config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
 
