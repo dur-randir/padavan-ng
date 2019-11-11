@@ -25,7 +25,8 @@ config_test:
 
 configure:
 	( cd $(SRC_NAME) ; \
-	PKG_CONFIG_PATH=$(STAGEDIR)/lib/pkgconfig \
+	export PKG_CONFIG_PATH=$(STAGEDIR)/lib/pkgconfig ; \
+	aclocal && autoconf && \
 	./configure \
 		$(SSLFLAG) \
 		confuse_CFLAGS="-I$(STAGEDIR)/include" \
