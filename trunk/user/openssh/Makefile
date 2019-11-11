@@ -54,10 +54,10 @@ ifeq ($(CONFIG_FIRMWARE_INCLUDE_OPENSSH),y)
 	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/moduli /etc_ro/ssh/moduli
 #	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/libssh.so /lib/libssh.so
 	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/scp /usr/bin/scp
-	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/ssh /usr/bin/ssh
+#	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/ssh /usr/bin/ssh
 	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/ssh-keygen /usr/bin/ssh-keygen
 	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/sshd /usr/sbin/sshd
 	$(ROMFSINST) -p +x /usr/bin/sshd.sh
 endif
-	mkdir -p $(INSTALLDIR)/usr/libexec
-	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/sftp-server /usr/libexec/sftp-server
+#	mkdir -p $(INSTALLDIR)/usr/libexec
+#	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/sftp-server /usr/libexec/sftp-server
