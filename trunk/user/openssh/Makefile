@@ -17,6 +17,7 @@ config_test:
 
 configure:
 	( cd $(SRC_NAME) ; \
+	aclocal && autoconf && autoheader && \
 	LD="$(CC)" \
 	./configure \
 		--prefix=/usr \
