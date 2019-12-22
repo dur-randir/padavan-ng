@@ -1,4 +1,4 @@
-# BUILD INSTRUCTION #
+### BUILD INSTRUCTION ###
 
 1) You need Linux environment to build the firmware. Ubuntu 16.04.1 LTS and
    Debian 9.x distros has been tested and recommended.
@@ -19,7 +19,7 @@ vi trunk/.config
 cd trunk && ./build_firmware.sh
 ```
 
-# NOTE #
+### NOTE ###
 
 You need following packages to build the firmware under Debian 9.x 'Stretch':
 - autoconf
