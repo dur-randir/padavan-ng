@@ -521,7 +521,7 @@ echo --------------------------MAKE-ALL--------------------------------
 make
 if [ -d images ]; then
     cd images
-    for file in *.trx; do md5sum "$file" > "${file//.trx}".md5; done
+    for file in *.trx; do md5sum "$file" > "${file%trx}md5"; done
     cd ..
 fi
 endtime
