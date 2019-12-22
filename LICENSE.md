@@ -1,5 +1,5 @@
 **IMPORTANT NOTE!! PLEASE READ IT CAREFULLY!!**
-# NO WARRANTY OR SUPPORT
+# NO WARRANTY OR SUPPORT #
 
 This product includes copyrighted third-party software licensed under the
 terms of the GNU General Public License. Please see The GNU General Public
