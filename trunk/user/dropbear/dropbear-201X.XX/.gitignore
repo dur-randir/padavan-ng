@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 *~
 *.o
 *.a
@@ -21,33 +20,3 @@ config.h
 config.h.in
 configure
 default_options_guard.h
-||||||| parent of a74254bdf... dropbear: sync with upstream (90cfbe1f7a8138225c08a43a62ffe5a064a6297e)
-=======
-*~
-*.o
-*.a
-*.da
-*.bb
-*.bbg
-*.prof
-.*.swp
-/autom4te.cache
-/config.log
-/config.status
-/dbclient
-/dropbear
-/dropbearconvert
-/dropbearkey
-/dropbearmulti
-/fuzzcorpus
-/fuzzer-*
-/fuzzer-*.options
-/scp
-/scp-progress
-Makefile
-config.h
-config.h.in
-configure
-default_options_guard.h
-tags
->>>>>>> a74254bdf... dropbear: sync with upstream (90cfbe1f7a8138225c08a43a62ffe5a064a6297e)

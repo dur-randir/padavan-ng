@@ -60,6 +60,9 @@ static void printhelp(const char * progname) {
 #if DROPBEAR_ED25519
 					"		- ed25519 %s\n"
 #endif
+#if DROPBEAR_ED25519
+					"		- ed25519 %s\n"
+#endif
 #if DROPBEAR_DELAY_HOSTKEY
 					"-R		Create hostkeys as required\n" 
 #endif

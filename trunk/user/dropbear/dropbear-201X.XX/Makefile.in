@@ -296,6 +296,9 @@ fuzzer-kexecdh: fuzzer-kexecdh.o $(HEADERS) $(LIBTOM_DEPS) Makefile $(svrfuzzobj
 fuzzer-kexcurve25519: fuzzer-kexcurve25519.o fuzz-harness.o
 	$(CXX) $(CXXFLAGS) $@.o $(LDFLAGS) $(svrfuzzobjs) -o $@$(EXEEXT) $(LIBTOM_LIBS) $(LIBS) $(FUZZLIB) @CRYPTLIB@
 
+fuzzer-kexcurve25519: fuzzer-kexcurve25519.o fuzz-harness.o
+	$(CXX) $(CXXFLAGS) $@.o $(LDFLAGS) $(svrfuzzobjs) -o $@$(EXEEXT) $(LIBTOM_LIBS) $(LIBS) $(FUZZLIB) @CRYPTLIB@
+
 fuzzer-%.options: Makefile
 	echo "[libfuzzer]"               > $@
 	echo "max_len = 50000"          >> $@
