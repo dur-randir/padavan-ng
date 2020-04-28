@@ -141,6 +141,7 @@ typedef unsigned long long u64;
 #endif
 
 #if defined(HAVE_LINUX_NETWORK)
+#include <linux/version.h>
 #include <linux/sockios.h>
 #include <linux/capability.h>
 /* There doesn't seem to be a universally-available 
@@ -267,7 +268,8 @@ struct event_desc {
 #define OPT_UBUS           58
 #define OPT_IGNORE_CLID    59
 #define OPT_SINGLE_PORT    60
-#define OPT_LAST           61
+#define OPT_LEASE_RENEW    61
+#define OPT_LAST           62
 
 #define OPTION_BITS (sizeof(unsigned int)*8)
 #define OPTION_SIZE ( (OPT_LAST/OPTION_BITS)+((OPT_LAST%OPTION_BITS)!=0) )
@@ -383,10 +385,12 @@ struct ds_config {
 #define ADDRLIST_REVONLY  4
 #define ADDRLIST_PREFIX   8
 #define ADDRLIST_WILDCARD 16
+#define ADDRLIST_DECLINED 32
 
 struct addrlist {
   union all_addr addr;
-  int flags, prefixlen; 
+  int flags, prefixlen;
+  time_t decline_time;
   struct addrlist *next;
 };
 
@@ -482,7 +486,7 @@ struct crec {
 #define F_NO_RR     (1u<<25)
 #define F_IPSET     (1u<<26)
 #define F_NOEXTRA   (1u<<27)
-#define F_SERVFAIL  (1u<<28)
+#define F_SERVFAIL  (1u<<28) /* currently unused. */
 #define F_RCODE     (1u<<29)
 #define F_SRV       (1u<<30)
 
@@ -703,6 +707,7 @@ struct frec {
 #define LEASE_NA            32  /* IPv6 no-temporary lease */
 #define LEASE_TA            64  /* IPv6 temporary lease */
 #define LEASE_HAVE_HWADDR  128  /* Have set hwaddress */
+#define LEASE_EXP_CHANGED  256  /* Lease expiry time changed */
 
 struct dhcp_lease {
   int clid_len;          /* length of client identifier */
@@ -1058,6 +1063,7 @@ extern struct daemon {
   unsigned int duid_enterprise, duid_config_len;
   unsigned char *duid_config;
   char *dbus_name;
+  char *ubus_name;
   char *dump_file;
   int dump_mask;
   unsigned long soa_sn, soa_refresh, soa_retry, soa_expiry;
@@ -1104,7 +1110,7 @@ extern struct daemon {
   int inotifyfd;
 #endif
 #if defined(HAVE_LINUX_NETWORK)
-  int netlinkfd;
+  int netlinkfd, kernel_version;
 #elif defined(HAVE_BSD_NETWORK)
   int dhcp_raw_fd, dhcp_icmp_fd, routefd;
 #endif
@@ -1281,9 +1287,12 @@ int memcmp_masked(unsigned char *a, unsigned char *b, int len,
 int expand_buf(struct iovec *iov, size_t size);
 char *print_mac(char *buff, unsigned char *mac, int len);
 int read_write(int fd, unsigned char *packet, int size, int rw);
-
+void close_fds(long max_fd, int spare1, int spare2, int spare3);
 int wildcard_match(const char* wildcard, const char* match);
 int wildcard_matchn(const char* wildcard, const char* match, int num);
+#ifdef HAVE_LINUX_NETWORK
+int kernel_version(void);
+#endif
 
 /* log.c */
 void die(char *message, char *arg1, int exit_code) ATTRIBUTE_NORETURN;
@@ -1315,7 +1324,7 @@ void receive_query(struct listener *listen, time_t now);
 unsigned char *tcp_request(int confd, time_t now,
 			   union mysockaddr *local_addr, struct in_addr netmask, int auth_dns);
 void server_gone(struct server *server);
-struct frec *get_new_frec(time_t now, int *wait, int force);
+struct frec *get_new_frec(time_t now, int *wait, struct frec *force);
 int send_from(int fd, int nowild, char *packet, size_t len, 
 	       union mysockaddr *to, union all_addr *source,
 	       unsigned int iface);
@@ -1441,7 +1450,7 @@ void clear_cache_and_reload(time_t now);
 
 /* netlink.c */
 #ifdef HAVE_LINUX_NETWORK
-void netlink_init(void);
+char *netlink_init(void);
 void netlink_multicast(void);
 #endif
 
