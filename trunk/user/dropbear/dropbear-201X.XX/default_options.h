@@ -83,7 +83,7 @@ IMPORTANT: Some options will require "make clean" after changes */
  * Including both AES keysize variants (128 and 256) will result in 
  * a minimal size increase */
 #define DROPBEAR_AES128 1
-#define DROPBEAR_3DES 1
+#define DROPBEAR_3DES 0
 #define DROPBEAR_AES256 1
 #define DROPBEAR_TWOFISH256 0
 #define DROPBEAR_TWOFISH128 0
@@ -101,7 +101,7 @@ IMPORTANT: Some options will require "make clean" after changes */
 
 /* Message integrity. sha2-256 is recommended as a default, 
    sha1 for compatibility */
-#define DROPBEAR_SHA1_HMAC 1
+#define DROPBEAR_SHA1_HMAC 0
 #define DROPBEAR_SHA1_96_HMAC 0
 #define DROPBEAR_SHA2_256_HMAC 1
 
@@ -112,7 +112,7 @@ IMPORTANT: Some options will require "make clean" after changes */
  * DSS may be necessary to connect to some systems though
    is not recommended for new keys */
 #define DROPBEAR_RSA 1
-#define DROPBEAR_DSS 1
+#define DROPBEAR_DSS 0
 /* ECDSA is significantly faster than RSA or DSS. Compiling in ECC
  * code (either ECDSA or ECDH) increases binary size - around 30kB
  * on x86-64 */
