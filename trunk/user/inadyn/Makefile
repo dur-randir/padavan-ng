@@ -1,4 +1,4 @@
-SRC_NAME="inadyn-2.5"
+SRC_NAME="inadyn-2.7"
 
 SHAREDIR = $(ROOTDIR)/user/shared
 CFLAGS += -Os -ffunction-sections -fdata-sections -I.
@@ -26,8 +26,8 @@ config_test:
 configure:
 	( cd $(SRC_NAME) ; \
 	export PKG_CONFIG_PATH=$(STAGEDIR)/lib/pkgconfig ; \
-	aclocal && autoconf && \
-	./configure \
+	autoreconf -vif && \
+	./configure --without-systemd \
 		$(SSLFLAG) \
 		confuse_CFLAGS="-I$(STAGEDIR)/include" \
 		confuse_LIBS="-L$(STAGEDIR)/lib" \
