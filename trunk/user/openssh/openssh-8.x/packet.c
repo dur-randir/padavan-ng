@@ -1,4 +1,4 @@
-/* $OpenBSD: packet.c,v 1.290 2020/01/30 07:20:05 djm Exp $ */
+/* $OpenBSD: packet.c,v 1.296 2020/07/05 23:59:45 djm Exp $ */
 /*
  * Author: Tatu Ylonen <ylo@cs.hut.fi>
  * Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
@@ -282,7 +282,8 @@ ssh_packet_set_input_hook(struct ssh *ssh, ssh_packet_hook_fn *hook, void *ctx)
 int
 ssh_packet_is_rekeying(struct ssh *ssh)
 {
-	return ssh->state->rekeying || ssh->kex->done == 0;
+	return ssh->state->rekeying ||
+	    (ssh->kex != NULL && ssh->kex->done == 0);
 }
 
 /*
@@ -345,6 +346,8 @@ ssh_packet_set_mux(struct ssh *ssh)
 {
 	ssh->state->mux = 1;
 	ssh->state->rekeying = 0;
+	kex_free(ssh->kex);
+	ssh->kex = NULL;
 }
 
 int
@@ -651,6 +654,8 @@ ssh_packet_close_internal(struct ssh *ssh, int do_close)
 		ssh->remote_ipaddr = NULL;
 		free(ssh->state);
 		ssh->state = NULL;
+		kex_free(ssh->kex);
+		ssh->kex = NULL;
 	}
 }
 
@@ -1365,7 +1370,7 @@ ssh_packet_read_seqnr(struct ssh *ssh, u_char *typep, u_int32_t *seqnr_p)
 		}
 		/* Wait for some data to arrive. */
 		for (;;) {
-			if (state->packet_timeout_ms != -1) {
+			if (state->packet_timeout_ms > 0) {
 				ms_to_timeval(&timeout, ms_remain);
 				monotime_tv(&start);
 			}
@@ -1377,7 +1382,7 @@ ssh_packet_read_seqnr(struct ssh *ssh, u_char *typep, u_int32_t *seqnr_p)
 				r = SSH_ERR_SYSTEM_ERROR;
 				goto out;
 			}
-			if (state->packet_timeout_ms == -1)
+			if (state->packet_timeout_ms <= 0)
 				continue;
 			ms_subtract_diff(&start, &ms_remain);
 			if (ms_remain <= 0) {
@@ -2014,7 +2019,7 @@ ssh_packet_write_wait(struct ssh *ssh)
 			timeoutp = &timeout;
 		}
 		for (;;) {
-			if (state->packet_timeout_ms != -1) {
+			if (state->packet_timeout_ms > 0) {
 				ms_to_timeval(&timeout, ms_remain);
 				monotime_tv(&start);
 			}
@@ -2024,7 +2029,7 @@ ssh_packet_write_wait(struct ssh *ssh)
 			if (errno != EAGAIN && errno != EINTR &&
 			    errno != EWOULDBLOCK)
 				break;
-			if (state->packet_timeout_ms == -1)
+			if (state->packet_timeout_ms <= 0)
 				continue;
 			ms_subtract_diff(&start, &ms_remain);
 			if (ms_remain <= 0) {
@@ -2445,7 +2450,7 @@ ssh_packet_set_state(struct ssh *ssh, struct sshbuf *m)
 	    (r = sshbuf_get_u64(m, &state->p_read.bytes)) != 0)
 		return r;
 	/*
-	 * We set the time here so that in post-auth privsep slave we
+	 * We set the time here so that in post-auth privsep child we
 	 * count from the completion of the authentication.
 	 */
 	state->rekey_time = monotime();

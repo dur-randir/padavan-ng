@@ -1,4 +1,4 @@
-/* $OpenBSD: sftp.c,v 1.197 2020/01/23 07:10:22 dtucker Exp $ */
+/* $OpenBSD: sftp.c,v 1.201 2020/08/03 02:43:41 djm Exp $ */
 /*
  * Copyright (c) 2001-2004 Damien Miller <djm@openbsd.org>
  *
@@ -2363,7 +2363,7 @@ usage(void)
 	extern char *__progname;
 
 	fprintf(stderr,
-	    "usage: %s [-46aCfpqrv] [-B buffer_size] [-b batchfile] [-c cipher]\n"
+	    "usage: %s [-46AaCfNpqrv] [-B buffer_size] [-b batchfile] [-c cipher]\n"
 	    "          [-D sftp_server_path] [-F ssh_config] [-i identity_file]\n"
 	    "          [-J destination] [-l limit] [-o ssh_option] [-P port]\n"
 	    "          [-R num_requests] [-S program] [-s subsystem | sftp_server]\n"
@@ -2375,9 +2375,9 @@ usage(void)
 int
 main(int argc, char **argv)
 {
-	int in, out, ch, err, tmp, port = -1;
+	int in, out, ch, err, tmp, port = -1, noisy = 0;
 	char *host = NULL, *user, *cp, *file2 = NULL;
-	int debug_level = 0, sshver = 2;
+	int debug_level = 0;
 	char *file1 = NULL, *sftp_server = NULL;
 	char *ssh_program = _PATH_SSH_PROGRAM, *sftp_direct = NULL;
 	const char *errstr;
@@ -2401,7 +2401,6 @@ main(int argc, char **argv)
 	args.list = NULL;
 	addargs(&args, "%s", ssh_program);
 	addargs(&args, "-oForwardX11 no");
-	addargs(&args, "-oForwardAgent no");
 	addargs(&args, "-oPermitLocalCommand no");
 	addargs(&args, "-oClearAllForwardings yes");
 
@@ -2409,9 +2408,10 @@ main(int argc, char **argv)
 	infile = stdin;
 
 	while ((ch = getopt(argc, argv,
-	    "1246afhpqrvCc:D:i:l:o:s:S:b:B:F:J:P:R:")) != -1) {
+	    "1246AafhNpqrvCc:D:i:l:o:s:S:b:B:F:J:P:R:")) != -1) {
 		switch (ch) {
 		/* Passed through to ssh(1) */
+		case 'A':
 		case '4':
 		case '6':
 		case 'C':
@@ -2445,12 +2445,10 @@ main(int argc, char **argv)
 			debug_level++;
 			break;
 		case '1':
-			sshver = 1;
-			if (sftp_server == NULL)
-				sftp_server = _PATH_SFTP_SERVER;
+			fatal("SSH protocol v.1 is no longer supported");
 			break;
 		case '2':
-			sshver = 2;
+			/* accept silently */
 			break;
 		case 'a':
 			global_aflag = 1;
@@ -2474,6 +2472,9 @@ main(int argc, char **argv)
 			break;
 		case 'f':
 			global_fflag = 1;
+			break;
+		case 'N':
+			noisy = 1; /* Used to clear quiet mode after getopt */
 			break;
 		case 'p':
 			global_pflag = 1;
@@ -2510,8 +2511,14 @@ main(int argc, char **argv)
 		}
 	}
 
+	/* Do this last because we want the user to be able to override it */
+	addargs(&args, "-oForwardAgent no");
+
 	if (!isatty(STDERR_FILENO))
 		showprogress = 0;
+
+	if (noisy)
+		quiet = 0;
 
 	log_init(argv[0], ll, SYSLOG_FACILITY_USER, 1);
 
@@ -2555,7 +2562,6 @@ main(int argc, char **argv)
 			addargs(&args, "-l");
 			addargs(&args, "%s", user);
 		}
-		addargs(&args, "-oProtocol %d", sshver);
 
 		/* no subsystem if the server-spec contains a '/' */
 		if (sftp_server == NULL || strchr(sftp_server, '/') == NULL)

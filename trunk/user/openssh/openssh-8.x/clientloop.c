@@ -1,4 +1,4 @@
-/* $OpenBSD: clientloop.c,v 1.340 2020/02/02 09:45:34 dtucker Exp $ */
+/* $OpenBSD: clientloop.c,v 1.346 2020/09/16 03:07:31 dtucker Exp $ */
 /*
  * Author: Tatu Ylonen <ylo@cs.hut.fi>
  * Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
@@ -149,9 +149,6 @@ extern char *forward_agent_sock_path;
 static volatile sig_atomic_t received_window_change_signal = 0;
 static volatile sig_atomic_t received_signal = 0;
 
-/* Flag indicating whether the user's terminal is in non-blocking mode. */
-static int in_non_blocking_mode = 0;
-
 /* Time when backgrounded control master using ControlPersist should exit */
 static time_t control_persist_exit_time = 0;
 
@@ -165,6 +162,7 @@ static int connection_out;	/* Connection to server (output). */
 static int need_rekeying;	/* Set to non-zero if rekeying is requested. */
 static int session_closed;	/* In SSH2: login session closed. */
 static u_int x11_refuse_time;	/* If >0, refuse x11 opens after this time. */
+static time_t server_alive_time;	/* Time to do server_alive_check */
 
 static void client_init_dispatch(struct ssh *ssh);
 int	session_ident = -1;
@@ -195,17 +193,6 @@ static struct global_confirms global_confirms =
     TAILQ_HEAD_INITIALIZER(global_confirms);
 
 void ssh_process_session2_setup(int, int, int, struct sshbuf *);
-
-/* Restores stdin to blocking mode. */
-
-static void
-leave_non_blocking(void)
-{
-	if (in_non_blocking_mode) {
-		unset_nonblock(fileno(stdin));
-		in_non_blocking_mode = 0;
-	}
-}
 
 /*
  * Signal handler for the window change signal (SIGWINCH).  This just sets a
@@ -457,11 +444,8 @@ client_check_window_change(struct ssh *ssh)
 {
 	if (!received_window_change_signal)
 		return;
-	/** XXX race */
 	received_window_change_signal = 0;
-
 	debug2("%s: changed", __func__);
-
 	channel_send_window_changes(ssh);
 }
 
@@ -476,12 +460,18 @@ client_global_request_reply(int type, u_int32_t seq, struct ssh *ssh)
 		gc->cb(ssh, type, seq, gc->ctx);
 	if (--gc->ref_count <= 0) {
 		TAILQ_REMOVE(&global_confirms, gc, entry);
-		explicit_bzero(gc, sizeof(*gc));
-		free(gc);
+		freezero(gc, sizeof(*gc));
 	}
 
 	ssh_packet_set_alive_timeouts(ssh, 0);
 	return 0;
+}
+
+static void
+schedule_server_alive_check(void)
+{
+	if (options.server_alive_interval > 0)
+		server_alive_time = monotime() + options.server_alive_interval;
 }
 
 static void
@@ -500,6 +490,7 @@ server_alive_check(struct ssh *ssh)
 		fatal("%s: send packet: %s", __func__, ssh_err(r));
 	/* Insert an empty placeholder to maintain ordering */
 	client_register_global_confirm(NULL, NULL);
+	schedule_server_alive_check();
 }
 
 /*
@@ -513,7 +504,7 @@ client_wait_until_can_do_something(struct ssh *ssh,
 {
 	struct timeval tv, *tvp;
 	int timeout_secs;
-	time_t minwait_secs = 0, server_alive_time = 0, now = monotime();
+	time_t minwait_secs = 0, now = monotime();
 	int r, ret;
 
 	/* Add any selections by the channel mechanism. */
@@ -542,10 +533,8 @@ client_wait_until_can_do_something(struct ssh *ssh,
 	 */
 
 	timeout_secs = INT_MAX; /* we use INT_MAX to mean no timeout */
-	if (options.server_alive_interval > 0) {
-		timeout_secs = options.server_alive_interval;
-		server_alive_time = now + options.server_alive_interval;
-	}
+	if (options.server_alive_interval > 0)
+		timeout_secs = MAXIMUM(server_alive_time - now, 0);
 	if (options.rekey_interval > 0 && !rekeying)
 		timeout_secs = MINIMUM(timeout_secs,
 		    ssh_packet_get_rekey_timeout(ssh));
@@ -575,7 +564,6 @@ client_wait_until_can_do_something(struct ssh *ssh,
 		 */
 		memset(*readsetp, 0, *nallocp);
 		memset(*writesetp, 0, *nallocp);
-
 		if (errno == EINTR)
 			return;
 		/* Note: we might still have data in the buffers. */
@@ -583,15 +571,14 @@ client_wait_until_can_do_something(struct ssh *ssh,
 		    "select: %s\r\n", strerror(errno))) != 0)
 			fatal("%s: buffer error: %s", __func__, ssh_err(r));
 		quit_pending = 1;
-	} else if (ret == 0) {
+	} else if (options.server_alive_interval > 0 && !FD_ISSET(connection_in,
+	     *readsetp) && monotime() >= server_alive_time)
 		/*
-		 * Timeout.  Could have been either keepalive or rekeying.
-		 * Keepalive we check here, rekeying is checked in clientloop.
+		 * ServerAlive check is needed. We can't rely on the select
+		 * timing out since traffic on the client side such as port
+		 * forwards can keep waking it up.
 		 */
-		if (server_alive_time != 0 && server_alive_time <= monotime())
-			server_alive_check(ssh);
-	}
-
+		server_alive_check(ssh);
 }
 
 static void
@@ -631,6 +618,7 @@ client_process_net_input(struct ssh *ssh, fd_set *readset)
 	 * the packet subsystem.
 	 */
 	if (FD_ISSET(connection_in, readset)) {
+		schedule_server_alive_check();
 		/* Read as much as possible. */
 		len = read(connection_in, buf, sizeof(buf));
 		if (len == 0) {
@@ -1250,7 +1238,6 @@ client_loop(struct ssh *ssh, int have_pty, int escape_char_arg,
 	int r, max_fd = 0, max_fd2 = 0, len;
 	u_int64_t ibytes, obytes;
 	u_int nalloc = 0;
-	char buf[100];
 
 	debug("Entering interactive session.");
 
@@ -1331,6 +1318,8 @@ client_loop(struct ssh *ssh, int have_pty, int escape_char_arg,
 		channel_register_cleanup(ssh, session_ident,
 		    client_channel_closed, 0);
 	}
+
+	schedule_server_alive_check();
 
 	/* Main loop of the client for the interactive session mode. */
 	while (!quit_pending) {
@@ -1477,7 +1466,6 @@ client_loop(struct ssh *ssh, int have_pty, int escape_char_arg,
 	}
 
 	/* Clear and free any buffers. */
-	explicit_bzero(buf, sizeof(buf));
 	sshbuf_free(stderr_buffer);
 
 	/* Report bytes transferred, and transfer rates. */
@@ -1649,7 +1637,7 @@ client_request_agent(struct ssh *ssh, const char *request_type, int rchan)
 
 char *
 client_request_tun_fwd(struct ssh *ssh, int tun_mode,
-    int local_tun, int remote_tun)
+    int local_tun, int remote_tun, channel_open_fn *cb, void *cbctx)
 {
 	Channel *c;
 	int r, fd;
@@ -1676,6 +1664,9 @@ client_request_tun_fwd(struct ssh *ssh, int tun_mode,
 		channel_register_filter(ssh, c->self, sys_tun_infilter,
 		    sys_tun_outfilter, NULL, NULL);
 #endif
+
+	if (cb != NULL)
+		channel_register_open_confirm(ssh, c->self, cb, cbctx);
 
 	if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_OPEN)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "tun@openssh.com")) != 0 ||
@@ -2459,7 +2450,6 @@ void
 cleanup_exit(int i)
 {
 	leave_raw_mode(options.request_tty == REQUEST_TTY_FORCE);
-	leave_non_blocking();
 	if (options.control_path != NULL && muxserver_sock != -1)
 		unlink(options.control_path);
 	ssh_kill_proxy_command();

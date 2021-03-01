@@ -1,4 +1,4 @@
-/* $OpenBSD: sshconnect.c,v 1.328 2020/01/25 07:17:18 djm Exp $ */
+/* $OpenBSD: sshconnect.c,v 1.332 2020/09/09 21:57:27 djm Exp $ */
 /*
  * Author: Tatu Ylonen <ylo@cs.hut.fi>
  * Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
@@ -89,11 +89,14 @@ expand_proxy_command(const char *proxy_command, const char *user,
     const char *host, const char *host_arg, int port)
 {
 	char *tmp, *ret, strport[NI_MAXSERV];
+	const char *keyalias = options.host_key_alias ?
+	     options.host_key_alias : host_arg;
 
 	snprintf(strport, sizeof strport, "%d", port);
 	xasprintf(&tmp, "exec %s", proxy_command);
 	ret = percent_expand(tmp,
 	    "h", host,
+	    "k", keyalias,
 	    "n", host_arg,
 	    "p", strport,
 	    "r", options.user,
@@ -594,7 +597,7 @@ confirm(const char *prompt, const char *fingerprint)
 		if (p[0] == '\0' || strcasecmp(p, "no") == 0)
 			ret = 0;
 		else if (strcasecmp(p, "yes") == 0 || (fingerprint != NULL &&
-		    strcasecmp(p, fingerprint) == 0))
+		    strcmp(p, fingerprint) == 0))
 			ret = 1;
 		free(cp);
 		if (ret != -1)
@@ -1276,6 +1279,7 @@ ssh_login(struct ssh *ssh, Sensitive *sensitive, const char *orighost,
 {
 	char *host;
 	char *server_user, *local_user;
+	int r;
 
 	local_user = xstrdup(pw->pw_name);
 	server_user = options.user ? options.user : local_user;
@@ -1285,8 +1289,8 @@ ssh_login(struct ssh *ssh, Sensitive *sensitive, const char *orighost,
 	lowercase(host);
 
 	/* Exchange protocol version identification strings with the server. */
-	if (kex_exchange_identification(ssh, timeout_ms, NULL) != 0)
-		cleanup_exit(255); /* error already logged */
+	if ((r = kex_exchange_identification(ssh, timeout_ms, NULL)) != 0)
+		sshpkt_fatal(ssh, r, "banner exchange");
 
 	/* Put the connection into non-blocking mode. */
 	ssh_packet_set_nonblocking(ssh);
@@ -1429,7 +1433,8 @@ maybe_add_key_to_agent(const char *authfile, struct sshkey *private,
 	if (sshkey_is_sk(private))
 		skprovider = options.sk_provider;
 	if ((r = ssh_add_identity_constrained(auth_sock, private,
-	    comment == NULL ? authfile : comment, 0,
+	    comment == NULL ? authfile : comment,
+	    options.add_keys_to_agent_lifespan,
 	    (options.add_keys_to_agent == 3), 0, skprovider)) == 0)
 		debug("identity added to agent: %s", authfile);
 	else

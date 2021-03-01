@@ -1,4 +1,4 @@
-/* $OpenBSD: ssh-pkcs11.c,v 1.47 2020/01/25 00:03:36 djm Exp $ */
+/* $OpenBSD: ssh-pkcs11.c,v 1.50 2020/05/29 03:14:02 djm Exp $ */
 /*
  * Copyright (c) 2010 Markus Friedl.  All rights reserved.
  * Copyright (c) 2014 Pedro Martelletto. All rights reserved.
@@ -271,9 +271,24 @@ pkcs11_login_slot(struct pkcs11_provider *provider, struct pkcs11_slotinfo *si,
 	    (pin != NULL) ? strlen(pin) : 0);
 	if (pin != NULL)
 		freezero(pin, strlen(pin));
-	if (rv != CKR_OK && rv != CKR_USER_ALREADY_LOGGED_IN) {
-		error("C_Login failed: %lu", rv);
-		return (-1);
+
+	switch (rv) {
+	case CKR_OK:
+	case CKR_USER_ALREADY_LOGGED_IN:
+		/* success */
+		break;
+	case CKR_PIN_LEN_RANGE:
+		error("PKCS#11 login failed: PIN length out of range");
+		return -1;
+	case CKR_PIN_INCORRECT:
+		error("PKCS#11 login failed: PIN incorrect");
+		return -1;
+	case CKR_PIN_LOCKED:
+		error("PKCS#11 login failed: PIN locked");
+		return -1;
+	default:
+		error("PKCS#11 login failed: error %lu", rv);
+		return -1;
 	}
 	si->logged_in = 1;
 	return (0);
@@ -1627,6 +1642,8 @@ fail:
 	}
 	if (handle)
 		dlclose(handle);
+	if (ret > 0)
+		ret = -1;
 	return (ret);
 }
 
@@ -1842,7 +1859,8 @@ pkcs11_init(int interactive)
 }
 
 int
-pkcs11_add_provider(char *provider_id, char *pin, struct sshkey ***keyp)
+pkcs11_add_provider(char *provider_id, char *pin, struct sshkey ***keyp,
+    char ***labelsp)
 {
 	error("%s: dlopen() not supported", __func__);
 	return (-1);

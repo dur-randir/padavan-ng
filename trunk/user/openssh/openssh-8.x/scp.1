@@ -8,9 +8,9 @@
 .\"
 .\" Created: Sun May  7 00:14:37 1995 ylo
 .\"
-.\" $OpenBSD: scp.1,v 1.87 2019/11/30 07:07:59 jmc Exp $
+.\" $OpenBSD: scp.1,v 1.90 2020/08/03 02:43:41 djm Exp $
 .\"
-.Dd $Mdocdate: November 30 2019 $
+.Dd $Mdocdate: August 3 2020 $
 .Dt SCP 1
 .Os
 .Sh NAME
@@ -18,7 +18,7 @@
 .Nd OpenSSH secure file copy
 .Sh SYNOPSIS
 .Nm scp
-.Op Fl 346BCpqrTv
+.Op Fl 346ABCpqrTv
 .Op Fl c Ar cipher
 .Op Fl F Ar ssh_config
 .Op Fl i Ar identity_file
@@ -74,7 +74,10 @@ The options are as follows:
 Copies between two remote hosts are transferred through the local host.
 Without this option the data is copied directly between the two remote
 hosts.
-Note that this option disables the progress meter.
+Note that this option disables the progress meter and selects batch mode
+for the second host, since
+.Nm
+cannot ask for passwords or passphrases for both hosts.
 .It Fl 4
 Forces
 .Nm
@@ -83,6 +86,11 @@ to use IPv4 addresses only.
 Forces
 .Nm
 to use IPv6 addresses only.
+.It Fl A
+Allows forwarding of
+.Xr ssh-agent 1
+to the remote system.
+The default is not to forward an authentication agent.
 .It Fl B
 Selects batch mode (prevents asking for passwords or passphrases).
 .It Fl C

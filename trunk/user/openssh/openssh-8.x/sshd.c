@@ -1,4 +1,4 @@
-/* $OpenBSD: sshd.c,v 1.549 2020/01/31 23:13:04 djm Exp $ */
+/* $OpenBSD: sshd.c,v 1.561 2020/08/27 01:06:19 djm Exp $ */
 /*
  * Author: Tatu Ylonen <ylo@cs.hut.fi>
  * Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
@@ -317,7 +317,6 @@ sighup_restart(void)
 	platform_pre_restart();
 	close_listen_socks();
 	close_startup_pipes();
-	alarm(0);  /* alarm timer persists across exec */
 	ssh_signal(SIGHUP, SIG_IGN); /* will be restored after exec */
 	execv(saved_argv[0], saved_argv);
 	logit("RESTART FAILED: av[0]='%.100s', error: %.100s.", saved_argv[0],
@@ -830,7 +829,7 @@ notify_hostkeys(struct ssh *ssh)
  * all connections are dropped for startups > max_startups
  */
 static int
-drop_connection(int startups)
+should_drop_connection(int startups)
 {
 	int p, r;
 
@@ -847,8 +846,66 @@ drop_connection(int startups)
 	p += options.max_startups_rate;
 	r = arc4random_uniform(100);
 
-	debug("drop_connection: p %d, r %d", p, r);
+	debug("%s: p %d, r %d", __func__, p, r);
 	return (r < p) ? 1 : 0;
+}
+
+/*
+ * Check whether connection should be accepted by MaxStartups.
+ * Returns 0 if the connection is accepted. If the connection is refused,
+ * returns 1 and attempts to send notification to client.
+ * Logs when the MaxStartups condition is entered or exited, and periodically
+ * while in that state.
+ */
+static int
+drop_connection(int sock, int startups)
+{
+	char *laddr, *raddr;
+	const char msg[] = "Exceeded MaxStartups\r\n";
+	static time_t last_drop, first_drop;
+	static u_int ndropped;
+	LogLevel drop_level = SYSLOG_LEVEL_VERBOSE;
+	time_t now;
+
+	now = monotime();
+	if (!should_drop_connection(startups)) {
+		if (last_drop != 0 &&
+		    startups < options.max_startups_begin - 1) {
+			/* XXX maybe need better hysteresis here */
+			logit("exited MaxStartups throttling after %s, "
+			    "%u connections dropped",
+			    fmt_timeframe(now - first_drop), ndropped);
+			last_drop = 0;
+		}
+		return 0;
+	}
+
+#define SSHD_MAXSTARTUPS_LOG_INTERVAL	(5 * 60)
+	if (last_drop == 0) {
+		error("beginning MaxStartups throttling");
+		drop_level = SYSLOG_LEVEL_INFO;
+		first_drop = now;
+		ndropped = 0;
+	} else if (last_drop + SSHD_MAXSTARTUPS_LOG_INTERVAL < now) {
+		/* Periodic logs */
+		error("in MaxStartups throttling for %s, "
+		    "%u connections dropped",
+		    fmt_timeframe(now - first_drop), ndropped + 1);
+		drop_level = SYSLOG_LEVEL_INFO;
+	}
+	last_drop = now;
+	ndropped++;
+
+	laddr = get_local_ipaddr(sock);
+	raddr = get_peer_ipaddr(sock);
+	do_log2(drop_level, "drop connection #%d from [%s]:%d on [%s]:%d "
+	    "past MaxStartups", startups, raddr, get_peer_port(sock),
+	    laddr, get_local_port(sock));
+	free(laddr);
+	free(raddr);
+	/* best-effort notification to client */
+	(void)write(sock, msg, sizeof(msg) - 1);
+	return 1;
 }
 
 static void
@@ -908,7 +965,7 @@ send_rexec_state(int fd, struct sshbuf *conf)
 	rexec_send_rng_seed(m);
 #endif
 	if (ssh_msg_send(fd, 0, m) == -1)
-		fatal("%s: ssh_msg_send failed", __func__);
+		error("%s: ssh_msg_send failed", __func__);
 
 	sshbuf_free(m);
 	sshbuf_free(inc);
@@ -1110,7 +1167,7 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s)
 	for (i = 0; i < num_listen_socks; i++)
 		if (listen_socks[i] > maxfd)
 			maxfd = listen_socks[i];
-	/* pipes connected to unauthenticated childs */
+	/* pipes connected to unauthenticated child sshd processes */
 	startup_pipes = xcalloc(options.max_startups, sizeof(int));
 	startup_flags = xcalloc(options.max_startups, sizeof(int));
 	for (i = 0; i < options.max_startups; i++)
@@ -1207,27 +1264,9 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s)
 					usleep(100 * 1000);
 				continue;
 			}
-			if (unset_nonblock(*newsock) == -1) {
-				close(*newsock);
-				continue;
-			}
-			if (drop_connection(startups) == 1) {
-				char *laddr = get_local_ipaddr(*newsock);
-				char *raddr = get_peer_ipaddr(*newsock);
-				char msg[] = "Exceeded MaxStartups\r\n";
-
-				verbose("drop connection #%d from [%s]:%d "
-				    "on [%s]:%d past MaxStartups", startups,
-				    raddr, get_peer_port(*newsock),
-				    laddr, get_local_port(*newsock));
-				free(laddr);
-				free(raddr);
-				/* best-effort notification to client */
-				(void)write(*newsock, msg, strlen(msg));
-				close(*newsock);
-				continue;
-			}
-			if (pipe(startup_p) == -1) {
+			if (unset_nonblock(*newsock) == -1 ||
+			    drop_connection(*newsock, startups) ||
+			    pipe(startup_p) == -1) {
 				close(*newsock);
 				continue;
 			}
@@ -1329,9 +1368,9 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s)
 			close(startup_p[1]);
 
 			if (rexec_flag) {
+				close(config_s[1]);
 				send_rexec_state(config_s[0], cfg);
 				close(config_s[0]);
-				close(config_s[1]);
 			}
 			close(*newsock);
 
@@ -1687,6 +1726,7 @@ main(int ac, char **av)
 	if ((cfg = sshbuf_new()) == NULL)
 		fatal("%s: sshbuf_new failed", __func__);
 	if (rexeced_flag) {
+		setproctitle("%s", "[rexeced]");
 		recv_rexec_state(REEXEC_CONFIG_PASS_FD, cfg);
 		if (!debug_flag) {
 			startup_pipe = dup(REEXEC_STARTUP_PIPE_FD);
@@ -1810,10 +1850,19 @@ main(int ac, char **av)
 		    &pubkey, NULL)) != 0 && r != SSH_ERR_SYSTEM_ERROR)
 			do_log2(ll, "Unable to load host key \"%s\": %s",
 			    options.host_key_files[i], ssh_err(r));
-		if (pubkey == NULL && key != NULL)
+		if (pubkey != NULL && key != NULL) {
+			if (!sshkey_equal(pubkey, key)) {
+				error("Public key for %s does not match "
+				    "private key", options.host_key_files[i]);
+				sshkey_free(pubkey);
+				pubkey = NULL;
+			}
+		}
+		if (pubkey == NULL && key != NULL) {
 			if ((r = sshkey_from_private(key, &pubkey)) != 0)
 				fatal("Could not demote key: \"%s\": %s",
 				    options.host_key_files[i], ssh_err(r));
+		}
 		sensitive_data.host_keys[i] = key;
 		sensitive_data.host_pubkeys[i] = pubkey;
 
@@ -2060,6 +2109,7 @@ main(int ac, char **av)
 		dup2(config_s[1], REEXEC_CONFIG_PASS_FD);
 		close(config_s[1]);
 
+		ssh_signal(SIGHUP, SIG_IGN); /* avoid reset to SIG_DFL */
 		execv(rexec_argv[0], rexec_argv);
 
 		/* Reexec has failed, fall back and continue */
@@ -2085,12 +2135,7 @@ main(int ac, char **av)
 	fcntl(sock_out, F_SETFD, FD_CLOEXEC);
 	fcntl(sock_in, F_SETFD, FD_CLOEXEC);
 
-	/*
-	 * Disable the key regeneration alarm.  We will not regenerate the
-	 * key since we are no longer in a position to give it to anyone. We
-	 * will not restart on SIGHUP since it no longer makes sense.
-	 */
-	alarm(0);
+	/* We will not restart on SIGHUP since it no longer makes sense. */
 	ssh_signal(SIGALRM, SIG_DFL);
 	ssh_signal(SIGHUP, SIG_DFL);
 	ssh_signal(SIGTERM, SIG_DFL);
@@ -2161,8 +2206,9 @@ main(int ac, char **av)
 	if (!debug_flag)
 		alarm(options.login_grace_time);
 
-	if (kex_exchange_identification(ssh, -1, options.version_addendum) != 0)
-		cleanup_exit(255); /* error already logged */
+	if ((r = kex_exchange_identification(ssh, -1,
+	    options.version_addendum)) != 0)
+		sshpkt_fatal(ssh, r, "banner exchange");
 
 	ssh_packet_set_nonblocking(ssh);
 
@@ -2292,19 +2338,19 @@ sshd_hostkey_sign(struct ssh *ssh, struct sshkey *privkey,
 	if (use_privsep) {
 		if (privkey) {
 			if (mm_sshkey_sign(ssh, privkey, signature, slenp,
-			    data, dlen, alg, options.sk_provider,
+			    data, dlen, alg, options.sk_provider, NULL,
 			    ssh->compat) < 0)
 				fatal("%s: privkey sign failed", __func__);
 		} else {
 			if (mm_sshkey_sign(ssh, pubkey, signature, slenp,
-			    data, dlen, alg, options.sk_provider,
+			    data, dlen, alg, options.sk_provider, NULL,
 			    ssh->compat) < 0)
 				fatal("%s: pubkey sign failed", __func__);
 		}
 	} else {
 		if (privkey) {
 			if (sshkey_sign(privkey, signature, slenp, data, dlen,
-			    alg, options.sk_provider, ssh->compat) < 0)
+			    alg, options.sk_provider, NULL, ssh->compat) < 0)
 				fatal("%s: privkey sign failed", __func__);
 		} else {
 			if ((r = ssh_agent_sign(auth_sock, pubkey,
@@ -2377,10 +2423,11 @@ do_ssh2_kex(struct ssh *ssh)
 
 #ifdef DEBUG_KEXDH
 	/* send 1st encrypted/maced/compressed message */
-	packet_start(SSH2_MSG_IGNORE);
-	packet_put_cstring("markus");
-	packet_send();
-	packet_write_wait();
+	if ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, "markus")) != 0 ||
+	    (r = sshpkt_send(ssh)) != 0 ||
+	    (r = ssh_packet_write_wait(ssh)) != 0)
+		fatal("%s: send test: %s", __func__, ssh_err(r));
 #endif
 	debug("KEX done");
 }

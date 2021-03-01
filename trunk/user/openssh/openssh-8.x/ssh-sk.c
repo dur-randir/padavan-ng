@@ -1,4 +1,4 @@
-/* $OpenBSD: ssh-sk.c,v 1.27 2020/02/06 22:30:54 naddy Exp $ */
+/* $OpenBSD: ssh-sk.c,v 1.32 2020/09/09 03:08:02 djm Exp $ */
 /*
  * Copyright (c) 2019 Google LLC
  *
@@ -100,6 +100,10 @@ sshsk_open(const char *path)
 	struct sshsk_provider *ret = NULL;
 	uint32_t version;
 
+	if (path == NULL || *path == '\0') {
+		error("No FIDO SecurityKeyProvider specified");
+		return NULL;
+	}
 	if ((ret = calloc(1, sizeof(*ret))) == NULL) {
 		error("%s: calloc failed", __func__);
 		return NULL;
@@ -170,6 +174,7 @@ sshsk_free_enroll_response(struct sk_enroll_response *r)
 	freezero(r->public_key, r->public_key_len);
 	freezero(r->signature, r->signature_len);
 	freezero(r->attestation_cert, r->attestation_cert_len);
+	freezero(r->authdata, r->authdata_len);
 	freezero(r, sizeof(*r));
 }
 
@@ -415,6 +420,31 @@ make_options(const char *device, const char *user_id,
 	return ret;
 }
 
+
+static int
+fill_attestation_blob(const struct sk_enroll_response *resp,
+    struct sshbuf *attest)
+{
+	int r;
+
+	if (attest == NULL)
+		return 0; /* nothing to do */
+	if ((r = sshbuf_put_cstring(attest, "ssh-sk-attest-v01")) != 0 ||
+	    (r = sshbuf_put_string(attest,
+	    resp->attestation_cert, resp->attestation_cert_len)) != 0 ||
+	    (r = sshbuf_put_string(attest,
+	    resp->signature, resp->signature_len)) != 0 ||
+	    (r = sshbuf_put_string(attest,
+	    resp->authdata, resp->authdata_len)) != 0 ||
+	    (r = sshbuf_put_u32(attest, 0)) != 0 || /* resvd flags */
+	    (r = sshbuf_put_string(attest, NULL, 0)) != 0 /* resvd */) {
+		error("%s: buffer error: %s", __func__, ssh_err(r));
+		return r;
+	}
+	/* success */
+	return 0;
+}
+
 int
 sshsk_enroll(int type, const char *provider_path, const char *device,
     const char *application, const char *userid, uint8_t flags,
@@ -502,19 +532,9 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 		goto out;
 
 	/* Optionally fill in the attestation information */
-	if (attest != NULL) {
-		if ((r = sshbuf_put_cstring(attest,
-		    "ssh-sk-attest-v00")) != 0 ||
-		    (r = sshbuf_put_string(attest,
-		    resp->attestation_cert, resp->attestation_cert_len)) != 0 ||
-		    (r = sshbuf_put_string(attest,
-		    resp->signature, resp->signature_len)) != 0 ||
-		    (r = sshbuf_put_u32(attest, 0)) != 0 || /* resvd flags */
-		    (r = sshbuf_put_string(attest, NULL, 0)) != 0 /* resvd */) {
-			error("%s: buffer error: %s", __func__, ssh_err(r));
-			goto out;
-		}
-	}
+	if ((r = fill_attestation_blob(resp, attest)) != 0)
+		goto out;
+
 	/* success */
 	*keyp = key;
 	key = NULL; /* transferred */
@@ -598,7 +618,7 @@ sshsk_ed25519_sig(struct sk_sign_response *resp, struct sshbuf *sig)
 #endif
 	r = 0;
  out:
-	return 0;
+	return r;
 }
 
 int
@@ -611,7 +631,6 @@ sshsk_sign(const char *provider_path, struct sshkey *key,
 	int type, alg;
 	struct sk_sign_response *resp = NULL;
 	struct sshbuf *inner_sig = NULL, *sig = NULL;
-	uint8_t message[32];
 	struct sk_option **opts = NULL;
 
 	debug("%s: provider \"%s\", key %s, flags 0x%02x%s", __func__,
@@ -646,15 +665,7 @@ sshsk_sign(const char *provider_path, struct sshkey *key,
 		goto out;
 	}
 
-	/* hash data to be signed before it goes to the security key */
-	if ((r = ssh_digest_memory(SSH_DIGEST_SHA256, data, datalen,
-	    message, sizeof(message))) != 0) {
-		error("%s: hash application failed: %s", __func__, ssh_err(r));
-		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
-	}
-	if ((r = skp->sk_sign(alg, message, sizeof(message),
-	    key->sk_application,
+	if ((r = skp->sk_sign(alg, data, datalen, key->sk_application,
 	    sshbuf_ptr(key->sk_key_handle), sshbuf_len(key->sk_key_handle),
 	    key->sk_flags, pin, opts, &resp)) != 0) {
 		debug("%s: sk_sign failed with code %d", __func__, r);
@@ -703,7 +714,6 @@ sshsk_sign(const char *provider_path, struct sshkey *key,
 	r = 0;
  out:
 	sshsk_free_options(opts);
-	explicit_bzero(message, sizeof(message));
 	sshsk_free(skp);
 	sshsk_free_sign_response(resp);
 	sshbuf_free(sig);
@@ -775,8 +785,9 @@ sshsk_load_resident(const char *provider_path, const char *device,
 		default:
 			continue;
 		}
-		/* XXX where to get flags? */
 		flags = SSH_SK_USER_PRESENCE_REQD|SSH_SK_RESIDENT_KEY;
+		if ((rks[i]->flags & SSH_SK_USER_VERIFICATION_REQD))
+			flags |= SSH_SK_USER_VERIFICATION_REQD;
 		if ((r = sshsk_key_from_response(rks[i]->alg,
 		    rks[i]->application, flags, &rks[i]->key, &key)) != 0)
 			goto out;
