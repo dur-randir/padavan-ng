@@ -95,7 +95,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
 	cipher-ctr.o cleanup.o \
 	compat.o fatal.o hostfile.o \
 	log.o match.o moduli.o nchan.o packet.o \
-	readpass.o ttymodes.o xmalloc.o addrmatch.o \
+	readpass.o ttymodes.o xmalloc.o addr.o addrmatch.o \
 	atomicio.o dispatch.o mac.o misc.o utf8.o \
 	monitor_fdpass.o rijndael.o ssh-dss.o ssh-ecdsa.o ssh-ecdsa-sk.o \
 	ssh-ed25519-sk.o ssh-rsa.o dh.o \
@@ -106,7 +106,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
 	hmac.o sc25519.o ge25519.o fe25519.o ed25519.o verify.o hash.o \
 	kex.o kexdh.o kexgex.o kexecdh.o kexc25519.o \
 	kexgexc.o kexgexs.o \
-	sntrup4591761.o kexsntrup4591761x25519.o kexgen.o \
+	kexsntrup761x25519.o sntrup761.o kexgen.o \
 	sftp-realpath.o platform-pledge.o platform-tracing.o platform-misc.o \
 	sshbuf-io.o
 
@@ -125,7 +125,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
 	monitor.o monitor_wrap.o auth-krb5.o \
 	auth2-gss.o gss-serv.o gss-serv-krb5.o \
 	loginrec.o auth-pam.o auth-shadow.o auth-sia.o md5crypt.o \
-	sftp-server.o sftp-common.o \
+	srclimit.o sftp-server.o sftp-common.o \
 	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
 	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
 	sandbox-solaris.o uidswap.o $(SKOBJS)
@@ -202,7 +202,6 @@ always:
 libssh.a: $(LIBSSH_OBJS)
 	$(AR) rv $@ $(LIBSSH_OBJS)
 	$(RANLIB) $@
-	$(LD) $(LDFLAGS) -shared -o libssh.so $^
 
 ssh$(EXEEXT): $(LIBCOMPAT) libssh.a $(SSHOBJS)
 	$(LD) -o $@ $(SSHOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(GSSLIBS)
@@ -211,10 +210,10 @@ sshd$(EXEEXT): libssh.a	$(LIBCOMPAT) $(SSHDOBJS)
 	$(LD) -o $@ $(SSHDOBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(SSHDLIBS) $(LIBS) $(GSSLIBS) $(K5LIBS)
 
 scp$(EXEEXT): $(LIBCOMPAT) libssh.a $(SCP_OBJS)
-	$(LD) -o $@ $(SCP_OBJS) $(LDFLAGS) libssh.a -lopenbsd-compat $(LIBS)
+	$(LD) -o $@ $(SCP_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
 
 ssh-add$(EXEEXT): $(LIBCOMPAT) libssh.a $(SSHADD_OBJS)
-	$(LD) -o $@ $(SSHADD_OBJS) $(LDFLAGS) libssh.a -lopenbsd-compat $(LIBS)
+	$(LD) -o $@ $(SSHADD_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
 
 ssh-agent$(EXEEXT): $(LIBCOMPAT) libssh.a $(SSHAGENT_OBJS)
 	$(LD) -o $@ $(SSHAGENT_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
@@ -226,19 +225,19 @@ ssh-keysign$(EXEEXT): $(LIBCOMPAT) libssh.a $(SSHKEYSIGN_OBJS)
 	$(LD) -o $@ $(SSHKEYSIGN_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
 
 ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT) libssh.a $(P11HELPER_OBJS)
-	$(LD) -o $@ $(P11HELPER_OBJS) $(LDFLAGS) libssh.a -lopenbsd-compat $(LIBS)
+	$(LD) -o $@ $(P11HELPER_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS)
 
 ssh-sk-helper$(EXEEXT): $(LIBCOMPAT) libssh.a $(SKHELPER_OBJS)
-	$(LD) -o $@ $(SKHELPER_OBJS) $(LDFLAGS) libssh.a -lopenbsd-compat $(LIBS) $(LIBFIDO2)
+	$(LD) -o $@ $(SKHELPER_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS) $(LIBFIDO2)
 
 ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a $(SSHKEYSCAN_OBJS)
-	$(LD) -o $@ $(SSHKEYSCAN_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
+	$(LD) -o $@ $(SSHKEYSCAN_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
 
 sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a $(SFTPSERVER_OBJS)
-	$(LD) -o $@ $(SFTPSERVER_OBJS) $(LDFLAGS) libssh.a -lopenbsd-compat $(LIBS)
+	$(LD) -o $@ $(SFTPSERVER_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
 
 sftp$(EXEEXT): $(LIBCOMPAT) libssh.a $(SFTP_OBJS)
-	$(LD) -o $@ $(SFTP_OBJS) $(LDFLAGS) libssh.a -lopenbsd-compat $(LIBS) $(LIBEDIT)
+	$(LD) -o $@ $(SFTP_OBJS) $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBEDIT)
 
 # test driver for the loginrec code - not built by default
 logintest: logintest.o $(LIBCOMPAT) libssh.a loginrec.o
@@ -266,7 +265,7 @@ moduli:
 	echo
 
 clean:	regressclean
-	rm -f *.o *.lo *.a *.so $(TARGETS) logintest config.cache config.log
+	rm -f *.o *.lo *.a $(TARGETS) logintest config.cache config.log
 	rm -f *.out core survey
 	rm -f regress/check-perm$(EXEEXT)
 	rm -f regress/mkdtemp$(EXEEXT)
@@ -290,15 +289,13 @@ clean:	regressclean
 	rm -f regress/unittests/match/test_match$(EXEEXT)
 	rm -f regress/unittests/utf8/*.o
 	rm -f regress/unittests/utf8/test_utf8$(EXEEXT)
-	rm -f regress/misc/kexfuzz/*.o
-	rm -f regress/misc/kexfuzz/kexfuzz$(EXEEXT)
 	rm -f regress/misc/sk-dummy/*.o
 	rm -f regress/misc/sk-dummy/*.lo
 	rm -f regress/misc/sk-dummy/sk-dummy.so
 	(cd openbsd-compat && $(MAKE) clean)
 
 distclean:	regressclean
-	rm -f *.o *.a *.so $(TARGETS) logintest config.cache config.log
+	rm -f *.o *.a $(TARGETS) logintest config.cache config.log
 	rm -f *.out core opensshd.init openssh.xml
 	rm -f Makefile buildpkg.sh config.h config.status
 	rm -f survey.sh openbsd-compat/regress/Makefile *~ 
@@ -325,8 +322,6 @@ distclean:	regressclean
 	rm -f regress/unittests/match/test_match
 	rm -f regress/unittests/utf8/*.o
 	rm -f regress/unittests/utf8/test_utf8
-	rm -f regress/misc/kexfuzz/*.o
-	rm -f regress/misc/kexfuzz/kexfuzz$(EXEEXT)
 	(cd openbsd-compat && $(MAKE) distclean)
 	if test -d pkg ; then \
 		rm -fr pkg ; \
@@ -498,7 +493,6 @@ regress-prep:
 	$(MKDIR_P) `pwd`/regress/unittests/kex
 	$(MKDIR_P) `pwd`/regress/unittests/match
 	$(MKDIR_P) `pwd`/regress/unittests/utf8
-	$(MKDIR_P) `pwd`/regress/misc/kexfuzz
 	$(MKDIR_P) `pwd`/regress/misc/sk-dummy
 	[ -f `pwd`/regress/Makefile ] || \
 	    ln -s `cd $(srcdir) && pwd`/regress/Makefile `pwd`/regress/Makefile
@@ -636,14 +630,6 @@ regress/unittests/utf8/test_utf8$(EXEEXT): \
 	    regress/unittests/test_helper/libtest_helper.a \
 	    -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS)
 
-MISC_KEX_FUZZ_OBJS=\
-	regress/misc/kexfuzz/kexfuzz.o \
-	$(SKOBJS)
-
-regress/misc/kexfuzz/kexfuzz$(EXEEXT): ${MISC_KEX_FUZZ_OBJS} libssh.a
-	$(LD) -o $@ $(LDFLAGS) $(MISC_KEX_FUZZ_OBJS) \
-	    -lssh -lopenbsd-compat -lssh -lopenbsd-compat $(LIBS)
-
 # These all need to be compiled -fPIC, so they are treated differently.
 SK_DUMMY_OBJS=\
 	regress/misc/sk-dummy/sk-dummy.lo \
@@ -677,7 +663,6 @@ regress-unit-binaries: regress-prep $(REGRESSLIBS) \
 	regress/unittests/kex/test_kex$(EXEEXT) \
 	regress/unittests/match/test_match$(EXEEXT) \
 	regress/unittests/utf8/test_utf8$(EXEEXT) \
-	regress/misc/kexfuzz/kexfuzz$(EXEEXT)
 
 tests:	file-tests t-exec interop-tests unit
 	echo all tests passed
