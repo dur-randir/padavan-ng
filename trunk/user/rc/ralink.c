@@ -1228,13 +1228,14 @@ gen_ralink_config(int is_soc_ap, int is_aband, int disable_autoscan)
 
 	// ITxBfEn
 	if (is_aband) {
-		i_val = nvram_wlan_get_int(1, "txbf");
-		if (i_val > 0 && nvram_wlan_get_int(1, "txbf_en") == 1)
+		i_val = nvram_wlan_get_int(is_aband, "txbf");
+		if (i_val > 0)
 			i_val = 1;
 		else
 			i_val = 0;
 		fprintf(fp, "ITxBfEn=%d\n", i_val);
-		fprintf(fp, "ETxBfEnCond=%d\n", i_val);
+		fprintf(fp, "ETxBfEnCond=%d;%d\n", i_val, i_val);
+		fprintf(fp, "ITxBfEnCond=%d;%d\n", i_val, i_val);
 	}
 
 	//AccessPolicy0
