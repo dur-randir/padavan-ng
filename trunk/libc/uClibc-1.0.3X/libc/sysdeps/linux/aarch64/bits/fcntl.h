@@ -52,6 +52,7 @@
 # define O_DIRECT	0200000
 # define O_NOATIME     01000000
 # define O_PATH       010000000
+# define O_TMPFILE    020040000
 #endif
 
 /* For now Linux has synchronisity options for data and read operations.
@@ -105,9 +106,9 @@
 # define F_SETPIPE_SZ	1031	/* Set pipe page size array.  */
 # define F_GETPIPE_SZ	1032	/* Set pipe page size array.  */
 #endif
-#ifdef __USE_XOPEN2K8
+#if defined __USE_XOPEN2K8 || defined __USE_GNU
 # define F_DUPFD_CLOEXEC 1030	/* Duplicate file descriptor with
-				   close-on-exit set.  */
+				   close-on-exit set on new fd.  */
 #endif
 
 /* For F_[GET|SET]FD.  */
