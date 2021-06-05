@@ -226,8 +226,13 @@ tcindex_set_parms(struct tcf_proto *tp, unsigned long base, u32 handle,
 	if (tb[TCA_TCINDEX_MASK])
 		cp.mask = nla_get_u16(tb[TCA_TCINDEX_MASK]);
 
-	if (tb[TCA_TCINDEX_SHIFT])
+	if (tb[TCA_TCINDEX_SHIFT]) {
 		cp.shift = nla_get_u32(tb[TCA_TCINDEX_SHIFT]);
+		if (cp->shift > 16) {
+			err = -EINVAL;
+			goto errout;
+		}
+	}
 
 	err = -EBUSY;
 	/* Hash already allocated, make sure that we still meet the
