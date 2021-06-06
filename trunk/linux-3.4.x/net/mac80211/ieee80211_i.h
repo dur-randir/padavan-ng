@@ -78,13 +78,13 @@ struct ieee80211_local;
 	IEEE80211_WMM_IE_STA_QOSINFO_SP_ALL
 
 struct ieee80211_fragment_entry {
-	unsigned long first_frag_time;
-	unsigned int seq;
-	unsigned int rx_queue;
-	unsigned int last_frag;
-	unsigned int extra_len;
 	struct sk_buff_head skb_list;
-	int ccmp; /* Whether fragments were encrypted with CCMP */
+	unsigned long first_frag_time;
+	u16 seq;
+	u16 extra_len;
+	u16 last_frag;
+	u8 rx_queue;
+	bool ccmp; /* Whether fragments were encrypted with CCMP */
 	u8 last_pn[6]; /* PN of the last fragment if CCMP was used */
 	unsigned int key_color;
 };
