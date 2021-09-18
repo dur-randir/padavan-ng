@@ -259,7 +259,7 @@ struct ieee80211_rx_data {
 			u16 iv16;
 		} tkip;
 		struct {
-			u8 pn[IEEE80211_CCMP_PN_LEN];
+			u8 pn[CCMP_PN_LEN];
 		} ccm_gcm;
 	};
 };
