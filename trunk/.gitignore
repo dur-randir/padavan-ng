@@ -24,3 +24,5 @@ stamp-h1
 /images/*
 /stage
 /stage/*
+linux-3.4.x/net/nat/hw_nat/*.h
+linux-3.4.x/net/nat/hw_nat/*.c
