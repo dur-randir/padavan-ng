@@ -3,6 +3,7 @@
 
 #include <linux/if_tunnel.h>
 #include <net/ip.h>
+#include <net/ip_vs.h>
 
 /* Keep error state on tunnel for 30 sec */
 #define IPTUNNEL_ERR_TIMEO	(30*HZ)
@@ -53,7 +54,7 @@ static inline void iptunnel_xmit(struct sk_buff *skb, struct net_device *dev)
 
 	nf_reset(skb);
 	skb->ip_summed = CHECKSUM_NONE;
-	ip_select_ident(skb, NULL);
+	ip_select_ident(skb_net(skb), skb, NULL);
 
 	err = ip_local_out(skb);
 	if (likely(net_xmit_eval(err) == 0)) {
