@@ -489,7 +489,7 @@ static netdev_tx_t ipip_tunnel_xmit(struct sk_buff *skb, struct net_device *dev)
 	if (df) {
 		mtu = dst_mtu(&rt->dst) - sizeof(struct iphdr);
 
-		if (mtu < 68) {
+		if (mtu < IPV4_MIN_MTU) {
 			dev->stats.collisions++;
 			ip_rt_put(rt);
 			goto tx_error;
@@ -726,7 +726,7 @@ done:
 
 static int ipip_tunnel_change_mtu(struct net_device *dev, int new_mtu)
 {
-	if (new_mtu < 68 || new_mtu > 0xFFF8 - sizeof(struct iphdr))
+	if (new_mtu < IPV4_MIN_MTU || new_mtu > 0xFFF8 - sizeof(struct iphdr))
 		return -EINVAL;
 	dev->mtu = new_mtu;
 	return 0;

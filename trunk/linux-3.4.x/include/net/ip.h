@@ -31,6 +31,8 @@
 #include <net/snmp.h>
 #include <net/flow.h>
 
+#define IPV4_MIN_MTU		68			/* RFC 791 */
+
 struct sock;
 
 struct inet_skb_parm {
@@ -471,7 +473,7 @@ extern int ip_misc_proc_init(void);
 
 static inline bool inetdev_valid_mtu(unsigned int mtu)
 {
-	return likely(mtu >= 68);
+	return likely(mtu >= IPV4_MIN_MTU);
 }
 
 #endif	/* _IP_H */
