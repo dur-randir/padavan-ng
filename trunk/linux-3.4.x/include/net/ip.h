@@ -92,7 +92,7 @@ extern int		igmp_mc_proc_init(void);
  *	Functions provided by ip.c
  */
 
-extern int		ip_build_and_send_pkt(struct sk_buff *skb, struct sock *sk,
+extern int		ip_build_and_send_pkt(struct sk_buff *skb, const struct sock *sk,
 					      __be32 saddr, __be32 daddr,
 					      struct ip_options_rcu *opt);
 extern int		ip_rcv(struct sk_buff *skb, struct net_device *dev,
